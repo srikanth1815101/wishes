@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="{{ .Site.Language.Locale | default "en-us" }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f1422" />
+
+    <title>{{ block "title" . }}{{ .Title }} — {{ .Site.Params.brandName }}{{ end }}</title>
+    <meta name="description" content="{{ .Params.description | default .Site.Params.description }}" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- OpenGraph & Twitter Meta Tags -->
+    <meta property="og:title" content="{{ .Title }}" />
+    <meta property="og:description" content="{{ .Params.description | default .Site.Params.description }}" />
+    <meta property="og:image" content="{{ .Site.Params.ogImage }}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="{{ .Site.Params.ogImage }}" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+              display: ['Fraunces', 'Georgia', 'serif'],
+            },
+            colors: {
+              ink: {
+                50: '#f6f7f9',
+                100: '#eceef2',
+                200: '#d5d9e3',
+                300: '#b0b8c9',
+                400: '#8591a9',
+                500: '#67738d',
+                600: '#525c73',
+                700: '#434b5e',
+                800: '#3a4050',
+                900: '#0f1422',
+                950: '#080b14',
+              },
+              gold: {
+                50: '#fbf7ee',
+                100: '#f5ecd6',
+                200: '#ebd7ad',
+                300: '#dfbb79',
+                400: '#d6a253',
+                500: '#c98a3a',
+                600: '#a96b2f',
+                700: '#865029',
+                800: '#6e4026',
+                900: '#5d3623',
+              },
+              brand: {
+                50: '#eef5ff',
+                100: '#d9e8ff',
+                200: '#bcd7ff',
+                300: '#8ebeff',
+                400: '#5998ff',
+                500: '#3374fc',
+                600: '#1c54f2',
+                700: '#1540df',
+                800: '#1836b4',
+                900: '#1a338e',
+              },
+            },
+            boxShadow: {
+              card: '0 1px 2px rgba(15,20,34,0.06), 0 8px 24px -12px rgba(15,20,34,0.18)',
+              cardHover: '0 4px 12px rgba(15,20,34,0.10), 0 20px 40px -16px rgba(15,20,34,0.28)',
+              glow: '0 0 0 1px rgba(201,138,58,0.25), 0 12px 40px -12px rgba(201,138,58,0.45)',
+            },
+            keyframes: {
+              'fade-up': {
+                '0%': { opacity: '0', transform: 'translateY(12px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              'scale-in': {
+                '0%': { opacity: '0', transform: 'scale(0.96)' },
+                '100%': { opacity: '1', transform: 'scale(1)' },
+              },
+              'slide-up': {
+                '0%': { transform: 'translateY(100%)' },
+                '100%': { transform: 'translateY(0)' },
+              },
+              shimmer: {
+                '0%': { backgroundPosition: '-200% 0' },
+                '100%': { backgroundPosition: '200% 0' },
+              },
+            },
+            animation: {
+              'fade-up': 'fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both',
+              'scale-in': 'scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both',
+              'slide-up': 'slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) both',
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Compiled Custom CSS Asset -->
+    {{ $style := resources.Get "css/main.css" | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}" />
+
+    <!-- Supabase JS Client CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Site Configuration & Data Injection -->
+    <script>
+      window.SITE_CONFIG = {
+        brandName: "{{ .Site.Params.brandName }}",
+        brandDomain: "{{ .Site.Params.brandDomain }}",
+        whatsappNumber: "{{ .Site.Params.whatsappNumber }}",
+        currency: "{{ .Site.Params.currency }}",
+        supabaseUrl: "{{ .Site.Params.supabaseUrl }}",
+        supabaseAnonKey: "{{ .Site.Params.supabaseAnonKey }}"
+      };
+
+      {{ $data := hugo.Data.templates }}
+      window.FALLBACK_TEMPLATES = {{ $data | jsonify | safeJS }};
+    </script>
+  </head>
+  <body class="min-h-screen bg-ink-50 font-sans antialiased text-ink-900">
+    {{ partial "header.html" . }}
+
+    {{ block "main" . }}{{ end }}
+
+    {{ partial "footer.html" . }}
+    {{ partial "modal.html" . }}
+    {{ partial "filter_sheet.html" . }}
+
+    <!-- App Engine JavaScript -->
+    {{ $js := resources.Get "js/main.js" | minify | fingerprint }}
+    <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
+  </body>
+</html>

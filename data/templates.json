@@ -1,0 +1,145 @@
+[
+  {
+    "id": "1",
+    "name": "Golden Radiance Birthday",
+    "slug": "golden-radiance-birthday",
+    "category": "Birthday",
+    "tagline": "Elegant gold-accented birthday wish portal with interactive memory gallery.",
+    "description": "Celebrate milestones with a regal gold and black template featuring custom photo galleries, countdown timer, ambient background music, and a digital guestbook for friends to leave heartfelt messages.",
+    "price": 1499,
+    "image_url": "https://images.pexels.com/photos/23384637/pexels-photo-23384637.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+    "gallery": [
+      "https://images.pexels.com/photos/23384637/pexels-photo-23384637.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+      "https://images.pexels.com/photos/1729808/pexels-photo-1729808.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
+    ],
+    "features": [
+      "Custom countdown timer",
+      "Interactive photo memory grid",
+      "Background music player",
+      "WhatsApp & social sharing buttons",
+      "Digital guestbook form"
+    ],
+    "tags": ["Gold", "Elegant", "Adult Birthday", "Premium"],
+    "is_featured": true,
+    "is_active": true,
+    "sort_order": 1,
+    "created_at": "2026-07-30T00:00:00Z"
+  },
+  {
+    "id": "2",
+    "name": "Eternal Bliss Wedding",
+    "slug": "eternal-bliss-wedding",
+    "category": "Wedding",
+    "tagline": "Timeless floral wedding invitation and wish hub for couples.",
+    "description": "A fairytale floral design crafted for weddings and receptions. Includes venue location map, RSVP collector, couple story timeline, and photo highlights.",
+    "price": 2499,
+    "image_url": "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+    "gallery": [
+      "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+      "https://images.pexels.com/photos/2253870/pexels-photo-2253870.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
+    ],
+    "features": [
+      "Interactive couple story timeline",
+      "Venue map & directions",
+      "RSVP submission",
+      "High-resolution photo gallery"
+    ],
+    "tags": ["Floral", "Romantic", "Wedding", "Invitation"],
+    "is_featured": true,
+    "is_active": true,
+    "sort_order": 2,
+    "created_at": "2026-07-30T00:00:00Z"
+  },
+  {
+    "id": "3",
+    "name": "Silver Jubilee Anniversary",
+    "slug": "silver-jubilee-anniversary",
+    "category": "Anniversary",
+    "tagline": "Commemorate love and togetherness with sleek silver typography.",
+    "description": "Perfect for milestone anniversaries. Features memory slideshows, audio message playback, and customizable romantic quotes.",
+    "price": 1999,
+    "image_url": "https://images.pexels.com/photos/265722/pexels-photo-265722.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+    "gallery": [
+      "https://images.pexels.com/photos/265722/pexels-photo-265722.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
+    ],
+    "features": [
+      "Audio message player",
+      "Milestone gallery slider",
+      "Personalized message section"
+    ],
+    "tags": ["Anniversary", "Silver", "Milestone", "Romantic"],
+    "is_featured": false,
+    "is_active": true,
+    "sort_order": 3,
+    "created_at": "2026-07-30T00:00:00Z"
+  },
+  {
+    "id": "4",
+    "name": "Sparkle & Cheer New Year",
+    "slug": "sparkle-cheer-new-year",
+    "category": "New Year",
+    "tagline": "Vibrant festive site to send New Year greetings to family & clients.",
+    "description": "Dynamic fireworks animation background, customizable greeting cards, and instant social share links.",
+    "price": 999,
+    "image_url": "https://images.pexels.com/photos/1387577/pexels-photo-1387577.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+    "gallery": [
+      "https://images.pexels.com/photos/1387577/pexels-photo-1387577.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
+    ],
+    "features": [
+      "Live fireworks canvas effect",
+      "Custom resolution generator",
+      "One-click WhatsApp sharing"
+    ],
+    "tags": ["Festive", "New Year", "Celebration", "Animated"],
+    "is_featured": true,
+    "is_active": true,
+    "sort_order": 4,
+    "created_at": "2026-07-30T00:00:00Z"
+  },
+  {
+    "id": "5",
+    "name": "Little Prince Baby Shower",
+    "slug": "little-prince-baby-shower",
+    "category": "Baby Shower",
+    "tagline": "Charming pastel theme welcoming the newborn prince or princess.",
+    "description": "Soft pastel color themes, gender reveal card reveal, registry link section, and parental message board.",
+    "price": 1299,
+    "image_url": "https://images.pexels.com/photos/3845492/pexels-photo-3845492.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+    "gallery": [
+      "https://images.pexels.com/photos/3845492/pexels-photo-3845492.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
+    ],
+    "features": [
+      "Soft pastel color scheme",
+      "Gift registry integration",
+      "Interactive baby prediction game"
+    ],
+    "tags": ["Cute", "Baby", "Pastel", "Celebration"],
+    "is_featured": false,
+    "is_active": true,
+    "sort_order": 5,
+    "created_at": "2026-07-30T00:00:00Z"
+  },
+  {
+    "id": "6",
+    "name": "Diwali Festival Grandeur",
+    "slug": "diwali-festival-grandeur",
+    "category": "Festival",
+    "tagline": "Radiant festive greetings with glowing lamps and sparkling effects.",
+    "description": "Traditional diya glow animation, personalized family greeting signatures, and background festive tunes.",
+    "price": 1199,
+    "image_url": "https://images.pexels.com/photos/1589255/pexels-photo-1589255.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+    "gallery": [
+      "https://images.pexels.com/photos/1589255/pexels-photo-1589255.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
+    ],
+    "features": [
+      "Glowing diya animation",
+      "Audio greeting player",
+      "Personalized photo frame"
+    ],
+    "tags": ["Festival", "Diwali", "Traditional", "Lights"],
+    "is_featured": false,
+    "is_active": true,
+    "sort_order": 6,
+    "created_at": "2026-07-30T00:00:00Z"
+  }
+]

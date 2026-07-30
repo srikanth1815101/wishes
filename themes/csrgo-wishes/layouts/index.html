@@ -1,0 +1,19 @@
+{{ define "main" }}
+{{ partial "hero.html" . }}
+{{ partial "featured.html" . }}
+
+<main class="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
+  {{ partial "categories.html" . }}
+
+  <div class="mt-6 flex items-center justify-between">
+    <h2 id="active-category-title" class="font-display text-xl font-semibold text-ink-900 sm:text-2xl">
+      All Templates
+    </h2>
+    <span id="template-count" class="text-sm text-ink-500">
+      Loading…
+    </span>
+  </div>
+
+  {{ partial "grid.html" . }}
+</main>
+{{ end }}
