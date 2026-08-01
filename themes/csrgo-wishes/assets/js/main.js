@@ -76,6 +76,7 @@
     if (fetched && Array.isArray(fetched)) {
       allTemplates = fetched;
       renderAll();
+      checkUrlForModal();
     } else {
       renderError('Failed to load templates.');
     }
@@ -414,21 +415,82 @@
   }
 
   // Modal Functionality
-  function openModal(template) {
+  function checkUrlForModal() {
+    const params = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    const orderId = params.get('order') || params.get('template') || hashParams.get('order') || hashParams.get('template');
+    if (orderId) {
+      const found = allTemplates.find(t => t.id === orderId || (t.slug && t.slug.includes(orderId)));
+      if (found) {
+        openModal(found, false);
+      }
+    }
+  }
+
+  function openModal(template, updateUrl = true) {
     selectedTemplate = template;
     currentStep = 'details';
     galleryIndex = 0;
     document.body.style.overflow = 'hidden';
 
+    if (updateUrl && template && template.id) {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set('order', template.id);
+      window.history.pushState({ modalOpen: true, templateId: template.id }, '', newUrl.toString());
+    }
+
     renderModalContent();
     if (modalOverlay) modalOverlay.style.display = 'flex';
   }
 
-  function closeModal() {
+  let modalGalleryInterval = null;
+
+  function stopGalleryAutoPlay() {
+    if (modalGalleryInterval) {
+      clearInterval(modalGalleryInterval);
+      modalGalleryInterval = null;
+    }
+  }
+
+  function startGalleryAutoPlay(gallery) {
+    stopGalleryAutoPlay();
+    if (gallery && gallery.length > 1) {
+      modalGalleryInterval = setInterval(() => {
+        galleryIndex = (galleryIndex + 1) % gallery.length;
+        updateGalleryUI(gallery);
+      }, 3000);
+    }
+  }
+
+  function closeModal(updateUrl = true) {
+    stopGalleryAutoPlay();
     selectedTemplate = null;
     document.body.style.overflow = '';
     if (modalOverlay) modalOverlay.style.display = 'none';
+
+    if (updateUrl) {
+      const newUrl = new URL(window.location.href);
+      if (newUrl.searchParams.has('order')) {
+        newUrl.searchParams.delete('order');
+        window.history.pushState({ modalOpen: false }, '', newUrl.toString());
+      }
+    }
   }
+
+  window.addEventListener('popstate', () => {
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get('order') || params.get('template');
+    if (orderId) {
+      const found = allTemplates.find(t => t.id === orderId || (t.slug && t.slug.includes(orderId)));
+      if (found) {
+        openModal(found, false);
+      } else {
+        closeModal(false);
+      }
+    } else {
+      closeModal(false);
+    }
+  });
 
   // Keyboard navigation
   window.addEventListener('keydown', (e) => {
@@ -507,73 +569,80 @@
         </div>
 
         <!-- Sticky Footer CTA -->
-        ${(() => {
-          const hasCustomBuilder = !!t.builder_key;
-          const showWhatsapp = t.show_whatsapp_order !== false && !hasCustomBuilder;
-          const showBack = t.show_back_button !== false && !hasCustomBuilder;
+        <div id="modal-step-footer" class="shrink-0">
+          ${renderModalFooterHtml(t)}
+        </div>
+      </div>
+    `;
 
-          if (currentStep === 'details') {
-            return `
-              <div class="shrink-0 border-t border-ink-100 bg-white/95 px-5 py-4 backdrop-blur sm:px-7">
-                <div class="flex items-center justify-between gap-4">
-                  <div>
-                    <p class="text-xs font-medium text-ink-500">Price</p>
-                    ${(t.price === 0 || t.slug === 'friendship-day') ? `
-                      <div class="flex items-center gap-2">
-                        <span class="text-sm font-semibold text-ink-400 line-through">₹${t.original_price || 99}</span>
-                        <span class="font-display text-2xl font-bold text-rose-600">₹0</span>
-                        <span class="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-600">100% OFF</span>
-                      </div>
-                    ` : `
-                      <p class="font-display text-2xl font-semibold text-ink-900">
-                        ${config.currency}${priceFormatted}
-                      </p>
-                    `}
-                  </div>
-                  <button
-                    type="button"
-                    id="modal-order-step-btn"
-                    class="flex-1 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-500 px-6 py-3.5 text-base font-semibold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98] sm:flex-none sm:px-8"
-                  >
-                    Order Now
-                  </button>
+    bindModalEvents(t, gallery);
+  }
+
+  function renderModalFooterHtml(t) {
+    const hasCustomBuilder = !!t.builder_key;
+    const showWhatsapp = t.show_whatsapp_order !== false && !hasCustomBuilder;
+    const showBack = t.show_back_button !== false && !hasCustomBuilder;
+    const priceFormatted = Number(t.price).toLocaleString('en-IN');
+
+    if (currentStep === 'details') {
+      return `
+        <div class="border-t border-ink-100 bg-white/95 px-5 py-4 backdrop-blur sm:px-7">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <p class="text-xs font-medium text-ink-500">Price</p>
+              ${(t.price === 0 || t.slug === 'friendship-day') ? `
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-semibold text-ink-400 line-through">₹${t.original_price || 99}</span>
+                  <span class="font-display text-2xl font-bold text-rose-600">₹0</span>
+                  <span class="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-600">100% OFF</span>
                 </div>
-              </div>
-            `;
-          }
-
-          if (!showWhatsapp && !showBack) {
-            return '';
-          }
-
-          return `
-            <div class="shrink-0 border-t border-ink-100 bg-white/95 px-5 py-4 backdrop-blur sm:px-7">
-              <div class="flex flex-col gap-3">
-                <div class="flex items-center justify-between gap-3">
-                  ${showBack ? `
-                    <button
-                      type="button"
-                      id="modal-back-step-btn"
-                      class="rounded-2xl border border-ink-200 px-5 py-3.5 text-sm font-semibold text-ink-700 transition hover:border-ink-300"
-                    >
-                      Back
-                    </button>
-                  ` : ''}
-                  ${showWhatsapp ? `
-                    <button
-                      type="button"
-                      id="modal-submit-whatsapp-btn"
-                      class="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-6 py-3.5 text-base font-semibold text-white shadow-card transition hover:bg-[#1fb557] active:scale-[0.98]"
-                    >
-                      <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-1.157 4.228 4.801-1.259z"/></svg>
-                      Order on WhatsApp
-                    </button>
-                  ` : ''}
-                </div>
-              </div>
+              ` : `
+                <p class="font-display text-2xl font-semibold text-ink-900">
+                  ${config.currency}${priceFormatted}
+                </p>
+              `}
             </div>
-          `;
-        })()}
+            <button
+              type="button"
+              id="modal-order-step-btn"
+              class="flex-1 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-500 px-6 py-3.5 text-base font-semibold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98] sm:flex-none sm:px-8"
+            >
+              Order Now
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    if (!showWhatsapp && !showBack) {
+      return '';
+    }
+
+    return `
+      <div class="border-t border-ink-100 bg-white/95 px-5 py-4 backdrop-blur sm:px-7">
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center justify-between gap-3">
+            ${showBack ? `
+              <button
+                type="button"
+                id="modal-back-step-btn"
+                class="rounded-2xl border border-ink-200 px-5 py-3.5 text-sm font-semibold text-ink-700 transition hover:border-ink-300"
+              >
+                Back
+              </button>
+            ` : ''}
+            ${showWhatsapp ? `
+              <button
+                type="button"
+                id="modal-submit-whatsapp-btn"
+                class="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-6 py-3.5 text-base font-semibold text-white shadow-card transition hover:bg-[#1fb557] active:scale-[0.98]"
+              >
+                <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-1.157 4.228 4.801-1.259z"/></svg>
+                Order on WhatsApp
+              </button>
+            ` : ''}
+          </div>
+        </div>
       </div>
     `;
 
@@ -727,6 +796,8 @@
   }
 
   function bindModalEvents(t, gallery) {
+    startGalleryAutoPlay(gallery);
+
     const closeBtn = document.getElementById('modal-close-btn');
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
 
@@ -735,6 +806,7 @@
       prevBtn.addEventListener('click', () => {
         galleryIndex = (galleryIndex - 1 + gallery.length) % gallery.length;
         updateGalleryUI(gallery);
+        startGalleryAutoPlay(gallery);
       });
     }
 
@@ -743,34 +815,53 @@
       nextBtn.addEventListener('click', () => {
         galleryIndex = (galleryIndex + 1) % gallery.length;
         updateGalleryUI(gallery);
+        startGalleryAutoPlay(gallery);
       });
     }
 
+    bindModalFooterEvents(t);
+
+    if (t.builder_key && window.WISH_BUILDERS && window.WISH_BUILDERS[t.builder_key]) {
+      window.WISH_BUILDERS[t.builder_key].bindForm(t);
+    }
+  }
+
+  function bindModalFooterEvents(t) {
     const orderStepBtn = document.getElementById('modal-order-step-btn');
     if (orderStepBtn) {
-      orderStepBtn.addEventListener('click', () => {
-        currentStep = 'order';
-        renderModalContent();
-      });
+      orderStepBtn.onclick = () => switchStep('order');
     }
 
     const backStepBtn = document.getElementById('modal-back-step-btn');
     if (backStepBtn) {
-      backStepBtn.addEventListener('click', () => {
-        currentStep = 'details';
-        renderModalContent();
-      });
+      backStepBtn.onclick = () => switchStep('details');
     }
 
     const submitWhatsappBtn = document.getElementById('modal-submit-whatsapp-btn');
     if (submitWhatsappBtn) {
-      submitWhatsappBtn.addEventListener('click', () => {
-        handleOrderSubmit(t);
-      });
+      submitWhatsappBtn.onclick = () => handleOrderSubmit(t);
+    }
+  }
+
+  function switchStep(step) {
+    currentStep = step;
+    const bodyEl = document.getElementById('modal-step-body');
+    const footerEl = document.getElementById('modal-step-footer');
+    if (!selectedTemplate) return;
+
+    const t = selectedTemplate;
+
+    if (bodyEl) {
+      bodyEl.innerHTML = currentStep === 'details' ? renderModalDetailsStep(t) : renderModalOrderStep(t);
+      bodyEl.scrollTop = 0;
+      if (currentStep === 'order' && t.builder_key && window.WISH_BUILDERS && window.WISH_BUILDERS[t.builder_key]) {
+        window.WISH_BUILDERS[t.builder_key].bindForm(t);
+      }
     }
 
-    if (t.builder_key && window.WISH_BUILDERS && window.WISH_BUILDERS[t.builder_key]) {
-      window.WISH_BUILDERS[t.builder_key].bindForm(t);
+    if (footerEl) {
+      footerEl.innerHTML = renderModalFooterHtml(t);
+      bindModalFooterEvents(t);
     }
   }
 
@@ -872,19 +963,37 @@
     } else {
       html.classList.remove('dark');
     }
-
-    const themeIcon = document.getElementById('theme-icon');
-    if (themeIcon) {
-      themeIcon.setAttribute('data-lucide', newTheme === 'dark' ? 'sun' : 'moon');
-      if (window.lucide) lucide.createIcons();
-    }
   };
 
-  window.toggleMobileMenu = function () {
+  function closeMobileMenu() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+      mobileMenu.classList.add('hidden');
+    }
+  }
+
+  window.toggleMobileMenu = function (e) {
+    if (e && e.stopPropagation) e.stopPropagation();
     const mobileMenu = document.getElementById('mobile-menu');
     if (mobileMenu) {
       mobileMenu.classList.toggle('hidden');
     }
   };
+
+  // Close mobile menu when user clicks or taps anywhere outside
+  document.addEventListener('click', (e) => {
+    const mobileMenu = document.getElementById('mobile-menu');
+    const toggleBtn = document.getElementById('mobile-menu-btn');
+    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+      if (!mobileMenu.contains(e.target) && (!toggleBtn || !toggleBtn.contains(e.target))) {
+        closeMobileMenu();
+      }
+    }
+  });
+
+  // Close mobile menu on page scroll
+  window.addEventListener('scroll', () => {
+    closeMobileMenu();
+  }, { passive: true });
 })();
 
