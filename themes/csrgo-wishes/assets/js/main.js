@@ -97,13 +97,13 @@
     if (categoryBar) {
       const barButtons = ['All', ...categories].map((cat) => {
         const isActive = cat === activeCategory;
-        const activeClasses = 'bg-ink-900 text-white shadow-card';
-        const inactiveClasses = 'border border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:text-ink-900';
+        const activeClasses = 'bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold shadow-md shadow-purple-500/25';
+        const inactiveClasses = 'border border-gray-200 dark:border-gray-700/80 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium';
         return `
           <button
             type="button"
             data-category="${escapeHtml(cat)}"
-            class="cat-btn shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all ${isActive ? activeClasses : inactiveClasses}"
+            class="cat-btn shrink-0 rounded-full px-4 py-2 text-sm transition-all ${isActive ? activeClasses : inactiveClasses}"
           >
             ${escapeHtml(cat)}
           </button>
@@ -115,13 +115,13 @@
     if (filterContainer) {
       const sheetButtons = ['All', ...categories].map((cat) => {
         const isActive = cat === activeCategory;
-        const activeClasses = 'bg-ink-900 text-white';
-        const inactiveClasses = 'border border-ink-200 bg-white text-ink-600';
+        const activeClasses = 'bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold';
+        const inactiveClasses = 'border border-gray-200 dark:border-gray-700/80 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium';
         return `
           <button
             type="button"
             data-category="${escapeHtml(cat)}"
-            class="cat-btn close-filter-btn rounded-full px-4 py-2 text-sm font-medium transition ${isActive ? activeClasses : inactiveClasses}"
+            class="cat-btn close-filter-btn rounded-full px-4 py-2 text-sm transition ${isActive ? activeClasses : inactiveClasses}"
           >
             ${escapeHtml(cat)}
           </button>
@@ -388,13 +388,12 @@
 
   function updateCategoryButtonsUI() {
     const btns = document.querySelectorAll('.cat-btn');
+    const activeClasses = 'cat-btn shrink-0 rounded-full px-4 py-2 text-sm font-bold transition-all bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md shadow-purple-500/25';
+    const inactiveClasses = 'cat-btn shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all border border-gray-200 dark:border-gray-700/80 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700';
+
     btns.forEach((btn) => {
       const cat = btn.getAttribute('data-category');
-      if (cat === activeCategory) {
-        btn.className = 'cat-btn shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all bg-ink-900 text-white shadow-card';
-      } else {
-        btn.className = 'cat-btn shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all border border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:text-ink-900';
-      }
+      btn.className = cat === activeCategory ? activeClasses : inactiveClasses;
     });
   }
 
