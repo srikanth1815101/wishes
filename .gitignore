@@ -10,6 +10,9 @@ node_modules
 dist
 dist-ssr
 *.local
+public
+resources
+.hugo_build.lock
 
 .vscode/*
 !.vscode/extensions.json

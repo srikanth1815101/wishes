@@ -33,12 +33,18 @@
   const filterSheetOverlay = document.getElementById('filter-sheet');
 
   // Initialize
-  document.addEventListener('DOMContentLoaded', () => {
+  function initApp() {
     initSearch();
     initCategoryButtons();
     initMobileFilters();
     loadTemplates();
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    initApp();
+  }
 
   // Fetch templates from Supabase or Fallback static dataset
   async function loadTemplates() {
@@ -75,6 +81,55 @@
     }
   }
 
+  function renderCategoryButtons() {
+    const categoryBar = document.getElementById('category-bar');
+    const filterContainer = document.getElementById('filter-categories-container');
+
+    const categoriesSet = new Set();
+    allTemplates.forEach((t) => {
+      if (t.category && t.is_active !== false) {
+        categoriesSet.add(t.category);
+      }
+    });
+    const categories = Array.from(categoriesSet);
+
+    if (categoryBar) {
+      const barButtons = ['All', ...categories].map((cat) => {
+        const isActive = cat === activeCategory;
+        const activeClasses = 'bg-ink-900 text-white shadow-card';
+        const inactiveClasses = 'border border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:text-ink-900';
+        return `
+          <button
+            type="button"
+            data-category="${escapeHtml(cat)}"
+            class="cat-btn shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all ${isActive ? activeClasses : inactiveClasses}"
+          >
+            ${escapeHtml(cat)}
+          </button>
+        `;
+      }).join('');
+      categoryBar.innerHTML = barButtons;
+    }
+
+    if (filterContainer) {
+      const sheetButtons = ['All', ...categories].map((cat) => {
+        const isActive = cat === activeCategory;
+        const activeClasses = 'bg-ink-900 text-white';
+        const inactiveClasses = 'border border-ink-200 bg-white text-ink-600';
+        return `
+          <button
+            type="button"
+            data-category="${escapeHtml(cat)}"
+            class="cat-btn close-filter-btn rounded-full px-4 py-2 text-sm font-medium transition ${isActive ? activeClasses : inactiveClasses}"
+          >
+            ${escapeHtml(cat)}
+          </button>
+        `;
+      }).join('');
+      filterContainer.innerHTML = sheetButtons;
+    }
+  }
+
   // Filter & Search logic
   function getFilteredTemplates() {
     const q = searchQuery.trim().toLowerCase();
@@ -101,25 +156,26 @@
 
   // UI Rendering
   function renderAll() {
-    const featured = getFeaturedTemplates();
-    const filtered = getFilteredTemplates();
-
-    // Featured section visibility
-    if (featuredSection && featuredRow) {
-      if (featured.length > 0 && !searchQuery.trim() && activeCategory === 'All') {
-        featuredSection.style.display = 'block';
-        renderFeaturedRow(featured);
-      } else {
-        featuredSection.style.display = 'none';
+    const isHomePage = !document.getElementById('search-input') && !document.getElementById('category-bar');
+    
+    if (isHomePage) {
+      const recent = allTemplates.slice(0, 6);
+      if (countIndicator) {
+        countIndicator.textContent = `${recent.length} template${recent.length === 1 ? '' : 's'}`;
       }
+      renderGrid(recent);
+      return;
     }
+
+    renderCategoryButtons();
+    const filtered = getFilteredTemplates();
 
     // Category title & count
     if (activeCategoryTitle) {
-      activeCategoryTitle.textContent = activeCategory === 'All' ? 'All Templates' : activeCategory;
+      activeCategoryTitle.textContent = activeCategory === 'All' ? 'All Templates' : `${activeCategory} Wish Templates`;
     }
     if (countIndicator) {
-      countIndicator.textContent = `${filtered.length} design${filtered.length === 1 ? '' : 's'}`;
+      countIndicator.textContent = `${filtered.length} template${filtered.length === 1 ? '' : 's'}`;
     }
 
     // Grid rendering
@@ -165,67 +221,45 @@
 
   function renderGrid(items) {
     if (!templatesGrid) return;
-    templatesGrid.className = 'mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
+    templatesGrid.className = 'mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3';
     templatesGrid.innerHTML = items.map((t, index) => {
       const delay = Math.min(index * 60, 400);
-      const tags = (t.tags || []).slice(0, 3);
-      const priceFormatted = Number(t.price).toLocaleString('en-IN');
 
       return `
         <button
           type="button"
           data-id="${t.id}"
           style="animation-delay: ${delay}ms;"
-          class="template-select-btn group animate-fade-up flex flex-col overflow-hidden rounded-3xl border border-ink-200 bg-white text-left shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-gold-300 hover:shadow-cardHover"
+          class="template-select-btn group relative animate-fade-up w-full aspect-[4/3] overflow-hidden rounded-3xl border border-white/20 text-left shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-cardHover focus:outline-none"
         >
-          <div class="relative aspect-[4/3] overflow-hidden bg-ink-100">
-            ${t.image_url ? `
-              <img
-                src="${escapeHtml(t.image_url)}"
-                alt="${escapeHtml(t.name)}"
-                loading="lazy"
-                class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-            ` : `<div class="h-full w-full skeleton-shimmer"></div>`}
-            <div class="absolute inset-0 bg-gradient-to-t from-ink-950/55 via-transparent to-transparent"></div>
-            ${t.is_featured ? `
-              <span class="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-gold-500/95 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm backdrop-blur">
-                <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg>
-                Featured
-              </span>
-            ` : ''}
-            <span class="absolute right-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-ink-700 shadow-sm backdrop-blur">
-              ${escapeHtml(t.category)}
-            </span>
-            <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-2">
-              <h3 class="font-display text-lg font-semibold leading-tight text-white drop-shadow">
-                ${escapeHtml(t.name)}
-              </h3>
-              <span class="shrink-0 rounded-full bg-emerald-500/95 px-2.5 py-1 text-xs font-bold text-white shadow-sm backdrop-blur">
-                ${(t.price === 0 || t.slug === 'friendship-day') ? `<span class="line-through text-emerald-200 opacity-80 mr-1">₹${t.original_price || 99}</span> ₹0` : `${config.currency}${priceFormatted}`}
-              </span>
-            </div>
-          </div>
+          ${t.image_url ? `
+            <img
+              src="${escapeHtml(t.image_url)}"
+              alt="${escapeHtml(t.name)}"
+              loading="lazy"
+              class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+          ` : `<div class="h-full w-full skeleton-shimmer"></div>`}
+          
+          <!-- Gradient Overlay -->
+          <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent"></div>
 
-          <div class="flex flex-1 flex-col gap-3 p-4">
-            ${t.tagline ? `
-              <p class="text-sm leading-relaxed text-ink-600 line-clamp-2" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-                ${escapeHtml(t.tagline)}
-              </p>
-            ` : ''}
-            <div class="mt-auto flex items-center justify-between">
-              <div class="flex flex-wrap gap-1.5">
-                ${tags.map((tag) => `
-                  <span class="rounded-full bg-ink-100 px-2.5 py-1 text-[11px] font-medium text-ink-600">
-                    ${escapeHtml(tag)}
-                  </span>
-                `).join('')}
-              </div>
-              <span class="inline-flex items-center gap-1 text-sm font-semibold text-gold-600 transition group-hover:gap-2">
-                View
-                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </span>
-            </div>
+          <!-- Featured Badge (Top Left) -->
+          ${t.is_featured !== false ? `
+            <span class="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-[#c98a3a] px-3.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-white shadow-md backdrop-blur-md">
+              <svg class="h-3.5 w-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1 1.275-1.275L12 3z"/></svg>
+              FEATURED
+            </span>
+          ` : ''}
+
+          <!-- Text Information Overlay (Bottom Left) -->
+          <div class="absolute bottom-5 left-5 right-5 text-left">
+            <p class="text-xs font-semibold text-white/80 tracking-wide mb-1">
+              ${escapeHtml(t.category)}
+            </p>
+            <h3 class="font-display text-xl font-bold leading-snug text-white drop-shadow-md sm:text-2xl">
+              ${escapeHtml(t.name)}
+            </h3>
           </div>
         </button>
       `;
@@ -468,62 +502,78 @@
         </div>
 
         <!-- Scrollable Modal Body -->
-        <div class="flex-1 overflow-y-auto px-5 py-5 sm:px-7">
+        <div id="modal-step-body" class="flex-1 overflow-y-auto px-5 py-5 sm:px-7">
           ${currentStep === 'details' ? renderModalDetailsStep(t) : renderModalOrderStep(t)}
         </div>
 
         <!-- Sticky Footer CTA -->
-        <div class="shrink-0 border-t border-ink-100 bg-white/95 px-5 py-4 backdrop-blur sm:px-7">
-          ${currentStep === 'details' ? `
-            <div class="flex items-center justify-between gap-4">
-              <div>
-                <p class="text-xs font-medium text-ink-500">Price</p>
-                ${(t.price === 0 || t.slug === 'friendship-day') ? `
-                  <div class="flex items-center gap-2">
-                    <span class="text-sm font-semibold text-ink-400 line-through">₹${t.original_price || 99}</span>
-                    <span class="font-display text-2xl font-bold text-rose-600">₹0</span>
-                    <span class="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-600">100% OFF</span>
+        ${(() => {
+          const hasCustomBuilder = !!t.builder_key;
+          const showWhatsapp = t.show_whatsapp_order !== false && !hasCustomBuilder;
+          const showBack = t.show_back_button !== false && !hasCustomBuilder;
+
+          if (currentStep === 'details') {
+            return `
+              <div class="shrink-0 border-t border-ink-100 bg-white/95 px-5 py-4 backdrop-blur sm:px-7">
+                <div class="flex items-center justify-between gap-4">
+                  <div>
+                    <p class="text-xs font-medium text-ink-500">Price</p>
+                    ${(t.price === 0 || t.slug === 'friendship-day') ? `
+                      <div class="flex items-center gap-2">
+                        <span class="text-sm font-semibold text-ink-400 line-through">₹${t.original_price || 99}</span>
+                        <span class="font-display text-2xl font-bold text-rose-600">₹0</span>
+                        <span class="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-600">100% OFF</span>
+                      </div>
+                    ` : `
+                      <p class="font-display text-2xl font-semibold text-ink-900">
+                        ${config.currency}${priceFormatted}
+                      </p>
+                    `}
                   </div>
-                ` : `
-                  <p class="font-display text-2xl font-semibold text-ink-900">
-                    ${config.currency}${priceFormatted}
-                  </p>
-                `}
+                  <button
+                    type="button"
+                    id="modal-order-step-btn"
+                    class="flex-1 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-500 px-6 py-3.5 text-base font-semibold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98] sm:flex-none sm:px-8"
+                  >
+                    Order Now
+                  </button>
+                </div>
               </div>
-              <button
-                type="button"
-                id="modal-order-step-btn"
-                class="flex-1 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-500 px-6 py-3.5 text-base font-semibold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98] sm:flex-none sm:px-8"
-              >
-                Order Now
-              </button>
-            </div>
-          ` : `
-            <div class="flex flex-col gap-3">
-              <div class="flex items-center justify-between gap-3">
-                <button
-                  type="button"
-                  id="modal-back-step-btn"
-                  class="rounded-2xl border border-ink-200 px-5 py-3.5 text-sm font-semibold text-ink-700 transition hover:border-ink-300"
-                >
-                  Back
-                </button>
-                <button
-                  type="button"
-                  id="modal-submit-whatsapp-btn"
-                  class="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-6 py-3.5 text-base font-semibold text-white shadow-card transition hover:bg-[#1fb557] active:scale-[0.98]"
-                >
-                  <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-1.157 4.228 4.801-1.259z"/></svg>
-                  Order on WhatsApp
-                </button>
+            `;
+          }
+
+          if (!showWhatsapp && !showBack) {
+            return '';
+          }
+
+          return `
+            <div class="shrink-0 border-t border-ink-100 bg-white/95 px-5 py-4 backdrop-blur sm:px-7">
+              <div class="flex flex-col gap-3">
+                <div class="flex items-center justify-between gap-3">
+                  ${showBack ? `
+                    <button
+                      type="button"
+                      id="modal-back-step-btn"
+                      class="rounded-2xl border border-ink-200 px-5 py-3.5 text-sm font-semibold text-ink-700 transition hover:border-ink-300"
+                    >
+                      Back
+                    </button>
+                  ` : ''}
+                  ${showWhatsapp ? `
+                    <button
+                      type="button"
+                      id="modal-submit-whatsapp-btn"
+                      class="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-6 py-3.5 text-base font-semibold text-white shadow-card transition hover:bg-[#1fb557] active:scale-[0.98]"
+                    >
+                      <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-1.157 4.228 4.801-1.259z"/></svg>
+                      Order on WhatsApp
+                    </button>
+                  ` : ''}
+                </div>
               </div>
-              <p class="flex items-center justify-center gap-1.5 text-center text-xs text-ink-500">
-                <svg class="h-3.5 w-3.5 text-gold-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-                No payment now — we confirm details and share a permanent link after build.
-              </p>
             </div>
-          `}
-        </div>
+          `;
+        })()}
       </div>
     `;
 
@@ -571,7 +621,41 @@
     `;
   }
 
+  function loadBuilderScript(scriptUrl, callback) {
+    if (!scriptUrl) return;
+    const existing = document.querySelector(`script[src="${scriptUrl}"]`);
+    if (existing) {
+      if (callback) callback();
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = scriptUrl;
+    script.onload = () => {
+      if (callback) callback();
+    };
+    document.body.appendChild(script);
+  }
+
   function renderModalOrderStep(t) {
+    if (t.builder_key && t.builder_script) {
+      if (window.WISH_BUILDERS && window.WISH_BUILDERS[t.builder_key]) {
+        return window.WISH_BUILDERS[t.builder_key].renderForm(t);
+      }
+      loadBuilderScript(t.builder_script, () => {
+        const body = document.getElementById('modal-step-body');
+        if (body && window.WISH_BUILDERS && window.WISH_BUILDERS[t.builder_key]) {
+          body.innerHTML = window.WISH_BUILDERS[t.builder_key].renderForm(t);
+          window.WISH_BUILDERS[t.builder_key].bindForm(t);
+        }
+      });
+      return `
+        <div class="py-12 text-center text-ink-500">
+          <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-purple-600 border-r-transparent mb-2"></div>
+          <p class="text-xs">Loading template builder...</p>
+        </div>
+      `;
+    }
+
     const priceFormatted = Number(t.price).toLocaleString('en-IN');
     return `
       <div class="flex flex-col gap-5">
@@ -665,12 +749,8 @@
     const orderStepBtn = document.getElementById('modal-order-step-btn');
     if (orderStepBtn) {
       orderStepBtn.addEventListener('click', () => {
-        if (t.demo_url || t.slug === 'friendship-day') {
-          window.location.href = t.demo_url || '/friendship-day/';
-        } else {
-          currentStep = 'order';
-          renderModalContent();
-        }
+        currentStep = 'order';
+        renderModalContent();
       });
     }
 
@@ -687,6 +767,10 @@
       submitWhatsappBtn.addEventListener('click', () => {
         handleOrderSubmit(t);
       });
+    }
+
+    if (t.builder_key && window.WISH_BUILDERS && window.WISH_BUILDERS[t.builder_key]) {
+      window.WISH_BUILDERS[t.builder_key].bindForm(t);
     }
   }
 
@@ -773,4 +857,34 @@
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
   }
+
+  // Global Header Interactivity Functions
+  window.toggleTheme = function () {
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme') || (html.classList.contains('dark') ? 'dark' : 'light');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+
+    if (newTheme === 'dark') {
+      html.classList.add('dark');
+    } else {
+      html.classList.remove('dark');
+    }
+
+    const themeIcon = document.getElementById('theme-icon');
+    if (themeIcon) {
+      themeIcon.setAttribute('data-lucide', newTheme === 'dark' ? 'sun' : 'moon');
+      if (window.lucide) lucide.createIcons();
+    }
+  };
+
+  window.toggleMobileMenu = function () {
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenu) {
+      mobileMenu.classList.toggle('hidden');
+    }
+  };
 })();
+

@@ -1,0 +1,22 @@
+[
+  {{- range $index, $page := .Pages }}
+  {{- if $index }},{{ end }}
+  {
+    "id": {{ $page.Params.id | default $page.File.TranslationBaseName | jsonify }},
+    "name": {{ $page.Title | jsonify }},
+    "slug": {{ $page.Params.slug | default (printf "templates/%s" $page.File.TranslationBaseName) | jsonify }},
+    "category": {{ $page.Params.category | jsonify }},
+    "tagline": {{ $page.Params.tagline | jsonify }},
+    "description": {{ $page.Params.description | default $page.Summary | jsonify }},
+    "price": {{ $page.Params.price | default 0 }},
+    "original_price": {{ $page.Params.original_price | default 99 }},
+    "image_url": {{ $page.Params.image_url | jsonify }},
+    "gallery": {{ $page.Params.gallery | jsonify }},
+    "features": {{ $page.Params.features | jsonify }},
+    "tags": {{ $page.Params.tags | jsonify }},
+    "is_featured": {{ if $page.Params.is_featured }}true{{ else }}false{{ end }},
+    "is_active": {{ if ne $page.Params.is_active false }}true{{ else }}false{{ end }},
+    "sort_order": {{ $page.Params.sort_order | default 1 }}
+  }
+  {{- end }}
+]

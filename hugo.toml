@@ -10,13 +10,8 @@ theme = 'csrgo-wishes'
 
 [[menu.main]]
   name = "Templates"
-  url = "/#templates"
+  url = "/templates/"
   weight = 2
-
-[[menu.main]]
-  name = "How It Works"
-  url = "/#how"
-  weight = 3
 
 [params]
   brandName = 'CSRGO Wishes'
@@ -27,4 +22,3 @@ theme = 'csrgo-wishes'
   supabaseAnonKey = ''
   description = 'Browse premium wishes website templates for birthdays, weddings, anniversaries and more. Pick a design, share your details, and we craft a permanent custom wish site just for you.'
   ogImage = 'https://images.pexels.com/photos/23384637/pexels-photo-23384637.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'
-
