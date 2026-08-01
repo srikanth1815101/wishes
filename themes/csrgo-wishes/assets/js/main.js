@@ -6,7 +6,7 @@
   const config = window.SITE_CONFIG || {
     brandName: 'CSRGO Wishes',
     brandDomain: 'wishes.csrgo.com',
-    whatsappNumber: '919999999999',
+    whatsappNumber: '919392438319',
     currency: '₹',
     supabaseUrl: '',
     supabaseAnonKey: ''
@@ -588,26 +588,38 @@
         <div class="border-t border-ink-100 bg-white/95 px-5 py-4 backdrop-blur sm:px-7">
           <div class="flex items-center justify-between gap-4">
             <div>
-              <p class="text-xs font-medium text-ink-500">Price</p>
-              ${(t.price === 0 || t.slug === 'friendship-day') ? `
+              <p class="text-xs font-medium text-ink-500 dark:text-gray-400">Price</p>
+              ${t.original_price && t.original_price > t.price ? `
                 <div class="flex items-center gap-2">
-                  <span class="text-sm font-semibold text-ink-400 line-through">₹${t.original_price || 99}</span>
-                  <span class="font-display text-2xl font-bold text-rose-600">₹0</span>
-                  <span class="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-600">100% OFF</span>
+                  <span class="text-sm font-semibold text-gray-400 line-through">₹${t.original_price}</span>
+                  <span class="font-display text-2xl font-bold text-rose-600 dark:text-rose-400">${t.price === 0 ? 'FREE' : `₹${t.price}`}</span>
+                  <span class="rounded-full bg-rose-100 dark:bg-rose-900/40 px-2.5 py-0.5 text-xs font-bold text-rose-600 dark:text-rose-300">
+                    ${Math.round(((t.original_price - t.price) / t.original_price) * 100)}% OFF
+                  </span>
                 </div>
               ` : `
-                <p class="font-display text-2xl font-semibold text-ink-900">
-                  ${config.currency}${priceFormatted}
+                <p class="font-display text-2xl font-semibold text-ink-900 dark:text-white">
+                  ${t.price === 0 ? 'FREE' : `${config.currency}${priceFormatted}`}
                 </p>
               `}
             </div>
-            <button
-              type="button"
-              id="modal-order-step-btn"
-              class="flex-1 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-500 px-6 py-3.5 text-base font-semibold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98] sm:flex-none sm:px-8"
-            >
-              Order Now
-            </button>
+            <div class="flex items-center gap-2.5">
+              <a
+                href="${t.demo_url || '/' + t.slug.replace(/^\//, '') + '/'}"
+                target="_blank"
+                class="inline-flex items-center justify-center gap-1.5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-200 shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-95 shrink-0"
+              >
+                <svg class="h-4 w-4 text-purple-600 dark:text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                View Demo Site
+              </a>
+              <button
+                type="button"
+                id="modal-order-step-btn"
+                class="flex-1 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-500 px-5 py-3 text-xs sm:text-base font-bold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98] sm:flex-none sm:px-8"
+              >
+                Order Now
+              </button>
+            </div>
           </div>
         </div>
       `;
@@ -636,7 +648,7 @@
                 id="modal-submit-whatsapp-btn"
                 class="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-6 py-3.5 text-base font-semibold text-white shadow-card transition hover:bg-[#1fb557] active:scale-[0.98]"
               >
-                <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-1.157 4.228 4.801-1.259z"/></svg>
+                <svg class="h-5 w-5 fill-none stroke-current" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
                 Order on WhatsApp
               </button>
             ` : ''}
@@ -672,17 +684,22 @@
         ` : ''}
 
         <div class="grid grid-cols-3 gap-3">
-          <div class="flex flex-col items-center gap-1.5 rounded-2xl border border-ink-100 bg-white px-2 py-3 text-center">
-            <span class="text-gold-500"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
-            <span class="text-[11px] font-medium leading-tight text-ink-600">Instant build</span>
+          <div class="flex flex-col items-center gap-1.5 rounded-2xl border border-ink-100 dark:border-gray-800 bg-white dark:bg-gray-800/80 px-2 py-3 text-center">
+            ${(t.price > 0 || t.slug === 'templates/birthday-star') ? `
+              <span class="text-purple-600 dark:text-purple-400"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+              <span class="text-[11px] font-medium leading-tight text-ink-600 dark:text-gray-300">48h Delivery</span>
+            ` : `
+              <span class="text-purple-600 dark:text-purple-400"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+              <span class="text-[11px] font-medium leading-tight text-ink-600 dark:text-gray-300">Instant build</span>
+            `}
           </div>
-          <div class="flex flex-col items-center gap-1.5 rounded-2xl border border-ink-100 bg-white px-2 py-3 text-center">
-            <span class="text-gold-500"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
-            <span class="text-[11px] font-medium leading-tight text-ink-600">Permanent URL</span>
+          <div class="flex flex-col items-center gap-1.5 rounded-2xl border border-ink-100 dark:border-gray-800 bg-white dark:bg-gray-800/80 px-2 py-3 text-center">
+            <span class="text-purple-600 dark:text-purple-400"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+            <span class="text-[11px] font-medium leading-tight text-ink-600 dark:text-gray-300">Permanent URL</span>
           </div>
-          <div class="flex flex-col items-center gap-1.5 rounded-2xl border border-ink-100 bg-white px-2 py-3 text-center">
-            <span class="text-gold-500"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
-            <span class="text-[11px] font-medium leading-tight text-ink-600">Secure order</span>
+          <div class="flex flex-col items-center gap-1.5 rounded-2xl border border-ink-100 dark:border-gray-800 bg-white dark:bg-gray-800/80 px-2 py-3 text-center">
+            <span class="text-purple-600 dark:text-purple-400"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+            <span class="text-[11px] font-medium leading-tight text-ink-600 dark:text-gray-300">Secure order</span>
           </div>
         </div>
       </div>

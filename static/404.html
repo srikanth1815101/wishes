@@ -2,25 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Friendship Day Wishes</title>
+  <title>CSRGO Wishes</title>
   <script>
     (function() {
       const path = window.location.pathname;
       const parts = path.split('/').filter(Boolean);
-      if (parts.length >= 2 && parts[0] === 'friendship-day') {
-        fetch('/friendship-day/index.html')
-          .then(res => {
-            if (!res.ok) throw new Error();
-            return res.text();
-          })
-          .then(html => {
-            document.open();
-            document.write(html);
-            document.close();
-          })
-          .catch(() => {
-            window.location.replace('/friendship-day/');
-          });
+      if (parts.length >= 1 && (parts[0] === 'friendship-day' || (parts.length >= 2 && parts[1] === 'friendship-day'))) {
+        fetch('/templates/friendship-day/index.html')
+          .then(res => res.text())
+          .then(html => { document.open(); document.write(html); document.close(); })
+          .catch(() => window.location.replace('/templates/?order=friendship-day-magic'));
+      } else if (parts.length >= 1 && (parts[0] === 'birthday-star' || (parts.length >= 2 && parts[1] === 'birthday-star'))) {
+        fetch('/templates/birthday-star/index.html')
+          .then(res => res.text())
+          .then(html => { document.open(); document.write(html); document.close(); })
+          .catch(() => window.location.replace('/templates/?order=birthday-star-celebration'));
       } else {
         window.location.replace('/');
       }
@@ -28,6 +24,6 @@
   </script>
 </head>
 <body style="font-family: system-ui, sans-serif; text-align: center; padding: 60px; color: #888;">
-  <p>Loading your wish surprise...</p>
+  <p>Redirecting to wish...</p>
 </body>
 </html>

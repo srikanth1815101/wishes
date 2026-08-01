@@ -1,2 +1,4 @@
 /friendship-day/*           /friendship-day/index.html            200
 /templates/friendship-day/* /templates/friendship-day/index.html  200
+/birthday-star/*           /templates/birthday-star/index.html    200
+/templates/birthday-star/* /templates/birthday-star/index.html  200
