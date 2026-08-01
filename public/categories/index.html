@@ -19,16 +19,41 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
 
     
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    
+    <script>
+      (function () {
+        const theme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
+
+    
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
       tailwind.config = {
+        darkMode: 'class',
         theme: {
           extend: {
+            colors: {
+              primary: '#4A90E2',
+              secondary: '#9B59B6',
+              accent: '#FF6B35',
+            },
             fontFamily: {
-              sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+              sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
               display: ['Fraunces', 'Georgia', 'serif'],
             },
             colors: {
@@ -105,7 +130,7 @@
 
     
     
-    <link rel="stylesheet" href="/css/main.min.f6f7cfd3da8fd1e92904102a2f8b04f8478800c01a1687cdb57c44ca3ee24430.css" integrity="sha256-9vfP09qP0ekpBBAqL4sE&#43;EeIAMAaFofNtXxEyj7iRDA=" />
+    <link rel="stylesheet" href="/css/main.min.375cd1d3d17aa03ac9d0dd26a406223fa7493d647d3e2589b7a88721b433156b.css" integrity="sha256-N1zR09F6oDrJ0N0mpAYiP6dJPWR9PiWJt6iHIbQzFWs=" />
 
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -117,51 +142,163 @@
         brandDomain: "wishes.csrgo.com",
         whatsappNumber: "919666839729",
         currency: "₹",
-        supabaseUrl: "https:\/\/hsddwonqxljdwsoqgcaj.supabase.co",
-        supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzZGR3b25xeGxqZHdzb3FnY2FqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU0MjQ0MjgsImV4cCI6MjEwMTAwMDQyOH0.BE3ohaqG_bsiK8KpB5dxVnIdo3ImW5VPsFZikvef--8"
+        supabaseUrl: "",
+        supabaseAnonKey: ""
       };
 
       
-      window.FALLBACK_TEMPLATES = [{"category":"Birthday","created_at":"2026-07-30T00:00:00Z","description":"Celebrate milestones with a regal gold and black template featuring custom photo galleries, countdown timer, ambient background music, and a digital guestbook for friends to leave heartfelt messages.","features":["Custom countdown timer","Interactive photo memory grid","Background music player","WhatsApp \u0026 social sharing buttons","Digital guestbook form"],"gallery":["https://images.pexels.com/photos/23384637/pexels-photo-23384637.jpeg?auto=compress\u0026cs=tinysrgb\u0026h=650\u0026w=940","https://images.pexels.com/photos/1729808/pexels-photo-1729808.jpeg?auto=compress\u0026cs=tinysrgb\u0026h=650\u0026w=940"],"id":"1","image_url":"https://images.pexels.com/photos/23384637/pexels-photo-23384637.jpeg?auto=compress\u0026cs=tinysrgb\u0026h=650\u0026w=940","is_active":true,"is_featured":true,"name":"Golden Radiance Birthday","price":1499,"slug":"golden-radiance-birthday","sort_order":1,"tagline":"Elegant gold-accented birthday wish portal with interactive memory gallery.","tags":["Gold","Elegant","Adult Birthday","Premium"]},{"category":"Wedding","created_at":"2026-07-30T00:00:00Z","description":"A fairytale floral design crafted for weddings and receptions. Includes venue location map, RSVP collector, couple story timeline, and photo highlights.","features":["Interactive couple story timeline","Venue map \u0026 directions","RSVP submission","High-resolution photo gallery"],"gallery":["https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress\u0026cs=tinysrgb\u0026h=650\u0026w=940","https://images.pexels.com/photos/2253870/pexels-photo-2253870.jpeg?auto=compress\u0026cs=tinysrgb\u0026h=650\u0026w=940"],"id":"2","image_url":"https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress\u0026cs=tinysrgb\u0026h=650\u0026w=940","is_active":true,"is_featured":true,"name":"Eternal Bliss Wedding","price":2499,"slug":"eternal-bliss-wedding","sort_order":2,"tagline":"Timeless floral wedding invitation and wish hub for couples.","tags":["Floral","Romantic","Wedding","Invitation"]},{"category":"Anniversary","created_at":"2026-07-30T00:00:00Z","description":"Perfect for milestone anniversaries. Features memory slideshows, audio message playback, and customizable romantic quotes.","features":["Audio message player","Milestone gallery slider","Personalized message section"],"gallery":["https://images.pexels.com/photos/265722/pexels-photo-265722.jpeg?auto=compress\u0026cs=tinysrgb\u0026h=650\u0026w=940"],"id":"3","image_url":"https://images.pexels.com/photos/265722/pexels-photo-265722.jpeg?auto=compress\u0026cs=tinysrgb\u0026h=650\u0026w=940","is_active":true,"is_featured":false,"name":"Silver Jubilee Anniversary","price":1999,"slug":"silver-jubilee-anniversary","sort_order":3,"tagline":"Commemorate love and togetherness with sleek silver typography.","tags":["Anniversary","Silver","Milestone","Romantic"]},{"category":"New Year","created_at":"2026-07-30T00:00:00Z","description":"Dynamic fireworks animation background, customizable greeting cards, and instant social share links.","features":["Live fireworks canvas effect","Custom resolution generator","One-click WhatsApp sharing"],"gallery":["https://images.pexels.com/photos/1387577/pexels-photo-1387577.jpeg?auto=compress\u0026cs=tinysrgb\u0026h=650\u0026w=940"],"id":"4","image_url":"https://images.pexels.com/photos/1387577/pexels-photo-1387577.jpeg?auto=compress\u0026cs=tinysrgb\u0026h=650\u0026w=940","is_active":true,"is_featured":true,"name":"Sparkle \u0026 Cheer New Year","price":999,"slug":"sparkle-cheer-new-year","sort_order":4,"tagline":"Vibrant festive site to send New Year greetings to family \u0026 clients.","tags":["Festive","New Year","Celebration","Animated"]},{"category":"Baby Shower","created_at":"2026-07-30T00:00:00Z","description":"Soft pastel color themes, gender reveal card reveal, registry link section, and parental message board.","features":["Soft pastel color scheme","Gift registry integration","Interactive baby prediction game"],"gallery":["https://images.pexels.com/photos/3845492/pexels-photo-3845492.jpeg?auto=compress\u0026cs=tinysrgb\u0026h=650\u0026w=940"],"id":"5","image_url":"https://images.pexels.com/photos/3845492/pexels-photo-3845492.jpeg?auto=compress\u0026cs=tinysrgb\u0026h=650\u0026w=940","is_active":true,"is_featured":false,"name":"Little Prince Baby Shower","price":1299,"slug":"little-prince-baby-shower","sort_order":5,"tagline":"Charming pastel theme welcoming the newborn prince or princess.","tags":["Cute","Baby","Pastel","Celebration"]},{"category":"Festival","created_at":"2026-07-30T00:00:00Z","description":"Traditional diya glow animation, personalized family greeting signatures, and background festive tunes.","features":["Glowing diya animation","Audio greeting player","Personalized photo frame"],"gallery":["https://images.pexels.com/photos/1589255/pexels-photo-1589255.jpeg?auto=compress\u0026cs=tinysrgb\u0026h=650\u0026w=940"],"id":"6","image_url":"https://images.pexels.com/photos/1589255/pexels-photo-1589255.jpeg?auto=compress\u0026cs=tinysrgb\u0026h=650\u0026w=940","is_active":true,"is_featured":false,"name":"Diwali Festival Grandeur","price":1199,"slug":"diwali-festival-grandeur","sort_order":6,"tagline":"Radiant festive greetings with glowing lamps and sparkling effects.","tags":["Festival","Diwali","Traditional","Lights"]}];
+      window.FALLBACK_TEMPLATES = [{"category":"Friendship","created_at":"2026-08-01T00:00:00Z","description":"Send a magical Friendship Day surprise! Features interactive heart collector game, scratch card reveal, friendship meter, celebratory confetti, custom message library, and instant WhatsApp link sharing.","features":["3 Interactive Mini-Games (Hearts, Scratch Card, Meter)","Curated message library (Gratitude, Funny, Heartfelt, etc.)","Confetti \u0026 floating heart celebration effects","Encrypted shareable link \u0026 instant WhatsApp sharing","Customizable sender \u0026 recipient names"],"gallery":["/friendship-day/images/friendship_band_hands.png","/friendship-day/images/friends_mf.png","/friendship-day/images/friends_mm.png","/friendship-day/images/friends_ff.png"],"id":"friendship-day-magic","image_url":"/friendship-day/images/friendship_band_hands.png","is_active":true,"is_featured":true,"name":"Friendship Day Magic \u0026 Surprise","original_price":99,"price":0,"slug":"friendship-day","sort_order":1,"tagline":"Interactive mini-games and secret custom wish reveal for your bestie.","tags":["Friendship","Interactive","Mini Games","Scratch Card","Featured"]}];
     </script>
   </head>
   <body class="min-h-screen bg-ink-50 font-sans antialiased text-ink-900">
-    <header class="sticky top-0 z-40 border-b border-ink-100 bg-ink-50/80 backdrop-blur-lg">
-  <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-    <a href="/" class="flex items-center gap-2.5">
-      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-ink-900 shadow-card">
-        <svg class="h-5 w-5 text-gold-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg>
-      </span>
-      <div class="leading-none">
-        <p class="font-display text-base font-semibold text-ink-900">
-          CSRGO Wishes
-        </p>
-        <p class="text-[11px] text-ink-500">wishes.csrgo.com</p>
-      </div>
-    </a>
-    <div class="hidden items-center gap-6 sm:flex">
-      <a href="#templates" class="text-sm font-medium text-ink-600 transition hover:text-ink-900">
-        Templates
-      </a>
-      <a href="#how" class="text-sm font-medium text-ink-600 transition hover:text-ink-900">
-        How it works
-      </a>
-      <a
-        href="#templates"
-        class="rounded-xl bg-ink-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink-800"
-      >
-        Browse Designs
-      </a>
+    <header class="fixed top-2 sm:top-4 left-2 sm:left-4 right-2 sm:right-4 z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto">
+        <div
+            class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border border-gray-200/50 dark:border-gray-600/50 rounded-xl sm:rounded-2xl px-4 sm:px-6 py-3 sm:py-4 shadow-lg shadow-purple-500/10 dark:shadow-purple-400/10 relative">
+            <div class="flex justify-between items-center">
+                
+                
+                
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <a href="/" class="flex items-center">
+                        <div class="relative flex items-center justify-center p-1">
+                            <img src="/logo.png" alt="CSRGO" class="w-6 h-6 sm:w-8 sm:h-8 relative z-10" />
+                        </div>
+
+                        
+                        <div class="h-4 sm:h-6 w-px bg-gray-200 dark:bg-gray-700 mx-1.5 sm:mx-2 self-center"></div>
+
+                        
+                        <div class="h-6 sm:h-8 flex items-center">
+                            <span
+                                class="text-xl sm:text-3xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600 leading-none pt-0.5">
+                                CSRGO Wishes
+                            </span>
+                        </div>
+                    </a>
+                </div>
+
+                
+                <div class="flex items-center space-x-4 sm:space-x-6">
+                    
+                    <div class="hidden md:flex gap-8 text-base font-medium">
+                        
+                        <a href="/"
+                            class="relative py-2 px-2 transition text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-fuchsia-400 ">
+                            Home
+                            <span
+                                class="absolute left-0 -bottom-1 w-full h-0.5 rounded bg-gradient-to-r from-blue-600 via-fuchsia-500 to-pink-500 transition-all duration-300 scale-x-0 origin-left "></span>
+                        </a>
+                        
+                        <a href="/#templates"
+                            class="relative py-2 px-2 transition text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-fuchsia-400 ">
+                            Templates
+                            <span
+                                class="absolute left-0 -bottom-1 w-full h-0.5 rounded bg-gradient-to-r from-blue-600 via-fuchsia-500 to-pink-500 transition-all duration-300 scale-x-0 origin-left "></span>
+                        </a>
+                        
+                        <a href="/#how"
+                            class="relative py-2 px-2 transition text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-fuchsia-400 ">
+                            How It Works
+                            <span
+                                class="absolute left-0 -bottom-1 w-full h-0.5 rounded bg-gradient-to-r from-blue-600 via-fuchsia-500 to-pink-500 transition-all duration-300 scale-x-0 origin-left "></span>
+                        </a>
+                        
+                    </div>
+
+                    
+                    <div class="flex items-center space-x-1 sm:space-x-2">
+                        
+                        <button onclick="toggleTheme()"
+                            class="p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-fuchsia-400 transition-colors duration-200"
+                            aria-label="Toggle theme">
+                            <i id="theme-icon" data-lucide="sun" stroke-width="2" class="w-6 h-6"></i>
+                        </button>
+
+                        
+                        <a href="/profile/"
+                            class="p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-fuchsia-400 transition-colors duration-200"
+                            aria-label="User Profile">
+                            <i data-lucide="user" stroke-width="2" class="w-6 h-6"></i>
+                        </a>
+
+                        
+                        <button onclick="toggleMobileMenu()"
+                            class="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-fuchsia-400 transition-colors duration-200"
+                            aria-label="Toggle menu">
+                            <i data-lucide="menu" stroke-width="2" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div id="mobile-menu"
+                class="hidden md:hidden pt-4 mt-2 border-t border-gray-200/50 dark:border-gray-700/50 space-y-2">
+                
+                <a href="/"
+                    class="block px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                    <span>Home</span>
+                </a>
+                
+                <a href="/#templates"
+                    class="block px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                    <span>Templates</span>
+                </a>
+                
+                <a href="/#how"
+                    class="block px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                    <span>How It Works</span>
+                </a>
+                
+
+            </div>
+        </div>
     </div>
-    <button
-      type="button"
-      class="open-filter-btn rounded-xl border border-ink-200 bg-white p-2 text-ink-600 shadow-sm transition hover:border-gold-300 sm:hidden"
-      aria-label="Search"
-    >
-      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-    </button>
-  </div>
 </header>
+
+<script>
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+
+        if (newTheme === 'dark') {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+
+        
+        const themeIcon = document.getElementById('theme-icon');
+        if (themeIcon) {
+            themeIcon.setAttribute('data-lucide', newTheme === 'dark' ? 'sun' : 'moon');
+            if (window.lucide) lucide.createIcons();
+        }
+    }
+
+    function toggleMobileMenu() {
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenu) {
+            mobileMenu.classList.toggle('hidden');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        const themeIcon = document.getElementById('theme-icon');
+        if (themeIcon) {
+            themeIcon.setAttribute('data-lucide', currentTheme === 'dark' ? 'sun' : 'moon');
+        }
+
+        if (window.lucide) window.lucide.createIcons();
+    });
+</script>
+
+
 
 
     
@@ -231,26 +368,60 @@
   </div>
 </section>
 
-<footer class="border-t border-ink-100 bg-white">
-  <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-    <div class="flex flex-col items-center justify-between gap-6 sm:flex-row">
-      <div class="flex items-center gap-2.5">
-        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-ink-900">
-          <svg class="h-4 w-4 text-gold-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg>
-        </span>
-        <div class="leading-none">
-          <p class="font-display text-sm font-semibold text-ink-900">
-            CSRGO Wishes
-          </p>
-          <p class="text-[11px] text-ink-500">wishes.csrgo.com</p>
+<footer class="bg-gradient-to-t from-gray-900 via-gray-950 to-blue-950 text-white pt-16 pb-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-5 gap-12 text-center md:text-left">
+        
+        <div class="md:col-span-2 flex flex-col gap-4">
+            <a href="/" class="flex items-center justify-center md:justify-start gap-1 group">
+                <img src="/logo.png" alt="CSRGO Wishes"
+                    class="h-10 w-10 object-contain transition-transform duration-200 group-hover:scale-105 leading-none pb-1 filter brightness-0 invert"
+                    style="max-width: 44px; min-width: 36px;" />
+                <span class="mx-1 h-7 border-l border-gray-400 dark:border-gray-300 inline-block relative -mt-1"></span>
+                <span class="text-4xl font-extrabold text-white select-none leading-none pb-1">CSRGO Wishes</span>
+            </a>
+            <p class="text-gray-300 text-sm max-w-md mx-auto md:mx-0">Browse premium wishes website templates for birthdays, weddings, anniversaries and more. Pick a design, share your details, and we craft a permanent custom wish site just for you.</p>
         </div>
-      </div>
-      <p class="text-xs text-ink-500">
-        © 2026 CSRGO Wishes. Crafted with care.
-      </p>
+        
+        <div>
+            <h4 class="font-bold mb-3">Quick Links</h4>
+            <ul class="space-y-2 text-gray-300 text-sm">
+                
+                <li><a href="/" class="hover:text-blue-400">Home</a></li>
+                
+                <li><a href="/#templates" class="hover:text-blue-400">Templates</a></li>
+                
+                <li><a href="/#how" class="hover:text-blue-400">How It Works</a></li>
+                
+                
+            </ul>
+        </div>
+        
+        <div>
+            <h4 class="font-bold mb-3">Legal</h4>
+            <ul class="space-y-2 text-gray-300 text-sm">
+                <li><a href="/privacy-policy/" class="hover:text-blue-400">Privacy Policy</a></li>
+                <li><a href="/terms/" class="hover:text-blue-400">Terms & Conditions</a></li>
+                <li><a href="/cookie-policy/" class="hover:text-blue-400">Cookie Policy</a></li>
+                <li><a href="/disclaimer/" class="hover:text-blue-400">Disclaimer</a></li>
+            </ul>
+        </div>
+        
+        <div>
+            <h4 class="font-bold mb-3">CSRGO Platforms</h4>
+            <ul class="space-y-2 text-gray-300 text-sm">
+                <li><a href="https://csrgo.com" class="hover:text-blue-400" target="_blank" rel="noopener">CSRGO.com</a>
+                </li>
+                <li><a href="https://csrgo.com/tools/" class="hover:text-blue-400">Tools</a></li>
+                <li><a href="https://csrgo.com/blog/" class="hover:text-blue-400">Blog</a></li>
+                <li><a href="https://csrgo.com/services/" class="hover:text-blue-400">Services</a></li>
+            </ul>
+        </div>
     </div>
-  </div>
+    <div class="border-t border-gray-800 mt-12 pt-6 text-center text-gray-400 text-sm">
+        © 2026 CSRGO Wishes. All rights reserved.<br>
+    </div>
 </footer>
+
 
     <div id="template-modal" class="fixed inset-0 z-50 flex items-end justify-center sm:items-center" style="display: none;">
   <div class="absolute inset-0 bg-ink-950/60 backdrop-blur-sm animate-fade-up" style="background-color: rgba(8,11,20,0.6); backdrop-filter: blur(4px);"></div>
@@ -306,6 +477,6 @@
 
     
     
-    <script src="/js/main.min.2a3745b73f87c6cac26fc2cbf811cd3fe3f0412fefb4428f030657b7a303c53a.js" integrity="sha256-KjdFtz&#43;HxsrCb8LL&#43;BHNP&#43;PwQS/vtEKPAwZXt6MDxTo="></script>
+    <script src="/js/main.min.15dfa5609b9e00a4f3eff226b66ff22d07246197f72d6674abf8d62c4ea9bb66.js" integrity="sha256-Fd&#43;lYJueAKTz7/Imtm/yLQckYZf3LWZ0q/jWLE6pu2Y="></script>
   </body>
 </html>

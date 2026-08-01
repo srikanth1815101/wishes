@@ -3,12 +3,28 @@ locale = 'en-us'
 title = 'CSRGO Wishes — Premium Wishes Website Templates'
 theme = 'csrgo-wishes'
 
+[[menu.main]]
+  name = "Home"
+  url = "/"
+  weight = 1
+
+[[menu.main]]
+  name = "Templates"
+  url = "/#templates"
+  weight = 2
+
+[[menu.main]]
+  name = "How It Works"
+  url = "/#how"
+  weight = 3
+
 [params]
   brandName = 'CSRGO Wishes'
   brandDomain = 'wishes.csrgo.com'
   whatsappNumber = '919666839729'
   currency = '₹'
-  supabaseUrl = 'https://hsddwonqxljdwsoqgcaj.supabase.co'
-  supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzZGR3b25xeGxqZHdzb3FnY2FqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU0MjQ0MjgsImV4cCI6MjEwMTAwMDQyOH0.BE3ohaqG_bsiK8KpB5dxVnIdo3ImW5VPsFZikvef--8'
+  supabaseUrl = ''
+  supabaseAnonKey = ''
   description = 'Browse premium wishes website templates for birthdays, weddings, anniversaries and more. Pick a design, share your details, and we craft a permanent custom wish site just for you.'
   ogImage = 'https://images.pexels.com/photos/23384637/pexels-photo-23384637.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'
+

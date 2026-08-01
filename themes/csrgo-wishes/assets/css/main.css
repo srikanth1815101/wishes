@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap');
 
 :root {
-  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-display: 'Fraunces', Georgia, serif;
 
   --color-ink-50: #f6f7f9;
@@ -117,3 +117,62 @@ body {
 .animate-fade-up { animation: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .animate-scale-in { animation: scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .animate-slide-up { animation: slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* Styles copied from DSA Project for exact theme matching */
+html[data-theme="dark"] body {
+    background-color: #0A0E27;
+    color: #E5E7EB;
+}
+
+html[data-theme="light"] body {
+    background-color: #F8F9FA;
+    color: #1F2937;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #FF6B35 0%, #4A90E2 50%, #9B59B6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.glass-effect {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* Global Scrollbar Styling */
+::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #F8F9FA;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #D1D5DB;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #9CA3AF;
+}
+
+html.dark::-webkit-scrollbar-track,
+html.dark ::-webkit-scrollbar-track {
+    background: #0A0E27;
+}
+
+html.dark::-webkit-scrollbar-thumb,
+html.dark ::-webkit-scrollbar-thumb {
+    background: #414652;
+}
+
+html.dark::-webkit-scrollbar-thumb:hover,
+html.dark ::-webkit-scrollbar-thumb:hover {
+    background: #595E69;
+}
+

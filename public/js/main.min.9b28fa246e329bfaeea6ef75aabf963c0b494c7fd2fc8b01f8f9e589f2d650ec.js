@@ -1,225 +1,79 @@
-// CSRGO Wishes Client Interactivity Engine
-(function () {
-  'use strict';
-
-  // Config variables (injected via window.SITE_CONFIG or defaults)
-  const config = window.SITE_CONFIG || {
-    brandName: 'CSRGO Wishes',
-    brandDomain: 'wishes.csrgo.com',
-    whatsappNumber: '919999999999',
-    currency: '₹',
-    supabaseUrl: '',
-    supabaseAnonKey: ''
-  };
-
-  let allTemplates = [];
-  let activeCategory = 'All';
-  let searchQuery = '';
-  let selectedTemplate = null;
-  let currentStep = 'details';
-  let galleryIndex = 0;
-  let debounceTimer = null;
-
-  // DOM Elements
-  const templatesGrid = document.getElementById('templates-grid');
-  const featuredRow = document.getElementById('featured-row');
-  const featuredSection = document.getElementById('featured-section');
-  const countIndicator = document.getElementById('template-count');
-  const activeCategoryTitle = document.getElementById('active-category-title');
-  const searchInput = document.getElementById('search-input');
-  const searchClearBtn = document.getElementById('search-clear-btn');
-  const modalOverlay = document.getElementById('template-modal');
-  const modalContent = document.getElementById('modal-content-container');
-  const filterSheetOverlay = document.getElementById('filter-sheet');
-
-  // Initialize
-  document.addEventListener('DOMContentLoaded', () => {
-    initSearch();
-    initCategoryButtons();
-    initMobileFilters();
-    loadTemplates();
-  });
-
-  // Fetch templates from Supabase or Fallback static dataset
-  async function loadTemplates() {
-    renderSkeleton();
-
-    let fetched = null;
-    let fallbackData = window.FALLBACK_TEMPLATES;
-    if (typeof fallbackData === 'string') {
-      try {
-        fallbackData = JSON.parse(fallbackData);
-      } catch (e) {
-        fallbackData = null;
-      }
-    }
-
-    if (Array.isArray(fallbackData) && fallbackData.length > 0) {
-      fetched = fallbackData;
-    } else {
-      try {
-        const res = await fetch('/data/templates.json');
-        if (res.ok) {
-          fetched = await res.json();
-        }
-      } catch (e) {
-        console.error('Error loading templates JSON:', e);
-      }
-    }
-
-    if (fetched && Array.isArray(fetched)) {
-      allTemplates = fetched;
-      renderAll();
-    } else {
-      renderError('Failed to load templates.');
-    }
-  }
-
-  // Filter & Search logic
-  function getFilteredTemplates() {
-    const q = searchQuery.trim().toLowerCase();
-    return allTemplates.filter((t) => {
-      const matchCategory = activeCategory === 'All' || t.category === activeCategory;
-      if (!matchCategory) return false;
-      if (!q) return true;
-
-      const haystack = [
-        t.name,
-        t.category,
-        t.tagline || '',
-        t.description || '',
-        ...(t.tags || [])
-      ].join(' ').toLowerCase();
-
-      return haystack.includes(q);
-    });
-  }
-
-  function getFeaturedTemplates() {
-    return allTemplates.filter((t) => t.is_featured);
-  }
-
-  // UI Rendering
-  function renderAll() {
-    const featured = getFeaturedTemplates();
-    const filtered = getFilteredTemplates();
-
-    // Featured section visibility
-    if (featuredSection && featuredRow) {
-      if (featured.length > 0 && !searchQuery.trim() && activeCategory === 'All') {
-        featuredSection.style.display = 'block';
-        renderFeaturedRow(featured);
-      } else {
-        featuredSection.style.display = 'none';
-      }
-    }
-
-    // Category title & count
-    if (activeCategoryTitle) {
-      activeCategoryTitle.textContent = activeCategory === 'All' ? 'All Templates' : activeCategory;
-    }
-    if (countIndicator) {
-      countIndicator.textContent = `${filtered.length} design${filtered.length === 1 ? '' : 's'}`;
-    }
-
-    // Grid rendering
-    if (filtered.length === 0) {
-      renderEmptyState();
-    } else {
-      renderGrid(filtered);
-    }
-  }
-
-  function renderFeaturedRow(items) {
-    featuredRow.innerHTML = items.map((t) => `
+(function(){"use strict";const o=window.SITE_CONFIG||{brandName:"CSRGO Wishes",brandDomain:"wishes.csrgo.com",whatsappNumber:"919999999999",currency:"₹",supabaseUrl:"",supabaseAnonKey:""};let h=[],n="All",r="",a=null,i="details",s=0,j=null;const t=document.getElementById("templates-grid"),p=document.getElementById("featured-row"),g=document.getElementById("featured-section"),y=document.getElementById("template-count"),O=document.getElementById("active-category-title"),l=document.getElementById("search-input"),d=document.getElementById("search-clear-btn"),f=document.getElementById("template-modal"),_=document.getElementById("modal-content-container"),m=document.getElementById("filter-sheet");document.addEventListener("DOMContentLoaded",()=>{A(),S(),C(),M()});async function M(){k();let t=null,e=window.FALLBACK_TEMPLATES;if(typeof e=="string")try{e=JSON.parse(e)}catch{e=null}if(Array.isArray(e)&&e.length>0)t=e;else try{const e=await fetch("/data/templates.json");e.ok&&(t=await e.json())}catch(e){console.error("Error loading templates JSON:",e)}t&&Array.isArray(t)?(h=t,u()):E("Failed to load templates.")}function H(){const e=r.trim().toLowerCase();return h.filter(t=>{const s=n==="All"||t.category===n;if(!s)return!1;if(!e)return!0;const o=[t.name,t.category,t.tagline||"",t.description||"",...t.tags||[]].join(" ").toLowerCase();return o.includes(e)})}function D(){return h.filter(e=>e.is_featured)}function u(){const t=D(),e=H();g&&p&&(t.length>0&&!r.trim()&&n==="All"?(g.style.display="block",z(t)):g.style.display="none"),O&&(O.textContent=n==="All"?"All Templates":n),y&&(y.textContent=`${e.length} design${e.length===1?"":"s"}`),e.length===0?F():x(e)}function z(t){p.innerHTML=t.map(t=>`
       <button
         type="button"
         data-id="${t.id}"
         class="template-select-btn group relative w-64 shrink-0 overflow-hidden rounded-3xl border border-ink-200 bg-white text-left shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-cardHover sm:w-72"
       >
         <div class="relative aspect-[4/3] overflow-hidden bg-ink-100">
-          ${t.image_url ? `
+          ${t.image_url?`
             <img
-              src="${escapeHtml(t.image_url)}"
-              alt="${escapeHtml(t.name)}"
+              src="${e(t.image_url)}"
+              alt="${e(t.name)}"
               loading="lazy"
               class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
-          ` : ''}
+          `:""}
           <div class="absolute inset-0 bg-gradient-to-t from-ink-950/60 to-transparent"></div>
           <span class="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-gold-500 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white">
             <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg> Featured
           </span>
           <div class="absolute bottom-3 left-3 right-3">
-            <p class="text-[11px] font-medium text-white/80">${escapeHtml(t.category)}</p>
+            <p class="text-[11px] font-medium text-white/80">${e(t.category)}</p>
             <h3 class="font-display text-lg font-semibold text-white">
-              ${escapeHtml(t.name)}
+              ${e(t.name)}
             </h3>
           </div>
         </div>
       </button>
-    `).join('');
-
-    bindTemplateSelectBtns(featuredRow);
-  }
-
-  function renderGrid(items) {
-    if (!templatesGrid) return;
-    templatesGrid.className = 'mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
-    templatesGrid.innerHTML = items.map((t, index) => {
-      const delay = Math.min(index * 60, 400);
-      const tags = (t.tags || []).slice(0, 3);
-      const priceFormatted = Number(t.price).toLocaleString('en-IN');
-
-      return `
+    `).join(""),b(p)}function x(n){if(!t)return;t.className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",t.innerHTML=n.map((t,n)=>{const s=Math.min(n*60,400),i=(t.tags||[]).slice(0,3),a=Number(t.price).toLocaleString("en-IN");return`
         <button
           type="button"
           data-id="${t.id}"
-          style="animation-delay: ${delay}ms;"
+          style="animation-delay: ${s}ms;"
           class="template-select-btn group animate-fade-up flex flex-col overflow-hidden rounded-3xl border border-ink-200 bg-white text-left shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-gold-300 hover:shadow-cardHover"
         >
           <div class="relative aspect-[4/3] overflow-hidden bg-ink-100">
-            ${t.image_url ? `
+            ${t.image_url?`
               <img
-                src="${escapeHtml(t.image_url)}"
-                alt="${escapeHtml(t.name)}"
+                src="${e(t.image_url)}"
+                alt="${e(t.name)}"
                 loading="lazy"
                 class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-            ` : `<div class="h-full w-full skeleton-shimmer"></div>`}
+            `:`<div class="h-full w-full skeleton-shimmer"></div>`}
             <div class="absolute inset-0 bg-gradient-to-t from-ink-950/55 via-transparent to-transparent"></div>
-            ${t.is_featured ? `
+            ${t.is_featured?`
               <span class="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-gold-500/95 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm backdrop-blur">
                 <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg>
                 Featured
               </span>
-            ` : ''}
+            `:""}
             <span class="absolute right-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-ink-700 shadow-sm backdrop-blur">
-              ${escapeHtml(t.category)}
+              ${e(t.category)}
             </span>
             <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-2">
               <h3 class="font-display text-lg font-semibold leading-tight text-white drop-shadow">
-                ${escapeHtml(t.name)}
+                ${e(t.name)}
               </h3>
               <span class="shrink-0 rounded-full bg-emerald-500/95 px-2.5 py-1 text-xs font-bold text-white shadow-sm backdrop-blur">
-                ${(t.price === 0 || t.slug === 'friendship-day') ? `<span class="line-through text-emerald-200 opacity-80 mr-1">₹${t.original_price || 99}</span> ₹0` : `${config.currency}${priceFormatted}`}
+                ${t.price===0||t.slug==="friendship-day"?`<span class="line-through text-emerald-200 opacity-80 mr-1">₹${t.original_price||99}</span> ₹0`:`${o.currency}${a}`}
               </span>
             </div>
           </div>
 
           <div class="flex flex-1 flex-col gap-3 p-4">
-            ${t.tagline ? `
+            ${t.tagline?`
               <p class="text-sm leading-relaxed text-ink-600 line-clamp-2" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-                ${escapeHtml(t.tagline)}
+                ${e(t.tagline)}
               </p>
-            ` : ''}
+            `:""}
             <div class="mt-auto flex items-center justify-between">
               <div class="flex flex-wrap gap-1.5">
-                ${tags.map((tag) => `
+                ${i.map(t=>`
                   <span class="rounded-full bg-ink-100 px-2.5 py-1 text-[11px] font-medium text-ink-600">
-                    ${escapeHtml(tag)}
+                    ${e(t)}
                   </span>
-                `).join('')}
+                `).join("")}
               </div>
               <span class="inline-flex items-center gap-1 text-sm font-semibold text-gold-600 transition group-hover:gap-2">
                 View
@@ -228,16 +82,7 @@
             </div>
           </div>
         </button>
-      `;
-    }).join('');
-
-    bindTemplateSelectBtns(templatesGrid);
-  }
-
-  function renderSkeleton() {
-    if (!templatesGrid) return;
-    templatesGrid.className = 'mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
-    templatesGrid.innerHTML = Array.from({ length: 8 }).map(() => `
+      `}).join(""),b(t)}function k(){if(!t)return;t.className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",t.innerHTML=Array.from({length:8}).map(()=>`
       <div class="overflow-hidden rounded-3xl border border-ink-200 bg-white shadow-card">
         <div class="aspect-[4/3] skeleton-shimmer"></div>
         <div class="space-y-3 p-4">
@@ -246,14 +91,7 @@
           <div class="h-3 w-1/2 rounded skeleton-shimmer"></div>
         </div>
       </div>
-    `).join('');
-  }
-
-  function renderEmptyState() {
-    if (!templatesGrid) return;
-    const catName = activeCategory === 'All' ? '' : ` for ${activeCategory}`;
-    templatesGrid.className = '';
-    templatesGrid.innerHTML = `
+    `).join("")}function F(){if(!t)return;const o=n==="All"?"":` for ${n}`;t.className="",t.innerHTML=`
       <div class="mt-8 flex flex-col items-center justify-center rounded-3xl border border-purple-100 dark:border-gray-800 bg-gradient-to-br from-white via-purple-50/40 to-blue-50/30 dark:from-gray-800 dark:via-gray-800/80 dark:to-gray-900 py-16 px-6 text-center shadow-lg shadow-purple-500/5">
         <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-blue-600 text-white shadow-md shadow-purple-500/25 mb-4 animate-bounce-soft">
           <svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg>
@@ -262,7 +100,7 @@
           Coming Soon
         </span>
         <h3 class="font-display text-2xl font-bold text-gray-900 dark:text-white">
-          New Templates Coming Soon${escapeHtml(catName)}!
+          New Templates Coming Soon${e(o)}!
         </h3>
         <p class="mt-2 max-w-md text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
           We are handcrafting stunning new interactive templates for this category. Stay tuned or check out our featured Friendship Day template!
@@ -276,148 +114,20 @@
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
       </div>
-    `;
-
-    const resetBtn = document.getElementById('reset-filters-btn');
-    if (resetBtn) {
-      resetBtn.addEventListener('click', () => {
-        searchQuery = '';
-        activeCategory = 'All';
-        if (searchInput) searchInput.value = '';
-        updateCategoryButtonsUI();
-        renderAll();
-      });
-    }
-  }
-
-  function renderError(msg) {
-    if (!templatesGrid) return;
-    templatesGrid.className = '';
-    templatesGrid.innerHTML = `
+    `;const s=document.getElementById("reset-filters-btn");s&&s.addEventListener("click",()=>{r="",n="All",l&&(l.value=""),v(),u()})}function E(n){if(!t)return;t.className="",t.innerHTML=`
       <div class="mt-10 rounded-3xl border border-red-200 bg-red-50 px-6 py-10 text-center">
         <h3 class="font-display text-lg font-semibold text-red-700">
           Something went wrong
         </h3>
-        <p class="mt-1 text-sm text-red-600">${escapeHtml(msg)}</p>
+        <p class="mt-1 text-sm text-red-600">${e(n)}</p>
       </div>
-    `;
-  }
-
-  // Event Listener Bindings
-  function bindTemplateSelectBtns(container) {
-    const btns = container.querySelectorAll('.template-select-btn');
-    btns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
-        const tmpl = allTemplates.find((t) => t.id === id);
-        if (tmpl) openModal(tmpl);
-      });
-    });
-  }
-
-  function initSearch() {
-    if (!searchInput) return;
-    searchInput.addEventListener('input', (e) => {
-      const val = e.target.value;
-      if (searchClearBtn) searchClearBtn.style.display = val ? 'block' : 'none';
-
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        searchQuery = val;
-        renderAll();
-      }, 200);
-    });
-
-    if (searchClearBtn) {
-      searchClearBtn.addEventListener('click', () => {
-        searchInput.value = '';
-        searchQuery = '';
-        searchClearBtn.style.display = 'none';
-        renderAll();
-      });
-    }
-  }
-
-  function initCategoryButtons() {
-    const container = document.getElementById('category-bar');
-    if (!container) return;
-
-    container.addEventListener('click', (e) => {
-      const btn = e.target.closest('.cat-btn');
-      if (!btn) return;
-      activeCategory = btn.getAttribute('data-category');
-      updateCategoryButtonsUI();
-      renderAll();
-    });
-  }
-
-  function updateCategoryButtonsUI() {
-    const btns = document.querySelectorAll('.cat-btn');
-    btns.forEach((btn) => {
-      const cat = btn.getAttribute('data-category');
-      if (cat === activeCategory) {
-        btn.className = 'cat-btn shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all bg-ink-900 text-white shadow-card';
-      } else {
-        btn.className = 'cat-btn shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all border border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:text-ink-900';
-      }
-    });
-  }
-
-  function initMobileFilters() {
-    const openBtns = document.querySelectorAll('.open-filter-btn');
-    openBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        if (filterSheetOverlay) filterSheetOverlay.style.display = 'flex';
-      });
-    });
-
-    const closeBtns = document.querySelectorAll('.close-filter-btn');
-    closeBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        if (filterSheetOverlay) filterSheetOverlay.style.display = 'none';
-      });
-    });
-  }
-
-  // Modal Functionality
-  function openModal(template) {
-    selectedTemplate = template;
-    currentStep = 'details';
-    galleryIndex = 0;
-    document.body.style.overflow = 'hidden';
-
-    renderModalContent();
-    if (modalOverlay) modalOverlay.style.display = 'flex';
-  }
-
-  function closeModal() {
-    selectedTemplate = null;
-    document.body.style.overflow = '';
-    if (modalOverlay) modalOverlay.style.display = 'none';
-  }
-
-  // Keyboard navigation
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && selectedTemplate) {
-      closeModal();
-    }
-  });
-
-  function renderModalContent() {
-    if (!selectedTemplate || !modalContent) return;
-
-    const t = selectedTemplate;
-    const galleryRaw = (t.gallery && t.gallery.length > 0) ? t.gallery : [t.image_url];
-    const gallery = Array.from(new Set([t.image_url, ...galleryRaw])).filter(Boolean);
-    const priceFormatted = Number(t.price).toLocaleString('en-IN');
-
-    modalContent.innerHTML = `
+    `}function b(e){const t=e.querySelectorAll(".template-select-btn");t.forEach(e=>{e.addEventListener("click",()=>{const n=e.getAttribute("data-id"),t=h.find(e=>e.id===n);t&&T(t)})})}function A(){if(!l)return;l.addEventListener("input",e=>{const t=e.target.value;d&&(d.style.display=t?"block":"none"),clearTimeout(j),j=setTimeout(()=>{r=t,u()},200)}),d&&d.addEventListener("click",()=>{l.value="",r="",d.style.display="none",u()})}function S(){const e=document.getElementById("category-bar");if(!e)return;e.addEventListener("click",e=>{const t=e.target.closest(".cat-btn");if(!t)return;n=t.getAttribute("data-category"),v(),u()})}function v(){const e=document.querySelectorAll(".cat-btn");e.forEach(e=>{const t=e.getAttribute("data-category");t===n?e.className="cat-btn shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all bg-ink-900 text-white shadow-card":e.className="cat-btn shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all border border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:text-ink-900"})}function C(){const e=document.querySelectorAll(".open-filter-btn");e.forEach(e=>{e.addEventListener("click",()=>{m&&(m.style.display="flex")})});const t=document.querySelectorAll(".close-filter-btn");t.forEach(e=>{e.addEventListener("click",()=>{m&&(m.style.display="none")})})}function T(e){a=e,i="details",s=0,document.body.style.overflow="hidden",c(),f&&(f.style.display="flex")}function w(){a=null,document.body.style.overflow="",f&&(f.style.display="none")}window.addEventListener("keydown",e=>{e.key==="Escape"&&a&&w()});function c(){if(!a||!_)return;const t=a,n=[t.image_url,...t.gallery||[]].filter(Boolean),r=Number(t.price).toLocaleString("en-IN");_.innerHTML=`
       <div class="relative z-10 flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl animate-slide-up sm:rounded-3xl sm:animate-scale-in">
         <!-- Gallery Header -->
         <div class="relative aspect-[16/10] shrink-0 overflow-hidden bg-ink-100 sm:aspect-[16/8]">
-          ${gallery[galleryIndex] ? `
-            <img id="modal-gallery-img" src="${escapeHtml(gallery[galleryIndex])}" alt="${escapeHtml(t.name)}" class="h-full w-full object-cover transition-opacity duration-200" />
-          ` : ''}
+          ${n[s]?`
+            <img id="modal-gallery-img" src="${e(n[s])}" alt="${e(t.name)}" class="h-full w-full object-cover transition-opacity duration-200" />
+          `:""}
           <div class="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-ink-950/20"></div>
 
           <button
@@ -429,13 +139,13 @@
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </button>
 
-          ${t.is_featured ? `
+          ${t.is_featured?`
             <span class="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-gold-500 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm">
               <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg> Featured
             </span>
-          ` : ''}
+          `:""}
 
-          ${gallery.length > 1 ? `
+          ${n.length>1?`
             <button
               type="button"
               id="gallery-prev-btn"
@@ -451,42 +161,42 @@
               <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
             </button>
             <div class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
-              ${gallery.map((_, i) => `
-                <span class="gallery-dot h-1.5 rounded-full transition-all ${i === galleryIndex ? 'w-5 bg-white' : 'w-1.5 bg-white/50'}"></span>
-              `).join('')}
+              ${n.map((e,t)=>`
+                <span class="gallery-dot h-1.5 rounded-full transition-all ${t===s?"w-5 bg-white":"w-1.5 bg-white/50"}"></span>
+              `).join("")}
             </div>
-          ` : ''}
+          `:""}
 
           <div class="absolute bottom-3 left-4 right-4">
             <span class="rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-ink-700">
-              ${escapeHtml(t.category)}
+              ${e(t.category)}
             </span>
             <h2 class="mt-2 font-display text-2xl font-semibold text-white drop-shadow sm:text-3xl">
-              ${escapeHtml(t.name)}
+              ${e(t.name)}
             </h2>
           </div>
         </div>
 
         <!-- Scrollable Modal Body -->
         <div class="flex-1 overflow-y-auto px-5 py-5 sm:px-7">
-          ${currentStep === 'details' ? renderModalDetailsStep(t) : renderModalOrderStep(t)}
+          ${i==="details"?N(t):L(t)}
         </div>
 
         <!-- Sticky Footer CTA -->
         <div class="shrink-0 border-t border-ink-100 bg-white/95 px-5 py-4 backdrop-blur sm:px-7">
-          ${currentStep === 'details' ? `
+          ${i==="details"?`
             <div class="flex items-center justify-between gap-4">
               <div>
                 <p class="text-xs font-medium text-ink-500">Price</p>
-                ${(t.price === 0 || t.slug === 'friendship-day') ? `
+                ${t.price===0||t.slug==="friendship-day"?`
                   <div class="flex items-center gap-2">
-                    <span class="text-sm font-semibold text-ink-400 line-through">₹${t.original_price || 99}</span>
+                    <span class="text-sm font-semibold text-ink-400 line-through">₹${t.original_price||99}</span>
                     <span class="font-display text-2xl font-bold text-rose-600">₹0</span>
                     <span class="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-600">100% OFF</span>
                   </div>
-                ` : `
+                `:`
                   <p class="font-display text-2xl font-semibold text-ink-900">
-                    ${config.currency}${priceFormatted}
+                    ${o.currency}${r}
                   </p>
                 `}
               </div>
@@ -498,7 +208,7 @@
                 Order Now
               </button>
             </div>
-          ` : `
+          `:`
             <div class="flex flex-col gap-3">
               <div class="flex items-center justify-between gap-3">
                 <button
@@ -525,33 +235,26 @@
           `}
         </div>
       </div>
-    `;
-
-    bindModalEvents(t, gallery);
-  }
-
-  function renderModalDetailsStep(t) {
-    const features = t.features || [];
-    return `
+    `,R(t,n)}function N(t){const n=t.features||[];return`
       <div class="flex flex-col gap-6">
-        ${t.tagline ? `<p class="text-base font-medium leading-relaxed text-ink-700">${escapeHtml(t.tagline)}</p>` : ''}
-        ${t.description ? `<p class="text-[15px] leading-relaxed text-ink-600">${escapeHtml(t.description)}</p>` : ''}
+        ${t.tagline?`<p class="text-base font-medium leading-relaxed text-ink-700">${e(t.tagline)}</p>`:""}
+        ${t.description?`<p class="text-[15px] leading-relaxed text-ink-600">${e(t.description)}</p>`:""}
 
-        ${features.length > 0 ? `
+        ${n.length>0?`
           <div>
             <h4 class="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-500">
               What's included
             </h4>
             <ul class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-              ${features.map((f) => `
+              ${n.map(t=>`
                 <li class="flex items-start gap-2 rounded-xl bg-ink-50 px-3 py-2.5 text-sm text-ink-700">
                   <svg class="mt-0.5 h-4 w-4 shrink-0 text-gold-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
-                  ${escapeHtml(f)}
+                  ${e(t)}
                 </li>
-              `).join('')}
+              `).join("")}
             </ul>
           </div>
-        ` : ''}
+        `:""}
 
         <div class="grid grid-cols-3 gap-3">
           <div class="flex flex-col items-center gap-1.5 rounded-2xl border border-ink-100 bg-white px-2 py-3 text-center">
@@ -568,17 +271,12 @@
           </div>
         </div>
       </div>
-    `;
-  }
-
-  function renderModalOrderStep(t) {
-    const priceFormatted = Number(t.price).toLocaleString('en-IN');
-    return `
+    `}function L(t){const n=Number(t.price).toLocaleString("en-IN");return`
       <div class="flex flex-col gap-5">
         <div class="rounded-2xl bg-ink-50 px-4 py-3">
           <p class="text-xs text-ink-500">Ordering</p>
           <p class="font-semibold text-ink-900">
-            ${escapeHtml(t.name)} · ${config.currency}${priceFormatted}
+            ${e(t.name)} · ${o.currency}${n}
           </p>
         </div>
 
@@ -624,153 +322,5 @@
           </label>
         </form>
       </div>
-    `;
-  }
-
-  function updateGalleryUI(gallery) {
-    const imgEl = document.getElementById('modal-gallery-img');
-    if (imgEl && gallery[galleryIndex]) {
-      imgEl.src = gallery[galleryIndex];
-    }
-    const dots = document.querySelectorAll('.gallery-dot');
-    dots.forEach((dot, i) => {
-      if (i === galleryIndex) {
-        dot.className = 'gallery-dot h-1.5 rounded-full transition-all w-5 bg-white';
-      } else {
-        dot.className = 'gallery-dot h-1.5 rounded-full transition-all w-1.5 bg-white/50';
-      }
-    });
-  }
-
-  function bindModalEvents(t, gallery) {
-    const closeBtn = document.getElementById('modal-close-btn');
-    if (closeBtn) closeBtn.addEventListener('click', closeModal);
-
-    const prevBtn = document.getElementById('gallery-prev-btn');
-    if (prevBtn) {
-      prevBtn.addEventListener('click', () => {
-        galleryIndex = (galleryIndex - 1 + gallery.length) % gallery.length;
-        updateGalleryUI(gallery);
-      });
-    }
-
-    const nextBtn = document.getElementById('gallery-next-btn');
-    if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
-        galleryIndex = (galleryIndex + 1) % gallery.length;
-        updateGalleryUI(gallery);
-      });
-    }
-
-    const orderStepBtn = document.getElementById('modal-order-step-btn');
-    if (orderStepBtn) {
-      orderStepBtn.addEventListener('click', () => {
-        if (t.demo_url || t.slug === 'friendship-day') {
-          window.location.href = t.demo_url || '/friendship-day/';
-        } else {
-          currentStep = 'order';
-          renderModalContent();
-        }
-      });
-    }
-
-    const backStepBtn = document.getElementById('modal-back-step-btn');
-    if (backStepBtn) {
-      backStepBtn.addEventListener('click', () => {
-        currentStep = 'details';
-        renderModalContent();
-      });
-    }
-
-    const submitWhatsappBtn = document.getElementById('modal-submit-whatsapp-btn');
-    if (submitWhatsappBtn) {
-      submitWhatsappBtn.addEventListener('click', () => {
-        handleOrderSubmit(t);
-      });
-    }
-  }
-
-  function handleOrderSubmit(t) {
-    const recipientInput = document.getElementById('field-recipient');
-    const dateInput = document.getElementById('field-date');
-    const yourNameInput = document.getElementById('field-yourname');
-    const phoneInput = document.getElementById('field-phone');
-    const emailInput = document.getElementById('field-email');
-    const notesInput = document.getElementById('field-notes');
-
-    const errRecipient = document.getElementById('err-recipient');
-    const errYourName = document.getElementById('err-yourname');
-    const errPhone = document.getElementById('err-phone');
-    const errEmail = document.getElementById('err-email');
-
-    let valid = true;
-
-    // Reset errors
-    if (errRecipient) errRecipient.classList.add('hidden');
-    if (errYourName) errYourName.classList.add('hidden');
-    if (errPhone) errPhone.classList.add('hidden');
-    if (errEmail) errEmail.classList.add('hidden');
-
-    const recipientVal = recipientInput ? recipientInput.value.trim() : '';
-    const dateVal = dateInput ? dateInput.value : '';
-    const yourNameVal = yourNameInput ? yourNameInput.value.trim() : '';
-    const phoneVal = phoneInput ? phoneInput.value.trim() : '';
-    const emailVal = emailInput ? emailInput.value.trim() : '';
-    const notesVal = notesInput ? notesInput.value.trim() : '';
-
-    if (!recipientVal) {
-      if (errRecipient) { errRecipient.textContent = 'Please enter the recipient name'; errRecipient.classList.remove('hidden'); }
-      valid = false;
-    }
-
-    if (!yourNameVal) {
-      if (errYourName) { errYourName.textContent = 'Please enter your name'; errYourName.classList.remove('hidden'); }
-      valid = false;
-    }
-
-    if (!phoneVal || phoneVal.replace(/\D/g, '').length < 8) {
-      if (errPhone) { errPhone.textContent = 'Please enter a valid phone number'; errPhone.classList.remove('hidden'); }
-      valid = false;
-    }
-
-    if (emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
-      if (errEmail) { errEmail.textContent = 'Please enter a valid email'; errEmail.classList.remove('hidden'); }
-      valid = false;
-    }
-
-    if (!valid) return;
-
-    // Format WhatsApp message
-    const priceFormatted = Number(t.price).toLocaleString('en-IN');
-    const lines = [
-      `*New Order — ${config.brandDomain}*`,
-      ``,
-      `*Template:* ${t.name}`,
-      `*Category:* ${t.category}`,
-      `*Price:* ${config.currency}${priceFormatted}`,
-      ``,
-      `*Recipient / Occasion Name:* ${recipientVal}`,
-      `*Occasion Date:* ${dateVal || 'Not specified'}`,
-      `*Your Name:* ${yourNameVal}`,
-      `*Phone:* ${phoneVal}`,
-      `*Email:* ${emailVal || 'Not provided'}`,
-      ``,
-      `*Notes:*`,
-      notesVal || 'None'
-    ];
-
-    const message = encodeURIComponent(lines.join('\n'));
-    const url = `https://wa.me/${config.whatsappNumber}?text=${message}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
-  }
-
-  function escapeHtml(str) {
-    if (typeof str !== 'string') return '';
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
-})();
+    `}function R(e,t){const n=document.getElementById("modal-close-btn");n&&n.addEventListener("click",w);const o=document.getElementById("gallery-prev-btn");o&&o.addEventListener("click",()=>{s=(s-1+t.length)%t.length,c()});const a=document.getElementById("gallery-next-btn");a&&a.addEventListener("click",()=>{s=(s+1)%t.length,c()});const r=document.getElementById("modal-order-step-btn");r&&r.addEventListener("click",()=>{e.demo_url||e.slug==="friendship-day"?window.location.href=e.demo_url||"/friendship-day/":(i="order",c())});const l=document.getElementById("modal-back-step-btn");l&&l.addEventListener("click",()=>{i="details",c()});const d=document.getElementById("modal-submit-whatsapp-btn");d&&d.addEventListener("click",()=>{P(e)})}function P(e){const l=document.getElementById("field-recipient"),h=document.getElementById("field-date"),u=document.getElementById("field-yourname"),g=document.getElementById("field-phone"),d=document.getElementById("field-email"),f=document.getElementById("field-notes"),t=document.getElementById("err-recipient"),a=document.getElementById("err-yourname"),i=document.getElementById("err-phone"),s=document.getElementById("err-email");let n=!0;t&&t.classList.add("hidden"),a&&a.classList.add("hidden"),i&&i.classList.add("hidden"),s&&s.classList.add("hidden");const m=l?l.value.trim():"",v=h?h.value:"",p=u?u.value.trim():"",c=g?g.value.trim():"",r=d?d.value.trim():"",b=f?f.value.trim():"";if(m||(t&&(t.textContent="Please enter the recipient name",t.classList.remove("hidden")),n=!1),p||(a&&(a.textContent="Please enter your name",a.classList.remove("hidden")),n=!1),(!c||c.replace(/\D/g,"").length<8)&&(i&&(i.textContent="Please enter a valid phone number",i.classList.remove("hidden")),n=!1),r&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r)&&(s&&(s.textContent="Please enter a valid email",s.classList.remove("hidden")),n=!1),!n)return;const j=Number(e.price).toLocaleString("en-IN"),y=[`*New Order — ${o.brandDomain}*`,``,`*Template:* ${e.name}`,`*Category:* ${e.category}`,`*Price:* ${o.currency}${j}`,``,`*Recipient / Occasion Name:* ${m}`,`*Occasion Date:* ${v||"Not specified"}`,`*Your Name:* ${p}`,`*Phone:* ${c}`,`*Email:* ${r||"Not provided"}`,``,`*Notes:*`,b||"None"],_=encodeURIComponent(y.join(`
+`)),w=`https://wa.me/${o.whatsappNumber}?text=${_}`;window.open(w,"_blank","noopener,noreferrer")}function e(e){return typeof e!="string"?"":e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}})()

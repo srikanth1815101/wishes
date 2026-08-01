@@ -1,36 +1,124 @@
-<header class="sticky top-0 z-40 border-b border-ink-100 bg-ink-50/80 backdrop-blur-lg">
-  <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-    <a href="/" class="flex items-center gap-2.5">
-      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-ink-900 shadow-card">
-        <svg class="h-5 w-5 text-gold-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg>
-      </span>
-      <div class="leading-none">
-        <p class="font-display text-base font-semibold text-ink-900">
-          {{ .Site.Params.brandName }}
-        </p>
-        <p class="text-[11px] text-ink-500">{{ .Site.Params.brandDomain }}</p>
-      </div>
-    </a>
-    <div class="hidden items-center gap-6 sm:flex">
-      <a href="#templates" class="text-sm font-medium text-ink-600 transition hover:text-ink-900">
-        Templates
-      </a>
-      <a href="#how" class="text-sm font-medium text-ink-600 transition hover:text-ink-900">
-        How it works
-      </a>
-      <a
-        href="#templates"
-        class="rounded-xl bg-ink-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink-800"
-      >
-        Browse Designs
-      </a>
+<header class="fixed top-2 sm:top-4 left-2 sm:left-4 right-2 sm:right-4 z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto">
+        <div
+            class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border border-gray-200/50 dark:border-gray-600/50 rounded-xl sm:rounded-2xl px-4 sm:px-6 py-3 sm:py-4 shadow-lg shadow-purple-500/10 dark:shadow-purple-400/10 relative">
+            <div class="flex justify-between items-center">
+                <!-- Logo and Site Title -->
+                <!-- Logo and Site Title -->
+                <!-- Logo and Site Title -->
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <a href="/" class="flex items-center">
+                        <div class="relative flex items-center justify-center p-1">
+                            <img src="/logo.png" alt="CSRGO" class="w-6 h-6 sm:w-8 sm:h-8 relative z-10" />
+                        </div>
+
+                        <!-- Separator -->
+                        <div class="h-4 sm:h-6 w-px bg-gray-200 dark:bg-gray-700 mx-1.5 sm:mx-2 self-center"></div>
+
+                        <!-- Brand Text -->
+                        <div class="h-6 sm:h-8 flex items-center">
+                            <span
+                                class="text-xl sm:text-3xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600 leading-none pt-0.5">
+                                CSRGO Wishes
+                            </span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Right Side Container (Nav + Actions) -->
+                <div class="flex items-center space-x-4 sm:space-x-6">
+                    <!-- Desktop Navigation -->
+                    <div class="hidden md:flex gap-8 text-base font-medium">
+                        {{ range .Site.Menus.main }}
+                        <a href="{{ .URL }}"
+                            class="relative py-2 px-2 transition text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-fuchsia-400 {{ if eq $.RelPermalink .URL }}font-bold text-blue-600 dark:text-fuchsia-400{{ end }}">
+                            {{ .Name }}
+                            <span
+                                class="absolute left-0 -bottom-1 w-full h-0.5 rounded bg-gradient-to-r from-blue-600 via-fuchsia-500 to-pink-500 transition-all duration-300 scale-x-0 origin-left {{ if eq $.RelPermalink .URL }}scale-x-100{{ end }}"></span>
+                        </a>
+                        {{ end }}
+                    </div>
+
+                    <!-- Right Actions -->
+                    <div class="flex items-center space-x-1 sm:space-x-2">
+                        <!-- Theme Toggle Button -->
+                        <button onclick="toggleTheme()"
+                            class="p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-fuchsia-400 transition-colors duration-200"
+                            aria-label="Toggle theme">
+                            <i id="theme-icon" data-lucide="sun" stroke-width="2" class="w-6 h-6"></i>
+                        </button>
+
+                        <!-- Profile Button -->
+                        <a href="/profile/"
+                            class="p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-fuchsia-400 transition-colors duration-200"
+                            aria-label="User Profile">
+                            <i data-lucide="user" stroke-width="2" class="w-6 h-6"></i>
+                        </a>
+
+                        <!-- Mobile Menu Button -->
+                        <button onclick="toggleMobileMenu()"
+                            class="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-fuchsia-400 transition-colors duration-200"
+                            aria-label="Toggle menu">
+                            <i data-lucide="menu" stroke-width="2" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation Dropdown -->
+            <div id="mobile-menu"
+                class="hidden md:hidden pt-4 mt-2 border-t border-gray-200/50 dark:border-gray-700/50 space-y-2">
+                {{ range .Site.Menus.main }}
+                <a href="{{ .URL }}"
+                    class="block px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 {{ if eq $.RelPermalink .URL }}bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 text-purple-700 dark:text-purple-300{{ else }}text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50{{ end }}">
+                    <span>{{ .Name }}</span>
+                </a>
+                {{ end }}
+
+            </div>
+        </div>
     </div>
-    <button
-      type="button"
-      class="open-filter-btn rounded-xl border border-ink-200 bg-white p-2 text-ink-600 shadow-sm transition hover:border-gold-300 sm:hidden"
-      aria-label="Search"
-    >
-      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-    </button>
-  </div>
 </header>
+
+<script>
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+
+        if (newTheme === 'dark') {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+
+        // Update icon
+        const themeIcon = document.getElementById('theme-icon');
+        if (themeIcon) {
+            themeIcon.setAttribute('data-lucide', newTheme === 'dark' ? 'sun' : 'moon');
+            if (window.lucide) lucide.createIcons();
+        }
+    }
+
+    function toggleMobileMenu() {
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenu) {
+            mobileMenu.classList.toggle('hidden');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        const themeIcon = document.getElementById('theme-icon');
+        if (themeIcon) {
+            themeIcon.setAttribute('data-lucide', currentTheme === 'dark' ? 'sun' : 'moon');
+        }
+
+        if (window.lucide) window.lucide.createIcons();
+    });
+</script>
+
+
