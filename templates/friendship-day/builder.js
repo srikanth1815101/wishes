@@ -219,9 +219,7 @@
 
           const payload = { u: uName, ug: state.userGender, f: fName, fg: state.friendGender, m: msg, t: Date.now() };
           const token = encodeToken(payload);
-          const uSlug = slugifyName(uName);
-          const fSlug = slugifyName(fName);
-          const generatedUrl = `${window.location.origin}/templates/friendship-day/#/${uSlug}-${fSlug}/${token}`;
+          const generatedUrl = `${window.location.origin}/templates/friendship-day/?token=${token}`;
 
           const resCard = document.getElementById('wish-result-card');
           const urlBox = document.getElementById('generated-wish-url');
