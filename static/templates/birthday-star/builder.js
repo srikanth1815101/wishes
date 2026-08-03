@@ -5,13 +5,46 @@
   const UPI_ID = 'csr850@okaxis';
 
   const DEFAULT_BALLOONS = [
-    "You are so much stronger than you think.",
-    "You are absolutely beautiful & gorgeous, inside and out.",
-    "You are so smart, brilliant, and wise.",
-    "You love so deeply and unconditionally.",
-    "You are the most incredible person in our lives.",
-    "Your radiant warmth makes us all smile every day."
+    "You are so much stronger than you think. 🌟",
+    "You are absolutely beautiful & gorgeous, inside and out. 💖",
+    "You are so smart, brilliant, and wise. 💡",
+    "You love so deeply and unconditionally. 💕",
+    "You are the most incredible person in our lives. ✨",
+    "Your radiant warmth makes us all smile every day. 🌸"
   ];
+
+  const FUNNY_BALLOONS = [
+    "Still looking 21 from a distance! 😂",
+    "Another year closer to becoming a crazy cat owner! 🐱",
+    "Here for the free cake and party vibes! 🎂",
+    "Thanks for being the only person crazier than me! 🤪",
+    "Aging like fine wine... or really expensive cheese! 🧀",
+    "Don't count the candles, count the memories! 🎉"
+  ];
+
+  const MAIN_WISH_PRESETS = [
+    {
+      label: "🌸 Heartfelt",
+      text: "Happy Birthday! Today is all about celebrating you and the amazing energy you bring into our lives. May your special day bring as much joy, warmth, and laughter as you bring to everyone around you. Wishing you health, success, and endless happiness!"
+    },
+    {
+      label: "💖 Best Friend",
+      text: "Happy Birthday to my partner-in-crime! From late-night talks to crazy adventures, I am so grateful for your friendship. Here’s to another year of making unforgettable memories together and shining bright!"
+    },
+    {
+      label: "❤️ Romantic / Love",
+      text: "Happy Birthday to my favorite person! You make every single day brighter, sweeter, and more meaningful. Wishing you all the love, happiness, and magic in the world today. I love you!"
+    },
+    {
+      label: "🎉 Funny & Playful",
+      text: "Happy Birthday! You’re not getting older, you’re just leveling up! May your day be filled with delicious cake, awesome gifts, and zero adulting responsibilities!"
+    }
+  ];
+
+  let state = {
+    senderGender: 'm',
+    birthdayGender: 'f'
+  };
 
   window.WISH_BUILDERS['birthday-star'] = {
     renderForm: function (t) {
@@ -35,45 +68,73 @@
                 </span>
               </div>
             </div>
-            <p class="text-xs text-ink-600 dark:text-gray-300 mt-1">
-              We will build your personalized website URL with 6 photos and custom wishes within 48h!
-            </p>
+            <div class="mt-2 pt-2 border-t border-purple-100/80 dark:border-purple-800/30">
+              <p class="text-xs text-ink-600 dark:text-gray-300">
+                We will build your personalized website URL with 6 photos and custom wishes within 48h!
+              </p>
+            </div>
           </div>
 
           <form id="birthday-order-form" class="space-y-4">
-            <!-- 1. Name of User & Name of Birthday Person -->
+            <!-- 1. Sender Name & Gender -->
+            <div>
+              <label class="text-xs font-bold text-gray-700 dark:text-gray-200 mb-1 block">
+                Your Name & Gender (Sender) <span class="text-rose-500">*</span>
+              </label>
+              <div class="flex flex-col sm:flex-row gap-2">
+                <input type="text" id="field-user-name" placeholder="e.g. Rahul" required class="field-input flex-1 text-sm" />
+                <div class="flex shrink-0 rounded-xl border border-ink-200 dark:border-gray-700 bg-ink-50 dark:bg-gray-800 p-1">
+                  <button type="button" id="btn-sg-m" class="gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-rose-500 text-white shadow-sm" data-gender="m">Male</button>
+                  <button type="button" id="btn-sg-f" class="gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition text-ink-600 dark:text-gray-300 hover:bg-ink-100 dark:hover:bg-gray-700" data-gender="f">Female</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Birthday Person Name & Gender -->
+            <div>
+              <label class="text-xs font-bold text-gray-700 dark:text-gray-200 mb-1 block">
+                Birthday Person Name & Gender <span class="text-rose-500">*</span>
+              </label>
+              <div class="flex flex-col sm:flex-row gap-2">
+                <input type="text" id="field-birthday-person" placeholder="e.g. Kiran" required class="field-input flex-1 text-sm" />
+                <div class="flex shrink-0 rounded-xl border border-ink-200 dark:border-gray-700 bg-ink-50 dark:bg-gray-800 p-1">
+                  <button type="button" id="btn-bg-m" class="gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition text-ink-600 dark:text-gray-300 hover:bg-ink-100 dark:hover:bg-gray-700" data-gender="m">Male</button>
+                  <button type="button" id="btn-bg-f" class="gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-rose-500 text-white shadow-sm" data-gender="f">Female</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Date & Month of Birth & Secret PIN -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label class="text-xs font-bold text-gray-700 dark:text-gray-200 mb-1 block">
-                  Your Name (Sender) <span class="text-rose-500">*</span>
+                  Date & Month of Birth <span class="text-rose-500">*</span>
                 </label>
-                <input type="text" id="field-user-name" placeholder="e.g. Rahul" required class="field-input w-full text-sm" />
+                <input type="text" id="field-birth-date" placeholder="e.g. 15th August" required class="field-input w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs font-bold text-gray-700 dark:text-gray-200 mb-1 block">
-                  Name of Birthday Person <span class="text-rose-500">*</span>
+                <label class="text-xs font-bold text-gray-700 dark:text-gray-200 mb-1 block flex items-center justify-between">
+                  <span>Secret 7-Digit PIN Code</span>
+                  <span class="text-[10px] font-normal text-gray-400">Optional</span>
                 </label>
-                <input type="text" id="field-birthday-person" placeholder="e.g. Alex" required class="field-input w-full text-sm" />
+                <input type="text" id="field-secret-pin" placeholder="e.g. 1234567" maxlength="7" class="field-input w-full text-sm" />
               </div>
             </div>
 
-            <!-- 2. Date & Month of Birth -->
+            <!-- 4. 6 Memory Balloon Messages -->
             <div>
-              <label class="text-xs font-bold text-gray-700 dark:text-gray-200 mb-1 block">
-                Date & Month of Birth <span class="text-rose-500">*</span>
-              </label>
-              <input type="text" id="field-birth-date" placeholder="e.g. 28th July" required class="field-input w-full text-sm" />
-            </div>
-
-            <!-- 3. 6 Balloon Messages -->
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
+              <div class="flex items-center justify-between mb-1.5 flex-wrap gap-1">
                 <label class="text-xs font-bold text-gray-700 dark:text-gray-200">
                   6 Memory Balloon Messages <span class="text-rose-500">*</span>
                 </label>
-                <button type="button" id="btn-fill-balloon-defaults" class="text-[11px] font-bold text-purple-600 dark:text-purple-400 hover:underline">
-                  Reset Defaults
-                </button>
+                <div class="flex gap-2">
+                  <button type="button" id="btn-balloon-funny" class="text-[11px] font-bold text-rose-500 hover:underline">
+                    Use Funny
+                  </button>
+                  <button type="button" id="btn-fill-balloon-defaults" class="text-[11px] font-bold text-purple-600 dark:text-purple-400 hover:underline">
+                    Reset Sweet
+                  </button>
+                </div>
               </div>
               <div class="space-y-2">
                 ${DEFAULT_BALLOONS.map((msg, i) => `
@@ -85,12 +146,24 @@
               </div>
             </div>
 
-            <!-- 4. Main Wish Message -->
+            <!-- 5. Main Wish Message -->
             <div>
-              <label class="text-xs font-bold text-gray-700 dark:text-gray-200 mb-1 block">
-                Main Birthday Wish Message <span class="text-rose-500">*</span>
-              </label>
-              <textarea id="field-main-wish" rows="3" placeholder="Happy Birthday! May your life be filled with as much laughter, wonder, and love as you bring to ours..." required class="field-input w-full text-xs resize-none"></textarea>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-bold text-gray-700 dark:text-gray-200">
+                  Main Birthday Wish Message <span class="text-rose-500">*</span>
+                </label>
+              </div>
+              
+              <!-- Quick Preset Chips -->
+              <div class="flex gap-1.5 mb-2 overflow-x-auto pb-1 scrollbar-none">
+                ${MAIN_WISH_PRESETS.map((p, idx) => `
+                  <button type="button" class="preset-wish-btn shrink-0 rounded-xl bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800 px-2.5 py-1 text-[11px] font-bold text-purple-700 dark:text-purple-300 transition hover:bg-purple-100 active:scale-95" data-index="${idx}">
+                    ${p.label}
+                  </button>
+                `).join('')}
+              </div>
+
+              <textarea id="field-main-wish" rows="3" placeholder="Happy Birthday! May your life be filled with as much laughter, wonder, and love as you bring to ours..." required class="field-input w-full text-xs resize-none">${MAIN_WISH_PRESETS[0].text}</textarea>
             </div>
 
             <!-- Payment & WhatsApp Instructions -->
@@ -108,11 +181,6 @@
             </div>
 
             <div id="wish-form-error" class="hidden rounded-xl bg-red-50 dark:bg-red-900/30 p-3 text-xs font-medium text-red-600 dark:text-red-300"></div>
-
-            <button type="submit" class="w-full rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-purple-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-emerald-500/25 transition hover:scale-[1.01] active:scale-95 flex items-center justify-center gap-2">
-              <svg class="h-5 w-5 fill-none stroke-current" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
-              Submit Order on WhatsApp
-            </button>
           </form>
         </div>
       `;
@@ -121,15 +189,68 @@
     bindForm: function (t) {
       const offerPrice = (t && typeof t.price === 'number') ? t.price : 99;
 
-      const btnPreset = document.getElementById('btn-fill-balloon-defaults');
-      if (btnPreset) {
-        btnPreset.onclick = () => {
+      // Gender buttons handling
+      const sgM = document.getElementById('btn-sg-m');
+      const sgF = document.getElementById('btn-sg-f');
+      if (sgM && sgF) {
+        sgM.onclick = () => {
+          state.senderGender = 'm';
+          sgM.className = 'gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-rose-500 text-white shadow-sm';
+          sgF.className = 'gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition text-ink-600 dark:text-gray-300 hover:bg-ink-100 dark:hover:bg-gray-700';
+        };
+        sgF.onclick = () => {
+          state.senderGender = 'f';
+          sgF.className = 'gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-rose-500 text-white shadow-sm';
+          sgM.className = 'gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition text-ink-600 dark:text-gray-300 hover:bg-ink-100 dark:hover:bg-gray-700';
+        };
+      }
+
+      const bgM = document.getElementById('btn-bg-m');
+      const bgF = document.getElementById('btn-bg-f');
+      if (bgM && bgF) {
+        bgM.onclick = () => {
+          state.birthdayGender = 'm';
+          bgM.className = 'gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-rose-500 text-white shadow-sm';
+          bgF.className = 'gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition text-ink-600 dark:text-gray-300 hover:bg-ink-100 dark:hover:bg-gray-700';
+        };
+        bgF.onclick = () => {
+          state.birthdayGender = 'f';
+          bgF.className = 'gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-rose-500 text-white shadow-sm';
+          bgM.className = 'gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition text-ink-600 dark:text-gray-300 hover:bg-ink-100 dark:hover:bg-gray-700';
+        };
+      }
+
+      // Preset balloon buttons
+      const btnPresetSweet = document.getElementById('btn-fill-balloon-defaults');
+      if (btnPresetSweet) {
+        btnPresetSweet.onclick = () => {
           DEFAULT_BALLOONS.forEach((msg, i) => {
             const input = document.getElementById(`field-balloon-${i + 1}`);
             if (input) input.value = msg;
           });
         };
       }
+
+      const btnPresetFunny = document.getElementById('btn-balloon-funny');
+      if (btnPresetFunny) {
+        btnPresetFunny.onclick = () => {
+          FUNNY_BALLOONS.forEach((msg, i) => {
+            const input = document.getElementById(`field-balloon-${i + 1}`);
+            if (input) input.value = msg;
+          });
+        };
+      }
+
+      // Preset main wish chips
+      document.querySelectorAll('.preset-wish-btn').forEach((btn) => {
+        btn.onclick = () => {
+          const idx = parseInt(btn.getAttribute('data-index'), 10);
+          if (MAIN_WISH_PRESETS[idx]) {
+            const textarea = document.getElementById('field-main-wish');
+            if (textarea) textarea.value = MAIN_WISH_PRESETS[idx].text;
+          }
+        };
+      });
 
       const form = document.getElementById('birthday-order-form');
       if (form) {
@@ -138,6 +259,7 @@
           const uName = document.getElementById('field-user-name').value.trim();
           const bPerson = document.getElementById('field-birthday-person').value.trim();
           const bDate = document.getElementById('field-birth-date').value.trim();
+          const secretPin = document.getElementById('field-secret-pin').value.trim();
           const mainWish = document.getElementById('field-main-wish').value.trim();
 
           const balloons = [];
@@ -149,20 +271,20 @@
           const errBox = document.getElementById('wish-form-error');
           if (!uName || !bPerson || !bDate || !mainWish || balloons.length < 6) {
             if (errBox) {
-              errBox.textContent = 'Please fill in all fields and ensure all 6 balloon messages are filled.';
+              errBox.textContent = 'Please fill in all required fields and ensure all 6 balloon messages are completed.';
               errBox.classList.remove('hidden');
             }
             return;
           }
           if (errBox) errBox.classList.add('hidden');
 
-          // Clean, reliable WhatsApp formatting
-          let waMsg = `*NEW BIRTHDAY WISH ORDER*\n`;
+          let waMsg = `*NEW BIRTHDAY STAR WISH ORDER*\n`;
           waMsg += `------------------------------------\n`;
-          waMsg += `*Birthday Person:* ${bPerson}\n`;
+          waMsg += `*Birthday Person:* ${bPerson} (${state.birthdayGender === 'm' ? 'Male' : 'Female'})\n`;
           waMsg += `*Birth Date/Month:* ${bDate}\n`;
-          waMsg += `*Ordered By:* ${uName}\n\n`;
-          waMsg += `*6 Balloon Messages:*\n`;
+          waMsg += `*Ordered By:* ${uName} (${state.senderGender === 'm' ? 'Male' : 'Female'})\n`;
+          if (secretPin) waMsg += `*Secret PIN:* ${secretPin}\n`;
+          waMsg += `\n*6 Balloon Messages:*\n`;
           balloons.forEach((b, idx) => {
             waMsg += `${idx + 1}. ${b}\n`;
           });
@@ -171,7 +293,7 @@
           waMsg += `*Amount to Pay:* ₹${offerPrice}\n`;
           waMsg += `*UPI ID:* ${UPI_ID}\n`;
           waMsg += `*UPI Link:* upi://pay?pa=${UPI_ID}&pn=CSRGO%20Wishes&am=${offerPrice}\n\n`;
-          waMsg += `*NOTE:* Please send the payment screenshot & 6 photos of birthday person in this chat for custom link creation.`;
+          waMsg += `*NOTE:* Please send the payment screenshot & 6 photos of the birthday person in this chat for custom website creation.`;
 
           const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMsg)}`;
           window.open(waUrl, '_blank');

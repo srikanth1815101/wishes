@@ -117,10 +117,6 @@
             </div>
 
             <div id="wish-form-error" class="hidden rounded-xl bg-red-50 dark:bg-red-900/30 p-3 text-xs font-medium text-red-600 dark:text-red-300"></div>
-
-            <button type="submit" class="w-full rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-purple-500/25 transition hover:scale-[1.01] active:scale-95">
-              ✨ Create My Wish Link
-            </button>
           </form>
 
           <!-- Result Card (Initially Hidden) -->

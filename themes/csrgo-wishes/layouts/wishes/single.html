@@ -73,16 +73,25 @@
 
     <!-- Data Injection from Hugo Markdown Frontmatter -->
     <script>
-      var BIRTHDAY_PIN = JSON.parse({{ .Params.pin | default "1815101" | jsonify }});
+      var birthdayName = JSON.parse({{ .Params.birthday_name | default "Birthday Star" | jsonify }});
+      var senderName = JSON.parse({{ .Params.sender_name | default .Params.from_name | default "" | jsonify }});
+      var BIRTHDAY_PIN = JSON.parse({{ .Params.pin_hash | default .Params.pin | default "h_11li87w" | jsonify }});
       var BIRTHDAY_TARGET_DATE = JSON.parse({{ .Params.birth_date | default "2026-07-28T00:00:00" | jsonify }});
 
       var welcomeMessage = {
-        title: "A little surprise for " + {{ .Params.birthday_name | default "you" }} + "...",
+        title: "A little surprise for " + birthdayName + "...",
         lines: []
       };
 
+      var BALLOON_COLORS = ['#ff6b8a', '#ffbe3d', '#7fd1b6', '#5bb4d6', '#ff8fa3', '#ffd56b'];
       {{ with .Params.balloons }}
-      var balloons = JSON.parse({{ . | jsonify }});
+      var rawBalloons = JSON.parse({{ . | jsonify }});
+      var balloons = rawBalloons.map(function(item, idx) {
+        return {
+          color: (item && typeof item === 'object' && item.color) ? item.color : BALLOON_COLORS[idx % BALLOON_COLORS.length],
+          message: (typeof item === 'string') ? item : ((item && item.message) || '')
+        };
+      });
       {{ end }}
 
       {{ with .Params.photos }}
@@ -94,22 +103,26 @@
       ];
       {{ end }}
 
-      {{ with .Params.daughter_wish }}
-      var daughterWish = JSON.parse({{ . | jsonify }});
-      {{ end }}
+      var daughterWish = null;
+      var familyWishes = [];
 
-      {{ with .Params.family_wishes }}
-      var familyWishes = JSON.parse({{ . | jsonify }});
-      {{ end }}
+      var rawLetter = JSON.parse({{ .Params.letter | default .Params.husband_letter | jsonify }});
+      var letterText = (rawLetter && typeof rawLetter === 'object') ? (rawLetter.body || '') : (typeof rawLetter === 'string' ? rawLetter : '');
 
-      {{ with .Params.husband_letter }}
-      var husbandLetter = JSON.parse({{ . | jsonify }});
-      {{ end }}
+      var husbandLetter = {
+        title: "A Special Birthday Wish for " + birthdayName,
+        salutation: "Dearest " + birthdayName + ",",
+        body: letterText || "Happy Birthday! May your special day be filled with warmth, laughter, and endless happiness.",
+        signoff: "With lots of love,",
+        signature: (senderName ? senderName : "Your Loved Ones") + " ❤️"
+      };
 
-      {{ with .Params.final_wish }}
-      var finalWish = JSON.parse({{ . | jsonify }});
-      {{ end }}
+      var finalWish = {
+        title: "Happy Birthday " + birthdayName + "!",
+        message: "May your day be filled with sweet surprises, delicious cake, and joyful moments. Today, tomorrow, and always — we celebrate you!",
+        signoff: senderName ? ("With lots of love, " + senderName + " ❤️") : "With all our love, always"
+      };
     </script>
-    <script src="/templates/birthday-star/app.js"></script>
+    <script src="/templates/birthday-star/app.js?v={{ now.Unix }}"></script>
   </body>
 </html>

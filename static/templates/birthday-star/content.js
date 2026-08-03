@@ -12,7 +12,7 @@ const balloons = [
   { color: '#ffbe3d', message: 'You are absolutely beautiful & gorgeous, inside and out. ✨' },
   { color: '#7fd1b6', message: 'You are so smart, brilliant, and wise. 💡' },
   { color: '#5bb4d6', message: 'You love so deeply and unconditionally. 💕' },
-  { color: '#ff8fa3', message: 'You are the most incredible mother and a wonderful wife. 👩‍👧‍👦❤️' },
+  { color: '#ff8fa3', message: 'You bring so much warmth, laughter, and joy into our lives. ❤️' },
   { color: '#ffd56b', message: 'Your radiant warmth makes us all smile every single day. 😊🌸' },
 ];
 
@@ -25,42 +25,22 @@ const galleryPhotos = [
   { src: '/templates/birthday-star/images/6.png' },
 ];
 
-const daughterWish = {
-  name: 'Minni',
-  gibberish: 'Gaa gaa goo... baa baa... Happy Bday! La i vuuu naaaa iiii... 🍼👶✨',
-  wish: 'Happy Birthday Amma! I may only speak in giggles and gugu-gagas right now, but I love you big big with all my little heart! 💖',
-};
+const daughterWish = null;
 
-const familyWishes = [
-  {
-    from: 'Amma',
-    message:
-      'Naa muddu bangaram, nuvvu naaku devudu ichina goppa varam. Neetho prathi kshanam naaku oka pandaga laantidi. Happy Birthday naa kanna, eppudoo chirunavvuthoo anandanga undu! 💕',
-  },
-  {
-    from: 'Nanna',
-    message:
-      'Nuvvu naaku eppatiki naa chitti papave. Nuvvu entha peddadanivaina, naa gundello ninnu eppudoo badranga daachukuntaanu. Happy Birthday naa bangaram! 🌸',
-  },
-  {
-    from: 'Anna',
-    message:
-      'Naa muddu chelli, nuvvu ante naaku entho ishtam. Eppudoo chirunavvuthoo santhoshanga undali ani korukuntunnanu. Happy Birthday chelli, love you forever! ✨',
-  },
-];
+const familyWishes = [];
 
 const husbandLetter = {
-  title: 'A Letter for My Love',
-  salutation: 'My Dearest Wife,',
-  body: 'Happy Birthday to the love of my life! Every single day with you is a gift I cherish more than words can express. Thank you for filling our home with warmth, laughter, and endless love. You are my best friend, my soulmate, and my forever.',
-  signoff: 'Forever and always yours,',
-  signature: 'Your Loving Husband ❤️',
+  title: 'A Birthday Wish for You',
+  salutation: 'Dearest Birthday Star,',
+  body: 'Happy Birthday! Every single day with you is a gift filled with warmth, laughter, and endless happiness. May your year ahead bring you all the love, success, and joy that you so truly deserve!',
+  signoff: 'With lots of love,',
+  signature: 'Rahul ❤️',
 };
 
 let finalWish = {
   title: 'And from all of us...',
   message:
-    'Happy Birthday, our precious little star. May your life be filled with as much laughter, wonder, and love as you bring to ours. Today, tomorrow, and always — we celebrate you.',
+    'Happy Birthday, our precious star. May your life be filled with as much laughter, wonder, and love as you bring to ours. Today, tomorrow, and always — we celebrate you.',
   signoff: 'With all our love, always',
 };
 

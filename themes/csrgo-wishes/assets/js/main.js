@@ -158,7 +158,7 @@
   // UI Rendering
   function renderAll() {
     const isHomePage = !document.getElementById('search-input') && !document.getElementById('category-bar');
-    
+
     if (isHomePage) {
       const recent = allTemplates.slice(0, 6);
       if (countIndicator) {
@@ -508,59 +508,81 @@
 
     modalContent.innerHTML = `
       <div class="relative z-10 flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl animate-slide-up sm:rounded-3xl sm:animate-scale-in">
-        <!-- Gallery Header -->
-        <div class="relative aspect-[16/10] shrink-0 overflow-hidden bg-ink-100 sm:aspect-[16/8]">
-          ${gallery[galleryIndex] ? `
-            <img id="modal-gallery-img" src="${escapeHtml(gallery[galleryIndex])}" alt="${escapeHtml(t.name)}" class="h-full w-full object-cover transition-opacity duration-200" />
-          ` : ''}
-          <div class="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-ink-950/20"></div>
+        ${currentStep === 'details' ? `
+          <!-- Gallery Header (Details / Specification Page Only) -->
+          <div class="relative aspect-[16/10] shrink-0 overflow-hidden bg-ink-100 sm:aspect-[16/8]">
+            ${gallery[galleryIndex] ? `
+              <img id="modal-gallery-img" src="${escapeHtml(gallery[galleryIndex])}" alt="${escapeHtml(t.name)}" class="h-full w-full object-cover transition-opacity duration-200" />
+            ` : ''}
+            <div class="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-ink-950/20"></div>
 
-          <button
-            type="button"
-            id="modal-close-btn"
-            class="absolute right-3 top-3 rounded-full bg-white/90 p-2 text-ink-700 shadow-md backdrop-blur transition hover:bg-white hover:text-ink-900"
-            aria-label="Close"
-          >
-            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-          </button>
-
-          ${t.is_featured ? `
-            <span class="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-gold-500 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm">
-              <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg> Featured
-            </span>
-          ` : ''}
-
-          ${gallery.length > 1 ? `
             <button
               type="button"
-              id="gallery-prev-btn"
-              class="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 text-ink-700 shadow backdrop-blur transition hover:bg-white"
+              id="modal-close-btn"
+              class="absolute right-3 top-3 rounded-full bg-white/90 p-2 text-ink-700 shadow-md backdrop-blur transition hover:bg-white hover:text-ink-900"
+              aria-label="Close"
             >
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
             </button>
-            <button
-              type="button"
-              id="gallery-next-btn"
-              class="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 text-ink-700 shadow backdrop-blur transition hover:bg-white"
-            >
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
-            </button>
-            <div class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
-              ${gallery.map((_, i) => `
-                <span class="gallery-dot h-1.5 rounded-full transition-all ${i === galleryIndex ? 'w-5 bg-white' : 'w-1.5 bg-white/50'}"></span>
-              `).join('')}
+
+            ${t.is_featured ? `
+              <span class="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-gold-500 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm">
+                <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg> Featured
+              </span>
+            ` : ''}
+
+            ${gallery.length > 1 ? `
+              <button
+                type="button"
+                id="gallery-prev-btn"
+                class="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 text-ink-700 shadow backdrop-blur transition hover:bg-white"
+              >
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+              <button
+                type="button"
+                id="gallery-next-btn"
+                class="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 text-ink-700 shadow backdrop-blur transition hover:bg-white"
+              >
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+              <div class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
+                ${gallery.map((_, i) => `
+                  <span class="gallery-dot h-1.5 rounded-full transition-all ${i === galleryIndex ? 'w-5 bg-white' : 'w-1.5 bg-white/50'}"></span>
+                `).join('')}
+              </div>
+            ` : ''}
+
+            <div class="absolute bottom-3 left-4 right-4">
+              <span class="rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-ink-700">
+                ${escapeHtml(t.category)}
+              </span>
+              <h2 class="mt-2 font-display text-2xl font-semibold text-white drop-shadow sm:text-3xl">
+                ${escapeHtml(t.name)}
+              </h2>
             </div>
-          ` : ''}
-
-          <div class="absolute bottom-3 left-4 right-4">
-            <span class="rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-ink-700">
-              ${escapeHtml(t.category)}
-            </span>
-            <h2 class="mt-2 font-display text-2xl font-semibold text-white drop-shadow sm:text-3xl">
-              ${escapeHtml(t.name)}
-            </h2>
           </div>
-        </div>
+        ` : `
+          <!-- Compact Header (Form Page Only) -->
+          <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-5 py-4 sm:px-7 shrink-0">
+            <div class="flex items-center gap-2">
+              <span class="rounded-full bg-purple-100 dark:bg-purple-900/40 px-2.5 py-0.5 text-xs font-bold text-purple-700 dark:text-purple-300 uppercase tracking-wide">
+                ${escapeHtml(t.category)}
+              </span>
+              <h2 class="font-display text-lg sm:text-xl font-bold text-ink-900 dark:text-white">
+                ${escapeHtml(t.name)} Order Form
+              </h2>
+            </div>
+            <button
+              type="button"
+              id="modal-close-btn"
+              class="rounded-full bg-gray-100 dark:bg-gray-800 p-2 text-ink-700 dark:text-gray-300 transition hover:bg-gray-200 dark:hover:bg-gray-700 shrink-0 ml-2"
+              aria-label="Close"
+            >
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+        `}
 
         <!-- Scrollable Modal Body -->
         <div id="modal-step-body" class="flex-1 overflow-y-auto px-5 py-5 sm:px-7">
@@ -582,6 +604,7 @@
     const showWhatsapp = t.show_whatsapp_order !== false && !hasCustomBuilder;
     const showBack = t.show_back_button !== false && !hasCustomBuilder;
     const priceFormatted = Number(t.price).toLocaleString('en-IN');
+    const demoUrl = t.demo_url || (t.id && (t.id.includes('birthday-star') || t.slug.includes('birthday-star')) ? '/birthday-sample/' : '/' + t.slug.replace(/^\//, '') + '/');
 
     if (currentStep === 'details') {
       return `
@@ -605,12 +628,12 @@
             </div>
             <div class="flex items-center gap-2.5">
               <a
-                href="${t.demo_url || '/' + t.slug.replace(/^\//, '') + '/'}"
+                href="${demoUrl}"
                 target="_blank"
                 class="inline-flex items-center justify-center gap-1.5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-200 shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-95 shrink-0"
               >
                 <svg class="h-4 w-4 text-purple-600 dark:text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                View Demo Site
+                Demo
               </a>
               <button
                 type="button"
@@ -625,34 +648,49 @@
       `;
     }
 
-    if (!showWhatsapp && !showBack) {
-      return '';
+    const isFree = t.price === 0 || (t.builder_key === 'friendship-day') || (t.slug && t.slug.includes('friendship'));
+
+    if (isFree) {
+      return `
+        <div class="border-t border-ink-100 bg-white/95 px-4 py-3.5 backdrop-blur sm:px-7 sm:py-4">
+          <div class="flex items-center justify-between gap-2.5 sm:gap-3">
+            <button
+              type="button"
+              id="modal-back-step-btn"
+              class="inline-flex h-12 items-center justify-center rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 sm:px-6 text-sm font-bold text-gray-700 dark:text-gray-200 shadow-sm transition hover:bg-gray-50 active:scale-95 shrink-0"
+            >
+              ← Back
+            </button>
+            <button
+              type="button"
+              id="modal-submit-whatsapp-btn"
+              class="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 px-4 sm:px-6 text-sm sm:text-base font-bold text-white shadow-lg shadow-purple-500/25 transition hover:scale-[1.01] active:scale-[0.98]"
+            >
+              ✨ Create My Wish Link
+            </button>
+          </div>
+        </div>
+      `;
     }
 
     return `
-      <div class="border-t border-ink-100 bg-white/95 px-5 py-4 backdrop-blur sm:px-7">
-        <div class="flex flex-col gap-3">
-          <div class="flex items-center justify-between gap-3">
-            ${showBack ? `
-              <button
-                type="button"
-                id="modal-back-step-btn"
-                class="rounded-2xl border border-ink-200 px-5 py-3.5 text-sm font-semibold text-ink-700 transition hover:border-ink-300"
-              >
-                Back
-              </button>
-            ` : ''}
-            ${showWhatsapp ? `
-              <button
-                type="button"
-                id="modal-submit-whatsapp-btn"
-                class="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-6 py-3.5 text-base font-semibold text-white shadow-card transition hover:bg-[#1fb557] active:scale-[0.98]"
-              >
-                <svg class="h-5 w-5 fill-none stroke-current" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
-                Order on WhatsApp
-              </button>
-            ` : ''}
-          </div>
+      <div class="border-t border-ink-100 bg-white/95 px-4 py-3.5 backdrop-blur sm:px-7 sm:py-4">
+        <div class="flex items-center justify-between gap-2.5 sm:gap-3">
+          <button
+            type="button"
+            id="modal-back-step-btn"
+            class="inline-flex h-12 items-center justify-center rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 sm:px-6 text-sm font-bold text-gray-700 dark:text-gray-200 shadow-sm transition hover:bg-gray-50 active:scale-95 shrink-0"
+          >
+            ← Back
+          </button>
+          <button
+            type="button"
+            id="modal-submit-whatsapp-btn"
+            class="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-4 sm:px-6 text-sm sm:text-base font-bold text-white shadow-card transition hover:bg-[#1fb557] active:scale-[0.98]"
+          >
+            <svg class="h-5 w-5 fill-none stroke-current" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+            Order on WhatsApp
+          </button>
         </div>
       </div>
     `;
@@ -708,13 +746,15 @@
 
   function loadBuilderScript(scriptUrl, callback) {
     if (!scriptUrl) return;
-    const existing = document.querySelector(`script[src="${scriptUrl}"]`);
+    const cleanUrl = scriptUrl.split('?')[0];
+    const existing = document.querySelector(`script[data-builder="${cleanUrl}"]`);
     if (existing) {
       if (callback) callback();
       return;
     }
     const script = document.createElement('script');
-    script.src = scriptUrl;
+    script.setAttribute('data-builder', cleanUrl);
+    script.src = `${cleanUrl}?v=${Date.now()}`;
     script.onload = () => {
       if (callback) callback();
     };
@@ -855,30 +895,26 @@
 
     const submitWhatsappBtn = document.getElementById('modal-submit-whatsapp-btn');
     if (submitWhatsappBtn) {
-      submitWhatsappBtn.onclick = () => handleOrderSubmit(t);
+      submitWhatsappBtn.onclick = () => {
+        const customForm = document.querySelector('#modal-step-body form');
+        if (customForm) {
+          if (typeof customForm.requestSubmit === 'function') {
+            customForm.requestSubmit();
+          } else {
+            customForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+          }
+        } else {
+          handleOrderSubmit(t);
+        }
+      };
     }
   }
 
   function switchStep(step) {
     currentStep = step;
+    renderModalContent();
     const bodyEl = document.getElementById('modal-step-body');
-    const footerEl = document.getElementById('modal-step-footer');
-    if (!selectedTemplate) return;
-
-    const t = selectedTemplate;
-
-    if (bodyEl) {
-      bodyEl.innerHTML = currentStep === 'details' ? renderModalDetailsStep(t) : renderModalOrderStep(t);
-      bodyEl.scrollTop = 0;
-      if (currentStep === 'order' && t.builder_key && window.WISH_BUILDERS && window.WISH_BUILDERS[t.builder_key]) {
-        window.WISH_BUILDERS[t.builder_key].bindForm(t);
-      }
-    }
-
-    if (footerEl) {
-      footerEl.innerHTML = renderModalFooterHtml(t);
-      bindModalFooterEvents(t);
-    }
+    if (bodyEl) bodyEl.scrollTop = 0;
   }
 
   function handleOrderSubmit(t) {

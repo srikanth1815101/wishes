@@ -40,9 +40,18 @@
     familyIndex: 0,
     // Final scene state
     finalConfetti: true,
+    // Inactivity tap hint state
+    showTapHint: false,
+    inactivityTimer: null,
   };
 
   function setStage(nextStage) {
+    if (state.inactivityTimer) {
+      clearTimeout(state.inactivityTimer);
+      state.inactivityTimer = null;
+    }
+    state.showTapHint = false;
+
     // Clean up timers
     if (state.countdownTimer) {
       clearInterval(state.countdownTimer);
@@ -64,6 +73,27 @@
       state.welcomeLit = false;
       state.welcomePin = '';
       state.welcomePinError = false;
+      state.pinErrorMsg = '';
+      state.pinErrorIndex = 0;
+      state.welcomeMatchPos = null;
+      state.welcomeDragging = false;
+
+      // Reset all subsequent scene states for fresh replay
+      state.countdownMode = 'timer';
+      state.countdownVal = 5;
+      state.countdownCelebrate = false;
+      state.balloonIndex = 0;
+      state.balloonPopped = false;
+      state.balloonMessage = false;
+      state.balloonAllDone = false;
+      state.photoIndex = 0;
+      state.cakeCut = false;
+      state.cakeKnifePos = null;
+      state.cakeDragging = false;
+      state.cakeTopReached = false;
+      state.showTapHint = false;
+    } else if (nextStage === 'candle') {
+      state.welcomeLit = false;
       state.welcomeMatchPos = null;
       state.welcomeDragging = false;
     } else if (nextStage === 'countdown') {
@@ -87,6 +117,21 @@
     render();
   }
 
+  function parseDate(dateStr) {
+    if (!dateStr) return new Date();
+    if (dateStr instanceof Date) return dateStr;
+    let s = String(dateStr).trim();
+    let d = new Date(s);
+    if (isNaN(d.getTime())) {
+      s = s.replace(' ', 'T');
+      d = new Date(s);
+    }
+    if (isNaN(d.getTime())) {
+      d = new Date(s.replace(/-/g, '/'));
+    }
+    return isNaN(d.getTime()) ? new Date() : d;
+  }
+
   // --- Countdown Logic ---
   function startCountdown() {
     if (state.countdownTimer) {
@@ -96,7 +141,7 @@
     }
 
     const now = new Date().getTime();
-    const target = new Date(BIRTHDAY_TARGET_DATE).getTime();
+    const target = parseDate(BIRTHDAY_TARGET_DATE).getTime();
     let diff = isNaN(target) ? 0 : target - now;
 
     state.countdownDiffMs = diff;
@@ -111,23 +156,22 @@
         state.countdownDiffMs = remMs;
 
         if (remMs > 5000) {
-          const timerBox = document.getElementById('countdown-timer-box');
-          if (timerBox) {
-            const pad = (n) => String(n).padStart(2, '0');
-            const days = Math.floor(remMs / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((remMs / (1000 * 60 * 60)) % 24);
-            const minutes = Math.floor((remMs / (1000 * 60)) % 60);
-            const seconds = Math.floor((remMs / 1000) % 60);
+          const pad = (n) => String(n).padStart(2, '0');
+          const days = Math.floor(remMs / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((remMs / (1000 * 60 * 60)) % 24);
+          const minutes = Math.floor((remMs / (1000 * 60)) % 60);
+          const seconds = Math.floor((remMs / 1000) % 60);
 
-            const dEl = document.getElementById('timer-days');
-            const hEl = document.getElementById('timer-hours');
-            const mEl = document.getElementById('timer-mins');
-            const sEl = document.getElementById('timer-secs');
+          const dEl = document.getElementById('timer-days');
+          const hEl = document.getElementById('timer-hours');
+          const mEl = document.getElementById('timer-mins');
+          const sEl = document.getElementById('timer-secs');
 
-            if (dEl) dEl.textContent = pad(days);
-            if (hEl) hEl.textContent = pad(hours);
-            if (mEl) mEl.textContent = pad(minutes);
-            if (sEl) sEl.textContent = pad(seconds);
+          if (dEl && hEl && mEl && sEl) {
+            dEl.textContent = pad(days);
+            hEl.textContent = pad(hours);
+            mEl.textContent = pad(minutes);
+            sEl.textContent = pad(seconds);
           } else {
             render();
           }
@@ -232,6 +276,34 @@
     return html;
   }
 
+  function scheduleTapHint() {
+    if (state.inactivityTimer) {
+      clearTimeout(state.inactivityTimer);
+      state.inactivityTimer = null;
+    }
+
+    const needsHint = (
+      (state.stage === 'welcome' && state.welcomeSubStage === 'message') ||
+      (state.stage === 'candle' && state.welcomeLit) ||
+      (state.stage === 'countdown' && state.countdownMode === 'celebrate') ||
+      (state.stage === 'balloons' && (state.balloonAllDone || state.balloonPopped)) ||
+      (state.stage === 'photos') ||
+      (state.stage === 'cake' && state.cakeCut) ||
+      (state.stage === 'husband')
+    );
+
+    if (needsHint && !state.showTapHint) {
+      state.inactivityTimer = setTimeout(() => {
+        state.showTapHint = true;
+        const hintEl = document.getElementById('tap-hint');
+        if (hintEl) {
+          hintEl.classList.remove('opacity-0');
+          hintEl.classList.add('opacity-100');
+        }
+      }, 2800);
+    }
+  }
+
   let lastStage = null;
 
   // --- Main Render Function ---
@@ -240,6 +312,8 @@
 
     if (state.stage === 'welcome') {
       content = renderWelcomeScene();
+    } else if (state.stage === 'candle') {
+      content = renderCandleScene();
     } else if (state.stage === 'countdown') {
       content = renderCountdownScene();
     } else if (state.stage === 'balloons') {
@@ -262,9 +336,28 @@
     lastStage = state.stage;
     const animClass = isNewStage ? 'scene-enter' : '';
 
-    app.innerHTML = `<div class="${animClass} min-h-[100dvh] w-full flex flex-col justify-center items-center">${content}</div>`;
+    const needsHint = (
+      (state.stage === 'welcome' && state.welcomeSubStage === 'message') ||
+      (state.stage === 'candle' && state.welcomeLit) ||
+      (state.stage === 'countdown' && state.countdownMode === 'celebrate') ||
+      (state.stage === 'balloons' && (state.balloonAllDone || state.balloonPopped)) ||
+      (state.stage === 'photos') ||
+      (state.stage === 'cake' && state.cakeCut) ||
+      (state.stage === 'husband')
+    );
+
+    const hintText = (state.stage === 'photos') ? 'Swipe or drag photo for more ✨' : 'Tap anywhere to continue ✨';
+
+    const tapHintHTML = needsHint ? `
+      <div id="tap-hint" class="${state.showTapHint ? 'opacity-100' : 'opacity-0'} fixed bottom-8 left-0 right-0 z-30 flex justify-center pointer-events-none px-6 transition-opacity duration-700">
+        <p class="font-body text-xs font-semibold text-rose-500/80 tracking-wide animate-pulse select-none">${hintText}</p>
+      </div>
+    ` : '';
+
+    app.innerHTML = `<div class="${animClass} min-h-[100dvh] w-full flex flex-col justify-center items-center">${content}</div>${tapHintHTML}`;
 
     attachEvents();
+    scheduleTapHint();
   }
 
   // --- Scene 1: Welcome Scene ---
@@ -280,36 +373,9 @@
           </h1>
         </div>
       `;
-    } else if (state.welcomeSubStage === 'candle') {
-      const matchStyle = state.welcomeMatchPos
-        ? `left: ${state.welcomeMatchPos.x}px; top: ${state.welcomeMatchPos.y}px; transform: translate(-50%, -100%) rotate(35deg); transition: none;`
-        : `left: 50%; top: 70%; transform: translate(-50%, 0) rotate(35deg); transition: left 0.3s ease, top 0.3s ease;`;
-
-      inner = `
-        <div ${state.welcomeLit ? 'data-action="welcome-to-pin"' : ''} class="${state.welcomeLit ? 'fixed inset-0 z-20 cursor-pointer justify-center' : 'w-full px-6'} flex flex-col items-center text-center">
-          <p class="font-script text-3xl text-rose-500 animate-fade-up mb-8">
-            ${state.welcomeLit ? 'A wish is ready...' : 'Light the candle...'}
-          </p>
-
-          <div id="candle-container" class="relative flex flex-col items-center w-full max-w-xs h-80 justify-end pb-8">
-            ${renderCakeGraphic(state.welcomeLit, false)}
-
-            ${!state.welcomeLit ? `
-              <div id="match-stick" class="absolute z-20 touch-none select-none cursor-grab active:cursor-grabbing" style="${matchStyle}">
-                <div class="relative flex flex-col items-center pointer-events-none">
-                  <div class="relative h-6 w-4 -mb-1">
-                    <div class="absolute inset-0 rounded-full bg-sun-400 animate-flame-flicker blur-[4px] opacity-70"></div>
-                    <div class="absolute inset-0 rounded-full animate-flame-flicker" style="background: radial-gradient(ellipse at 50% 80%, #fff3a0 0%, #ffbe3d 50%, #ff6b8a 90%, transparent 100%);"></div>
-                  </div>
-                  <div class="h-20 w-1.5 rounded-full bg-gradient-to-b from-ink-700/80 to-ink-700/40"></div>
-                </div>
-              </div>
-            ` : ''}
-          </div>
-        </div>
-      `;
     } else if (state.welcomeSubStage === 'pin') {
-      const pinLength = BIRTHDAY_PIN.length;
+      const targetPinStr = (typeof BIRTHDAY_PIN !== 'undefined') ? String(BIRTHDAY_PIN) : 'h_11li87w';
+      const pinLength = targetPinStr.startsWith('h_') ? 7 : targetPinStr.length;
       const pinDots = Array.from({ length: pinLength }).map((_, i) => `
         <div class="h-4 w-4 rounded-full border-2 transition-all ${state.welcomePinError
           ? 'border-rose-500 bg-rose-500/20 animate-wiggle'
@@ -321,8 +387,14 @@
 
       const keys = [
         { key: '1', display: '1' },
+        { key: '2', display: '2' },
+        { key: '3', display: '3' },
+        { key: '4', display: '4' },
         { key: '5', display: '5' },
+        { key: '6', display: '6' },
+        { key: '7', display: '7' },
         { key: '8', display: '8' },
+        { key: '9', display: '9' },
         {
           key: '🔄',
           display: `<svg class="h-6 w-6 text-ink-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>`
@@ -334,27 +406,60 @@
         },
       ];
       const keypadHTML = keys.map((item) => `
-        <button data-action="pin-key" data-key="${item.key}" class="h-16 w-16 rounded-2xl bg-white/80 text-2xl font-semibold text-ink-800 soft-shadow active:scale-95 transition-transform backdrop-blur cursor-pointer flex items-center justify-center">
+        <button data-action="pin-key" data-key="${item.key}" class="h-14 w-14 rounded-2xl bg-white/80 text-xl font-semibold text-ink-800 soft-shadow active:scale-95 transition-transform backdrop-blur cursor-pointer flex items-center justify-center">
           ${item.display}
         </button>
       `).join('');
 
       inner = `
         <div class="flex w-full max-w-xs flex-col items-center text-center px-6">
-          <p class="font-script text-3xl text-rose-500 mb-8">Your secret code</p>
+          <p class="font-script text-3xl text-rose-500 mb-6">Your secret code</p>
 
-          <div class="flex gap-2.5 mb-6 flex-wrap justify-center">${pinDots}</div>
+          <div class="flex gap-2.5 mb-4 flex-wrap justify-center">${pinDots}</div>
 
           ${state.welcomePinError ? `
-            <div class="bg-rose-500/10 border border-rose-400/40 rounded-2xl px-4 py-2.5 mb-6 animate-fade-up max-w-[240px]">
+            <div class="bg-rose-500/10 border border-rose-400/40 rounded-2xl px-4 py-2 mb-3 animate-fade-up max-w-[240px]">
               <p class="text-rose-600 text-xs font-semibold leading-relaxed">${state.pinErrorMsg || 'Oopsie! Not quite... try again 💕'}</p>
             </div>
-          ` : '<div class="h-12 mb-2"></div>'}
+          ` : '<div class="h-8 mb-1"></div>'}
 
-          <div class="grid grid-cols-3 gap-3.5 w-full max-w-[240px] justify-items-center">${keypadHTML}</div>
+          <div class="grid grid-cols-3 gap-3 w-full max-w-[240px] justify-items-center">${keypadHTML}</div>
         </div>
       `;
     }
+
+    return sceneBgHTML() + floatingDecorHTML(16) + inner;
+  }
+
+  // --- Scene 1.5: Candle Scene ---
+  function renderCandleScene() {
+    const matchStyle = state.welcomeMatchPos
+      ? `left: ${state.welcomeMatchPos.x}px; top: ${state.welcomeMatchPos.y}px; transform: translate(-50%, -100%) rotate(35deg); transition: none;`
+      : `left: 50%; top: 70%; transform: translate(-50%, 0) rotate(35deg); transition: left 0.3s ease, top 0.3s ease;`;
+
+    const inner = `
+      <div ${state.welcomeLit ? 'data-action="candle-to-balloons"' : ''} class="${state.welcomeLit ? 'fixed inset-0 z-20 cursor-pointer justify-center' : 'w-full px-6'} flex flex-col items-center text-center">
+        <p class="font-script text-3xl text-rose-500 animate-fade-up mb-8">
+          ${state.welcomeLit ? 'A wish is ready...' : 'Light the candle...'}
+        </p>
+
+        <div id="candle-container" class="relative flex flex-col items-center w-full max-w-xs h-80 justify-end pb-8">
+          ${renderCakeGraphic(state.welcomeLit, false)}
+
+          ${!state.welcomeLit ? `
+            <div id="match-stick" class="absolute z-20 touch-none select-none cursor-grab active:cursor-grabbing" style="${matchStyle}">
+              <div class="relative flex flex-col items-center pointer-events-none">
+                <div class="relative h-6 w-4 -mb-1">
+                  <div class="absolute inset-0 rounded-full bg-sun-400 animate-flame-flicker blur-[4px] opacity-70"></div>
+                  <div class="absolute inset-0 rounded-full animate-flame-flicker" style="background: radial-gradient(ellipse at 50% 80%, #fff3a0 0%, #ffbe3d 50%, #ff6b8a 90%, transparent 100%);"></div>
+                </div>
+                <div class="h-20 w-1.5 rounded-full bg-gradient-to-b from-ink-700/80 to-ink-700/40"></div>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
 
     return sceneBgHTML() + floatingDecorHTML(16) + inner;
   }
@@ -500,28 +605,31 @@
     const pad = (n) => String(n).padStart(2, '0');
 
     return `
-      <div id="countdown-timer-box" class="flex flex-col items-center text-center px-6 max-w-md w-full">
-        <div class="flex gap-2 sm:gap-3 justify-center items-center font-display text-rose-600 glow-text">
-          ${days > 0 ? `
-            <div class="flex flex-col bg-white/80 backdrop-blur rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 min-w-[64px] sm:min-w-[72px] soft-shadow border border-rose-100/50">
-              <span id="timer-days" class="text-3xl sm:text-4xl font-bold font-body text-rose-600">${pad(days)}</span>
-              <span class="text-[10px] sm:text-xs font-body text-ink-700/70 tracking-wider uppercase">Days</span>
-            </div>
-            <span class="text-2xl font-bold text-rose-400 pb-3">:</span>
-          ` : ''}
-          <div class="flex flex-col bg-white/80 backdrop-blur rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 min-w-[64px] sm:min-w-[72px] soft-shadow border border-rose-100/50">
+      ${sceneBgHTML()}
+      ${floatingDecorHTML(16)}
+      <div id="countdown-timer-box" class="flex flex-col items-center text-center px-6 max-w-md w-full select-none">
+        <div class="flex gap-2 sm:gap-3 justify-center items-center font-display text-rose-600 glow-text animate-pop-in">
+          <div class="flex flex-col bg-white/85 backdrop-blur rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 min-w-[64px] sm:min-w-[72px] soft-shadow border border-rose-100/60">
+            <span id="timer-days" class="text-3xl sm:text-4xl font-bold font-body text-rose-600">${pad(days)}</span>
+            <span class="text-[10px] sm:text-xs font-body text-ink-700/70 tracking-wider uppercase font-semibold">Days</span>
+          </div>
+          <span class="text-2xl font-bold text-rose-400 pb-3">:</span>
+
+          <div class="flex flex-col bg-white/85 backdrop-blur rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 min-w-[64px] sm:min-w-[72px] soft-shadow border border-rose-100/60">
             <span id="timer-hours" class="text-3xl sm:text-4xl font-bold font-body text-rose-600">${pad(hours)}</span>
-            <span class="text-[10px] sm:text-xs font-body text-ink-700/70 tracking-wider uppercase">Hours</span>
+            <span class="text-[10px] sm:text-xs font-body text-ink-700/70 tracking-wider uppercase font-semibold">Hours</span>
           </div>
           <span class="text-2xl font-bold text-rose-400 pb-3">:</span>
-          <div class="flex flex-col bg-white/80 backdrop-blur rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 min-w-[64px] sm:min-w-[72px] soft-shadow border border-rose-100/50">
+
+          <div class="flex flex-col bg-white/85 backdrop-blur rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 min-w-[64px] sm:min-w-[72px] soft-shadow border border-rose-100/60">
             <span id="timer-mins" class="text-3xl sm:text-4xl font-bold font-body text-rose-600">${pad(minutes)}</span>
-            <span class="text-[10px] sm:text-xs font-body text-ink-700/70 tracking-wider uppercase">Mins</span>
+            <span class="text-[10px] sm:text-xs font-body text-ink-700/70 tracking-wider uppercase font-semibold">Mins</span>
           </div>
           <span class="text-2xl font-bold text-rose-400 pb-3">:</span>
-          <div class="flex flex-col bg-white/80 backdrop-blur rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 min-w-[64px] sm:min-w-[72px] soft-shadow border border-rose-100/50">
+
+          <div class="flex flex-col bg-white/85 backdrop-blur rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 min-w-[64px] sm:min-w-[72px] soft-shadow border border-rose-100/60">
             <span id="timer-secs" class="text-3xl sm:text-4xl font-bold font-body text-rose-600">${pad(seconds)}</span>
-            <span class="text-[10px] sm:text-xs font-body text-ink-700/70 tracking-wider uppercase">Secs</span>
+            <span class="text-[10px] sm:text-xs font-body text-ink-700/70 tracking-wider uppercase font-semibold">Secs</span>
           </div>
         </div>
       </div>
@@ -753,10 +861,30 @@
         </div>
 
         <h2 class="font-display text-5xl text-rose-600 glow-text animate-fade-up">${finalWish.title}</h2>
-        <p class="font-body text-lg text-ink-800 leading-relaxed mt-6 max-w-sm animate-fade-up" style="animation-delay: 0.3s">${finalWish.message}</p>
-        <p class="font-display text-2xl text-ink-700/60 mt-12 animate-fade-in" style="animation-delay: 1s">
-          Happy Birthday 🎂
-        </p>
+        <p class="font-body text-base sm:text-lg text-ink-800 leading-relaxed mt-5 max-w-sm animate-fade-up" style="animation-delay: 0.3s">${finalWish.message}</p>
+
+        <!-- Action Buttons -->
+        <div class="mt-8 flex flex-col items-center justify-center gap-3 w-full max-w-xs sm:max-w-sm animate-fade-up" style="animation-delay: 0.6s">
+          <!-- Main / Primary Button: Replay Surprise -->
+          <button
+            type="button"
+            data-action="replay-magic"
+            class="w-full inline-flex items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 px-6 py-4 text-base font-bold text-white shadow-lg shadow-rose-500/30 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
+          >
+            <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+            <span>Replay Surprise</span>
+          </button>
+          
+          <!-- Secondary / Minimal Button: Create Surprise for Loved Ones -->
+          <button
+            type="button"
+            data-action="order-surprise"
+            class="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-white/70 hover:bg-white/95 px-5 py-3 text-xs sm:text-sm font-semibold text-rose-600/90 border border-rose-200/60 shadow-sm backdrop-blur transition-all hover:scale-[1.01] active:scale-95 cursor-pointer"
+          >
+            <svg class="h-4 w-4 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+            <span>Create a surprise for your loved ones ✨</span>
+          </button>
+        </div>
       </div>
     `;
   }
@@ -785,59 +913,101 @@
     `;
   }
 
+  function hashPin(pin) {
+    if (!pin) return '';
+    const str = String(pin).trim();
+    if (str.startsWith('h_')) return str;
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
+    }
+    return 'h_' + (h >>> 0).toString(36);
+  }
+
+  function handlePinInput(key) {
+    const pinErrorMessages = [
+      'Oopsie! Not quite right, silly goose! 💕',
+      'Nice try sweetie! Give it another shot 🐥',
+      'Almost there darling! Try one more time 💖',
+      'Hmm, not quite! You can do it 🌟',
+    ];
+
+    const targetPin = (typeof BIRTHDAY_PIN !== 'undefined') ? String(BIRTHDAY_PIN) : 'h_11li87w';
+    const targetLength = targetPin.startsWith('h_') ? 7 : targetPin.length;
+
+    if (key === '🔄') {
+      state.welcomePin = '';
+      state.welcomePinError = false;
+      state.pinErrorMsg = '';
+      render();
+    } else if (key === '⌫') {
+      state.welcomePin = state.welcomePin.slice(0, -1);
+      state.welcomePinError = false;
+      render();
+    } else if (state.welcomePin.length < targetLength) {
+      state.welcomePin += key;
+      state.welcomePinError = false;
+      render();
+      if (state.welcomePin.length === targetLength) {
+        const isMatch = (state.welcomePin === targetPin) || (hashPin(state.welcomePin) === targetPin);
+        if (isMatch) {
+          setTimeout(() => {
+            setStage('countdown');
+          }, 350);
+        } else {
+          setTimeout(() => {
+            state.welcomePinError = true;
+            state.pinErrorMsg = pinErrorMessages[state.pinErrorIndex % pinErrorMessages.length];
+            state.pinErrorIndex = (state.pinErrorIndex + 1) % pinErrorMessages.length;
+            state.welcomePin = '';
+            render();
+          }, 250);
+        }
+      }
+    }
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (state.stage === 'welcome' && state.welcomeSubStage === 'pin') {
+      if (e.key >= '0' && e.key <= '9') {
+        handlePinInput(e.key);
+      } else if (e.key === 'Backspace') {
+        handlePinInput('⌫');
+      } else if (e.key === 'Escape' || e.key === 'Delete') {
+        handlePinInput('🔄');
+      }
+    }
+  });
+
   // --- DOM Event Handling & Drag Interactions ---
   function attachEvents() {
     // Click delegation for buttons and interactive controls
     document.querySelectorAll('[data-action]').forEach((el) => {
       el.addEventListener('click', (e) => {
+        if (state.inactivityTimer) {
+          clearTimeout(state.inactivityTimer);
+          state.inactivityTimer = null;
+        }
+        state.showTapHint = false;
+        const hintEl = document.getElementById('tap-hint');
+        if (hintEl) {
+          hintEl.classList.remove('opacity-100');
+          hintEl.classList.add('opacity-0');
+        }
+
         const action = el.getAttribute('data-action');
         if (action === 'welcome-next-stage') {
           state.welcomeSubStage = 'pin';
           render();
-        } else if (action === 'welcome-to-pin') {
-          setStage('countdown');
-          render();
-        } else if (action === 'countdown-to-balloons') {
+        } else if (action === 'countdown-to-candle') {
+          setStage('candle');
+        } else if (action === 'candle-to-balloons') {
           setStage('balloons');
+        } else if (action === 'countdown-to-balloons') {
+          setStage('candle');
         } else if (action === 'pin-key') {
           const key = el.getAttribute('data-key');
-          const pinErrorMessages = [
-            'Oopsie! Not quite right, silly goose! 💕',
-            'Nice try sweetie! Give it another shot 🐥',
-            'Almost there darling! Try one more time 💖',
-            'Hmm, not quite! You can do it 🌟',
-          ];
-
-          if (key === '🔄') {
-            state.welcomePin = '';
-            state.welcomePinError = false;
-            state.pinErrorMsg = '';
-            render();
-          } else if (key === '⌫') {
-            state.welcomePin = state.welcomePin.slice(0, -1);
-            state.welcomePinError = false;
-            render();
-          } else if (state.welcomePin.length < BIRTHDAY_PIN.length) {
-            state.welcomePin += key;
-            state.welcomePinError = false;
-            render();
-            if (state.welcomePin.length === BIRTHDAY_PIN.length) {
-              if (state.welcomePin === BIRTHDAY_PIN) {
-                setTimeout(() => {
-                  state.welcomeSubStage = 'candle';
-                  render();
-                }, 350);
-              } else {
-                setTimeout(() => {
-                  state.welcomePinError = true;
-                  state.pinErrorMsg = pinErrorMessages[state.pinErrorIndex % pinErrorMessages.length];
-                  state.pinErrorIndex = (state.pinErrorIndex + 1) % pinErrorMessages.length;
-                  state.welcomePin = '';
-                  render();
-                }, 250);
-              }
-            }
-          }
+          handlePinInput(key);
         } else if (action === 'pop-balloon') {
           if (!state.balloonPopped) {
             state.balloonPopped = true;
@@ -866,16 +1036,7 @@
             setStage('cake');
           }
         } else if (action === 'cake-done') {
-          setStage('daughter');
-        } else if (action === 'next-daughter-wish') {
-          setStage('family');
-        } else if (action === 'next-family-wish') {
-          if (state.familyIndex < familyWishes.length - 1) {
-            state.familyIndex += 1;
-            render();
-          } else {
-            setStage('husband');
-          }
+          setStage('husband');
         } else if (action === 'husband-done') {
           setStage('final');
         } else if (action === 'toggle-confetti') {
@@ -883,6 +1044,8 @@
           render();
         } else if (action === 'replay-magic') {
           setStage('welcome');
+        } else if (action === 'order-surprise') {
+          window.location.href = '/?order=birthday-star-celebration';
         }
       });
     });
