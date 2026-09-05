@@ -18,7 +18,7 @@
 
       /* Clean Full-width CMS form styling */
       div[class*="EditorContainer"] {
-        max-width: 920px !important;
+        max-width: 960px !important;
         margin: 0 auto !important;
       }
 
@@ -61,7 +61,7 @@
       .autofill-textarea {
         width: 100%;
         box-sizing: border-box;
-        height: 90px;
+        height: 85px;
         background: rgba(255, 255, 255, 0.08);
         border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 8px;
@@ -165,6 +165,115 @@
         font-weight: 700;
         color: #db2777;
         font-size: 14px;
+      }
+
+      /* Multi-Photo Uploader & Reordering Grid */
+      .multi-photo-container {
+        background: #ffffff;
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 6px;
+      }
+
+      .multi-photo-dropzone {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: #f8fafc;
+        border-radius: 8px;
+        border: 1px dashed #94a3b8;
+        cursor: pointer;
+        text-align: center;
+        transition: background 0.2s, border-color 0.2s;
+      }
+
+      .multi-photo-dropzone:hover {
+        background: #fdf2f8;
+        border-color: #ec4899;
+      }
+
+      .multi-photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .photo-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      .photo-card-img {
+        width: 100%;
+        height: 110px;
+        object-fit: cover;
+        background: #f1f5f9;
+      }
+
+      .photo-card-badge {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        background: rgba(15, 23, 42, 0.75);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      .photo-card-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 8px;
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      .btn-arrow {
+        background: #e2e8f0;
+        border: none;
+        border-radius: 4px;
+        width: 26px;
+        height: 24px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn-arrow:hover:not(:disabled) {
+        background: #cbd5e1;
+      }
+
+      .btn-arrow:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      .btn-remove-photo {
+        background: #fee2e2;
+        color: #ef4444;
+        border: none;
+        border-radius: 4px;
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
       }
     </style>
   </head>
@@ -291,7 +400,6 @@
       CMS.registerWidget('slug_checker', SlugCheckerControl);
 
       // 4. Custom Single "pin_hasher" Widget:
-      // Admin only enters PIN (e.g. 1234567); displays hash confirmation; writes encrypted pin_hash to MD file!
       var PinHasherControl = createClass({
         handleChange: function(e) {
           var val = e.target.value.trim();
@@ -322,13 +430,130 @@
 
       CMS.registerWidget('pin_hasher', PinHasherControl);
 
-      // 5. PreSave Hook: Automatically inject computed `url`, `pin_hash`, `photos` array, and `balloons` array into frontmatter!
+      // 5. Custom Multi-Photo Uploader Widget with 6-Photo Batch Upload & Reordering
+      var MultiPhotoControl = createClass({
+        getInitialState: function() {
+          var initialList = [];
+          try {
+            if (this.props.value) {
+              initialList = typeof this.props.value === 'string' ? JSON.parse(this.props.value) : this.props.value;
+            }
+          } catch(e) {}
+          return { photos: Array.isArray(initialList) ? initialList : [] };
+        },
+
+        handleFileSelect: function(e) {
+          var self = this;
+          var files = Array.from(e.target.files);
+          if (!files.length) return;
+
+          // Process files into Data URLs
+          var readers = files.map(function(file) {
+            return new Promise(function(resolve) {
+              var reader = new FileReader();
+              reader.onload = function(evt) {
+                resolve({ name: file.name, url: evt.target.result });
+              };
+              reader.readAsDataURL(file);
+            });
+          });
+
+          Promise.all(readers).then(function(newPhotos) {
+            var combined = self.state.photos.concat(newPhotos.map(function(p) { return p.url; }));
+            if (combined.length > 6) combined = combined.slice(0, 6);
+            self.updatePhotos(combined);
+          });
+        },
+
+        movePhoto: function(index, direction) {
+          var newPhotos = this.state.photos.slice();
+          var targetIndex = index + direction;
+          if (targetIndex < 0 || targetIndex >= newPhotos.length) return;
+          var temp = newPhotos[index];
+          newPhotos[index] = newPhotos[targetIndex];
+          newPhotos[targetIndex] = temp;
+          this.updatePhotos(newPhotos);
+        },
+
+        removePhoto: function(index) {
+          var newPhotos = this.state.photos.slice();
+          newPhotos.splice(index, 1);
+          this.updatePhotos(newPhotos);
+        },
+
+        updatePhotos: function(photos) {
+          this.setState({ photos: photos });
+          this.props.onChange(photos);
+        },
+
+        render: function() {
+          var self = this;
+          var photos = this.state.photos || [];
+
+          return h('div', { className: 'multi-photo-container' },
+            // Dropzone/Click to upload all 6 at once
+            h('label', { className: 'multi-photo-dropzone' },
+              h('span', { style: { fontSize: '28px', marginBottom: '6px' } }, '📷'),
+              h('strong', { style: { color: '#0f172a', fontSize: '14px' } },
+                photos.length >= 6 ? 'All 6 Photos Selected (Reorder Below)' : 'Click to Upload Photos (Select up to 6 at once)'
+              ),
+              h('span', { style: { color: '#64748b', fontSize: '12px', marginTop: '4px' } },
+                'Currently: ' + photos.length + '/6 photos selected. Use arrows below to change photo order.'
+              ),
+              h('input', {
+                type: 'file',
+                multiple: true,
+                accept: 'image/*',
+                style: { display: 'none' },
+                onChange: this.handleFileSelect
+              })
+            ),
+
+            // Photos Grid with Reordering Buttons
+            photos.length > 0 ? h('div', { className: 'multi-photo-grid' },
+              photos.map(function(photoUrl, idx) {
+                return h('div', { key: idx, className: 'photo-card' },
+                  h('span', { className: 'photo-card-badge' }, 'Photo ' + (idx + 1)),
+                  h('img', { src: photoUrl, className: 'photo-card-img', alt: 'Photo ' + (idx + 1) }),
+                  h('div', { className: 'photo-card-actions' },
+                    h('button', {
+                      type: 'button',
+                      className: 'btn-arrow',
+                      disabled: idx === 0,
+                      onClick: function() { self.movePhoto(idx, -1); },
+                      title: 'Move Left'
+                    }, '◀'),
+                    h('button', {
+                      type: 'button',
+                      className: 'btn-remove-photo',
+                      onClick: function() { self.removePhoto(idx); },
+                      title: 'Remove'
+                    }, '✕'),
+                    h('button', {
+                      type: 'button',
+                      className: 'btn-arrow',
+                      disabled: idx === photos.length - 1,
+                      onClick: function() { self.movePhoto(idx, 1); },
+                      title: 'Move Right'
+                    }, '▶')
+                  )
+                );
+              })
+            ) : null
+          );
+        }
+      });
+
+      CMS.registerWidget('multi_photo_uploader', MultiPhotoControl);
+
+      // 6. PreSave Hook: Automatically inject computed `url`, `pin_hash`, `photos` array, and `balloons` array into frontmatter!
       CMS.registerEventListener({
         name: 'preSave',
         handler: function(data) {
           var entry = data.entry;
           var slug = entry.getIn(['data', 'slug_name']);
           var pinCode = entry.getIn(['data', 'pin_code']);
+          var photosData = entry.getIn(['data', 'photos_data']);
           var updates = {};
 
           if (slug) {
@@ -340,16 +565,12 @@
             updates.pin_hash = generatePinHash(pinCode);
           }
 
-          // Convert individual photo_1...photo_6 inputs into standard photos array
-          var photoList = [];
-          for (var p = 1; p <= 6; p++) {
-            var photoVal = entry.getIn(['data', 'photo_' + p]);
-            if (photoVal) {
-              photoList.push(photoVal);
+          // Save photos array from multi_photo_uploader widget
+          if (photosData) {
+            var pList = photosData.toJS ? photosData.toJS() : photosData;
+            if (Array.isArray(pList) && pList.length > 0) {
+              updates.photos = pList;
             }
-          }
-          if (photoList.length > 0) {
-            updates.photos = photoList;
           }
 
           // Convert individual balloon_1...balloon_6 inputs into standard balloons array
@@ -371,7 +592,7 @@
         }
       });
 
-      // 6. WhatsApp Order Auto-Fill Parser
+      // 7. WhatsApp Order Auto-Fill Parser
       function parseWhatsAppOrder(text) {
         var result = {};
         if (!text) return result;
@@ -516,7 +737,7 @@
       window.addEventListener('hashchange', checkRouteForBanner);
       setInterval(checkRouteForBanner, 1000);
 
-      // 7. Netlify Identity handling (identical to blog pattern)
+      // 8. Netlify Identity handling (identical to blog pattern)
       window.CMS_MANUAL_INIT = true;
 
       if (window.netlifyIdentity) {

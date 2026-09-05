@@ -25,13 +25,8 @@ collections:
       - { label: "Birth Date", name: "birth_date", widget: "datetime", default: "", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DDT00:00:00", hint: "Select the birth date using the calendar picker" }
       - { label: "7-Digit PIN / Password", name: "pin_code", widget: "pin_hasher", hint: "Enter the PIN (e.g. 1234567). The encrypted pin_hash is generated and stored in the markdown file automatically on submit." }
       
-      # 6 Direct Photo Upload Inputs (Always open, individual file uploads)
-      - { label: "Photo 1 (Mandatory)", name: "photo_1", widget: "image" }
-      - { label: "Photo 2 (Mandatory)", name: "photo_2", widget: "image" }
-      - { label: "Photo 3 (Mandatory)", name: "photo_3", widget: "image" }
-      - { label: "Photo 4 (Mandatory)", name: "photo_4", widget: "image" }
-      - { label: "Photo 5 (Mandatory)", name: "photo_5", widget: "image" }
-      - { label: "Photo 6 (Mandatory)", name: "photo_6", widget: "image" }
+      # Multi-Photo Uploader (Batch upload up to 6 photos at once with drag/drop reordering)
+      - { label: "Photos (Upload 6 Photos at Once with Drag & Reorder)", name: "photos_data", widget: "multi_photo_uploader", hint: "Select all 6 photos together from your computer. Drag or use arrow buttons to reorder them 1 to 6." }
 
       # 6 Direct Balloon Message Inputs (Always open, auto-fillable with 1 click)
       - { label: "Balloon Message 1 (Mandatory)", name: "balloon_1", widget: "string" }
