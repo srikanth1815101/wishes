@@ -24,9 +24,7 @@ collections:
     format: "frontmatter"
     editor:
       preview: true
-    filter: { field: "template_type", value: "birthday-star" }
     fields:
-      - { label: "Template Type", name: "template_type", widget: "hidden", default: "birthday-star" }
       - { label: "Customised URL Slug", name: "slug_name", widget: "string", hint: "e.g., 'rahul', 'kiran-birthday'. Live availability checked automatically.", pattern: ['^[a-z0-9-]+$', "Must contain only lowercase letters, numbers, and hyphens"] }
       - { label: "Full URL Path", name: "url", widget: "string", hint: "Automatically formatted as /customisedurl/", pattern: ['^\/[a-z0-9-]+\/$', "Must start and end with / like /your-slug/"] }
       - { label: "Birthday Person Name", name: "birthday_name", widget: "string" }
@@ -64,16 +62,18 @@ collections:
     format: "frontmatter"
     editor:
       preview: true
-    filter: { field: "template_type", value: "friendship-day" }
     fields:
-      - { label: "Template Type", name: "template_type", widget: "hidden", default: "friendship-day" }
       - { label: "Customised URL Slug", name: "slug_name", widget: "string", hint: "e.g., 'bestie-ananya'. Live availability checked automatically.", pattern: ['^[a-z0-9-]+$', "Must contain only lowercase letters, numbers, and hyphens"] }
       - { label: "Full URL Path", name: "url", widget: "string", hint: "Format: /customisedurl/" }
       - { label: "Recipient Name", name: "recipient_name", widget: "string" }
       - { label: "Sender Name", name: "sender_name", widget: "string" }
-      - label: "Gender Pairing", name: "gender_pair", widget: "select", options: ["Male & Female", "Male & Male", "Female & Female"], default: "Male & Female" }
+      - { label: "Gender Pairing", name: "gender_pair", widget: "select", options: ["Male & Female", "Male & Male", "Female & Female"], default: "Male & Female" }
       - { label: "Special Friendship Message", name: "friendship_note", widget: "text" }
-      - label: "Gallery Photos", name: "photos", widget: "list", required: false, field: { label: "Photo", name: "photo", widget: "image" }
+      - label: "Gallery Photos"
+        name: "photos"
+        widget: "list"
+        required: false
+        field: { label: "Photo", name: "photo", widget: "image" }
 
   # 3. All General / Custom Orders (Extensible for all future templates)
   - name: "general_wishes"
@@ -95,4 +95,8 @@ collections:
       - { label: "Recipient Name", name: "recipient_name", widget: "string", required: false }
       - { label: "Sender Name", name: "sender_name", widget: "string", required: false }
       - { label: "Message / Letter", name: "letter", widget: "text", required: false }
-      - label: "Uploaded Photos", name: "photos", widget: "list", required: false, field: { label: "Photo", name: "photo", widget: "image" }
+      - label: "Uploaded Photos"
+        name: "photos"
+        widget: "list"
+        required: false
+        field: { label: "Photo", name: "photo", widget: "image" }
