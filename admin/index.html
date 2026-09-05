@@ -637,16 +637,12 @@
             updates.pin_hash = generatePinHash(pinCode);
           }
 
-          // Collect individual photo_1...photo_6 uploaded image files into standard photos array
-          var pList = [];
-          for (var p = 1; p <= 6; p++) {
-            var pVal = entry.getIn(['data', 'photo_' + p]);
-            if (pVal) {
-              pList.push(pVal);
+          // Save photos from batch multi_photo_uploader widget
+          if (photosData) {
+            var pList = photosData.toJS ? photosData.toJS() : photosData;
+            if (Array.isArray(pList) && pList.length > 0) {
+              updates.photos = pList;
             }
-          }
-          if (pList.length > 0) {
-            updates.photos = pList;
           }
 
           var balloonList = [];
