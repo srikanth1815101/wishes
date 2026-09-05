@@ -319,10 +319,10 @@
           var parsed = parseWhatsAppOrder(this.state.text);
           var filledCount = 0;
 
-          // 1. Fill Slug / URL
-          if (parsed.url) {
-            var urlEl = document.querySelector('input[id*="url"]');
-            if (urlEl) { setNativeInputValue(urlEl, parsed.url); filledCount++; }
+          // 1. Fill Slug
+          if (parsed.slug) {
+            var slugEl = document.querySelector('input[id*="slug"]');
+            if (slugEl) { setNativeInputValue(slugEl, parsed.slug); filledCount++; }
           }
 
           // 2. Fill Birthday Person
@@ -510,13 +510,15 @@
         name: 'preSave',
         handler: function(data) {
           var entry = data.entry;
-          var urlVal = entry.getIn(['data', 'url']);
+          var slugVal = entry.getIn(['data', 'slug']);
           var pinCode = entry.getIn(['data', 'pin_code']);
           var existingPinHash = entry.getIn(['data', 'pin_hash']);
           var updates = {};
 
-          if (urlVal) {
-            var cleanSlug = String(urlVal).toLowerCase().trim().replace(/^\/+|\/+$/g, '');
+          var cleanSlug = 'wish';
+          if (slugVal) {
+            cleanSlug = String(slugVal).toLowerCase().trim().replace(/[^a-z0-9-]/g, '').replace(/^-+|-+$/g, '');
+            updates.slug = cleanSlug;
             updates.url = '/' + cleanSlug + '/';
           }
 
@@ -527,10 +529,22 @@
           }
 
           // Gather individual photo_1...photo_6 inputs into photos array
+          // Format paths into /images/wishes/{slug}/{slug}{N}.{ext}
           var pList = [];
           for (var p = 1; p <= 6; p++) {
             var pVal = entry.getIn(['data', 'photo_' + p]);
-            if (pVal) pList.push(pVal);
+            if (pVal) {
+              var strVal = String(pVal).trim();
+              // extract file extension
+              var ext = 'jpg';
+              var dotIdx = strVal.lastIndexOf('.');
+              if (dotIdx !== -1) {
+                var extracted = strVal.substring(dotIdx + 1).toLowerCase();
+                if (extracted.length <= 4) ext = extracted;
+              }
+              var formattedPath = '/images/wishes/' + cleanSlug + '/' + cleanSlug + p + '.' + ext;
+              pList.push(formattedPath);
+            }
           }
           if (pList.length > 0) {
             updates.photos = pList;
@@ -568,7 +582,8 @@
         var nameMatch = text.match(/\*?Birthday Person:?\*?\s*([^\n\r]+)/i);
         if (nameMatch) {
           result.birthday_name = nameMatch[1].trim();
-          var slugClean = result.birthday_name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+          var slugClean = result.birthday_name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, '');
+          result.slug = slugClean;
           result.url = '/' + slugClean + '/';
         }
 
@@ -617,14 +632,24 @@
         el.dispatchEvent(new Event('change', { bubbles: true }));
       }
 
-      // 7. Populate balloon_1..6 and photo_1..6 when editing an existing entry
+      // 7. Populate balloon_1..6 and photo_1..6 and slug when editing an existing entry
       CMS.registerEventListener({
         name: 'preProcess',
         handler: function(data) {
           var entry = data.entry;
+          var slug = entry.get('slug');
+          var url = entry.getIn(['data', 'url']);
           var photos = entry.getIn(['data', 'photos']);
           var balloons = entry.getIn(['data', 'balloons']);
           var updates = {};
+
+          if (!entry.getIn(['data', 'slug'])) {
+            if (slug) {
+              updates.slug = slug;
+            } else if (url) {
+              updates.slug = String(url).replace(/^\/+|\/+$/g, '');
+            }
+          }
 
           if (photos && typeof photos.toJS === 'function') {
             var pArr = photos.toJS();

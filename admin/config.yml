@@ -13,16 +13,17 @@ collections:
     label: "Birthday Wish Orders"
     folder: "content/wishes"
     create: true
-    slug: "{{slug}}"
-    media_folder: "{{media_folder}}/{{slug}}"
-    public_folder: "{{public_folder}}/{{slug}}"
+    slug: "{{fields.slug}}"
+    identifier_field: "slug"
+    media_folder: "{{media_folder}}/{{fields.slug}}"
+    public_folder: "{{public_folder}}/{{fields.slug}}"
     format: "frontmatter"
     extension: "md"
     editor:
       preview: false
     fields:
       - { label: "Paste WhatsApp Message to Auto-Fill Form", name: "whatsapp_order_text", widget: "whatsapp_autofill_box", required: false, hint: "Paste customer WhatsApp order message here to automatically populate name, date, pin, and all balloon messages." }
-      - { label: "Customised URL Slug", name: "url", widget: "slug_checker", hint: "URL identifier (e.g. /roja/, /kiran/). Checks availability against content/wishes/ and sets page at wishes.csrgo.com/your-slug/" }
+      - { label: "Customised URL Slug", name: "slug", widget: "slug_checker", hint: "URL identifier (e.g. roja, kiran). Sets filename to roja.md and page at wishes.csrgo.com/roja/" }
       - { label: "Birthday Person Name", name: "birthday_name", widget: "string" }
       - { label: "Sender Name", name: "sender_name", widget: "string" }
       - { label: "Birth Date", name: "birth_date", widget: "datetime", default: "", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DDT00:00:00", hint: "Select the birth date using the calendar picker" }
