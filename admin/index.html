@@ -3,118 +3,103 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wishes Admin | wishes-admin.csrgo.com</title>
+    <title>CSRGO Wishes | Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
       html, body {
         margin: 0;
         padding: 0;
-        background: linear-gradient(to bottom, #fdf4ff 0%, #f3e8ff 50%, #dbeafe 100%);
+        background: #f8fafc;
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       }
 
-      /* Helper Bar: ONLY visible once logged in */
-      #csrgo-admin-bar {
-        display: none;
-        background: linear-gradient(135deg, #18181b 0%, #09090b 100%);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        color: #fff;
-        padding: 8px 18px;
-        position: relative;
-        z-index: 99999;
+      /* Clean Full-width CMS form styling overrides */
+      div[class*="EditorContainer"] {
+        max-width: 900px !important;
+        margin: 0 auto !important;
       }
 
-      #csrgo-admin-bar.logged-in {
+      /* Custom widget styling */
+      .widget-box {
+        position: relative;
         display: flex;
-        flex-wrap: wrap;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 4px;
+      }
+
+      .widget-row {
+        display: flex;
         align-items: center;
-        justify-content: space-between;
         gap: 12px;
       }
 
-      .admin-brand {
+      .widget-input {
+        flex: 1;
+        padding: 12px 16px;
+        font-size: 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        outline: none;
+        font-family: inherit;
+        background: #fff;
+        transition: border-color 0.2s;
+      }
+
+      .widget-input:focus {
+        border-color: #ec4899;
+      }
+
+      .badge-indicator {
+        font-size: 12px;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 6px;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+      }
+
+      .badge-idle { background: #f1f5f9; color: #64748b; }
+      .badge-available { background: #dcfce7; color: #16a34a; border: 1px solid #86efac; }
+      .badge-taken { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
+      .badge-loading { background: #fef3c7; color: #d97706; }
+
+      .hash-preview-row {
         display: flex;
         align-items: center;
         gap: 8px;
         font-size: 13px;
-        font-weight: 700;
-      }
-
-      .admin-tools {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .tool-box {
-        display: flex;
-        align-items: center;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #475569;
+        background: #fdf2f8;
+        border: 1px dashed #f472b6;
+        padding: 8px 12px;
         border-radius: 6px;
-        padding: 3px 8px;
-        gap: 6px;
-        font-size: 12px;
       }
 
-      .tool-prefix { color: #9ca3af; font-size: 11px; }
-      .tool-input { background: transparent; border: none; outline: none; color: #fff; font-size: 12px; font-weight: 600; width: 130px; font-family: inherit; }
-      
-      .slug-status { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
-      .status-idle { background: #374151; color: #9ca3af; }
-      .status-available { background: rgba(16, 185, 129, 0.25); color: #34d399; }
-      .status-taken { background: rgba(239, 68, 68, 0.25); color: #f87171; }
-      .status-loading { background: rgba(245, 158, 11, 0.25); color: #fbbf24; }
-
-      .pin-hash-badge {
+      .hash-preview-code {
         font-family: monospace;
-        font-size: 11px;
-        background: rgba(236, 72, 153, 0.25);
-        color: #f472b6;
-        padding: 2px 6px;
-        border-radius: 4px;
-        cursor: pointer;
+        font-weight: 700;
+        color: #db2777;
+        font-size: 14px;
       }
     </style>
   </head>
   <body>
-    <!-- Authenticated Tool Bar (appears ONLY once logged in) -->
-    <div id="csrgo-admin-bar">
-      <div class="admin-brand">
-        ✨ <span>Wishes Admin</span>
-      </div>
-      <div class="admin-tools">
-        <!-- Slug Availability Checker -->
-        <div class="tool-box" title="Type a slug to check availability against existing wishes md files">
-          <span class="tool-prefix">wishes.csrgo.com/</span>
-          <input type="text" id="checkSlugInput" class="tool-input" placeholder="customisedurl" spellcheck="false" autocomplete="off" />
-          <span id="slugStatusBadge" class="slug-status status-idle">Check Slug</span>
-        </div>
-
-        <!-- 7-Digit PIN Quick Hasher -->
-        <div class="tool-box" title="Type 7-digit PIN to get pin_hash">
-          <span class="tool-prefix">PIN:</span>
-          <input type="text" id="quickPinInput" class="tool-input" placeholder="1234567" maxlength="7" style="width: 60px;" />
-          <span id="quickPinHash" class="pin-hash-badge" title="Click to copy hash">h_xdkb3o</span>
-        </div>
-      </div>
-    </div>
-
     <!-- Identity Widget -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
-    <!-- Netlify CMS matching blog version -->
+    <!-- Netlify CMS (Matching Blog Engine) -->
     <script src="https://unpkg.com/netlify-cms@^2.10.192/dist/netlify-cms.js"></script>
 
     <script>
-      // 1. PIN Hasher calculation
-      function generatePinHash(pin) {
-        if (!pin) return '';
+      // 1. PIN Hashing algorithm matching birthday-star
+      function generatePinHash(val) {
+        if (!val) return '';
         var hash = 0;
-        var str = String(pin).trim();
+        var str = String(val).trim();
         for (var i = 0; i < str.length; i++) {
           var char = str.charCodeAt(i);
           hash = ((hash << 5) - hash) + char;
@@ -123,101 +108,161 @@
         return 'h_' + Math.abs(hash).toString(36);
       }
 
-      var pinInput = document.getElementById('quickPinInput');
-      var pinHashDisplay = document.getElementById('quickPinHash');
-      if (pinInput && pinHashDisplay) {
-        pinInput.addEventListener('input', function(e) {
-          var val = e.target.value.replace(/\D/g, '');
-          e.target.value = val;
-          pinHashDisplay.textContent = generatePinHash(val) || 'h_......';
-        });
-        pinHashDisplay.addEventListener('click', function() {
-          if (pinHashDisplay.textContent && pinHashDisplay.textContent !== 'h_......') {
-            navigator.clipboard.writeText(pinHashDisplay.textContent);
-            var orig = pinHashDisplay.textContent;
-            pinHashDisplay.textContent = 'Copied!';
-            setTimeout(function() { pinHashDisplay.textContent = orig; }, 1000);
-          }
-        });
-      }
-
-      // 2. Slug availability checker
+      // 2. Slug availability verification cache
       var existingSlugs = new Set(["birthday-sample", "kiran"]);
       fetch('/slugs.json')
-        .then(function(res) { return res.json(); })
+        .then(function(r) { return r.json(); })
         .then(function(list) {
           if (Array.isArray(list)) list.forEach(function(s) { existingSlugs.add(s.toLowerCase()); });
         })
         .catch(function() {});
 
-      var checkSlugInput = document.getElementById('checkSlugInput');
-      var slugStatusBadge = document.getElementById('slugStatusBadge');
-      var slugTimer = null;
+      // 3. Register Custom In-Form "slug_checker" Widget
+      var SlugCheckerControl = createClass({
+        getInitialState: function() {
+          return {
+            status: 'idle',
+            message: 'Check Availability'
+          };
+        },
+        handleChange: function(e) {
+          var self = this;
+          var val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+          this.props.onChange(val);
 
-      if (checkSlugInput && slugStatusBadge) {
-        checkSlugInput.addEventListener('input', function() {
-          var raw = checkSlugInput.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
-          checkSlugInput.value = raw;
-
-          if (!raw) {
-            slugStatusBadge.className = 'slug-status status-idle';
-            slugStatusBadge.textContent = 'Check Slug';
+          if (!val) {
+            this.setState({ status: 'idle', message: 'Enter slug' });
             return;
           }
 
-          if (existingSlugs.has(raw)) {
-            slugStatusBadge.className = 'slug-status status-taken';
-            slugStatusBadge.innerHTML = '✕ Taken';
+          if (existingSlugs.has(val)) {
+            this.setState({ status: 'taken', message: '✕ Taken (file exists)' });
             return;
           }
 
-          slugStatusBadge.className = 'slug-status status-loading';
-          slugStatusBadge.innerHTML = 'Checking...';
+          this.setState({ status: 'loading', message: 'Checking...' });
 
-          clearTimeout(slugTimer);
-          slugTimer = setTimeout(function() {
-            var url = 'https://api.github.com/repos/srikanth1815101/wishes/contents/content/wishes/' + raw + '.md';
+          clearTimeout(this._timer);
+          this._timer = setTimeout(function() {
+            var url = 'https://api.github.com/repos/srikanth1815101/wishes/contents/content/wishes/' + val + '.md';
             fetch(url, { headers: { 'Accept': 'application/vnd.github.v3+json' } })
               .then(function(res) {
                 if (res.status === 200) {
-                  existingSlugs.add(raw);
-                  slugStatusBadge.className = 'slug-status status-taken';
-                  slugStatusBadge.innerHTML = '✕ Taken';
+                  existingSlugs.add(val);
+                  self.setState({ status: 'taken', message: '✕ URL Taken (in wishes folder)' });
                 } else {
-                  slugStatusBadge.className = 'slug-status status-available';
-                  slugStatusBadge.innerHTML = '✓ Available';
+                  self.setState({ status: 'available', message: '✓ URL Available!' });
                 }
               })
               .catch(function() {
-                var avail = !existingSlugs.has(raw);
-                slugStatusBadge.className = 'slug-status ' + (avail ? 'status-available' : 'status-taken');
-                slugStatusBadge.innerHTML = avail ? '✓ Available' : '✕ Taken';
+                var isAvail = !existingSlugs.has(val);
+                self.setState({
+                  status: isAvail ? 'available' : 'taken',
+                  message: isAvail ? '✓ Available' : '✕ Taken'
+                });
               });
-          }, 300);
-        });
-      }
+          }, 350);
+        },
+        render: function() {
+          var val = this.props.value || '';
+          var statusClass = 'badge-idle';
+          if (this.state.status === 'available') statusClass = 'badge-available';
+          if (this.state.status === 'taken') statusClass = 'badge-taken';
+          if (this.state.status === 'loading') statusClass = 'badge-loading';
 
-      // 3. Ensure manual init for Netlify Identity exactly like blog
+          return h('div', { className: 'widget-box' },
+            h('div', { className: 'widget-row' },
+              h('input', {
+                type: 'text',
+                id: this.props.forID,
+                className: 'widget-input',
+                value: val,
+                placeholder: 'e.g. rahul, kiran-birthday',
+                onChange: this.handleChange
+              }),
+              h('span', { className: 'badge-indicator ' + statusClass }, this.state.message)
+            ),
+            val ? h('div', { style: { fontSize: '13px', color: '#64748b' } },
+              'Final URL will be: ',
+              h('strong', { style: { color: '#0f172a' } }, 'https://wishes.csrgo.com/' + val + '/')
+            ) : null
+          );
+        }
+      });
+
+      CMS.registerWidget('slug_checker', SlugCheckerControl);
+
+      // 4. Register Custom In-Form "pin_hasher" Widget
+      var PinHasherControl = createClass({
+        handleChange: function(e) {
+          var val = e.target.value;
+          this.props.onChange(val);
+        },
+        render: function() {
+          var val = this.props.value || '';
+          var computedHash = generatePinHash(val);
+
+          return h('div', { className: 'widget-box' },
+            h('div', { className: 'widget-row' },
+              h('input', {
+                type: 'text',
+                id: this.props.forID,
+                className: 'widget-input',
+                value: val,
+                placeholder: 'Enter 7-digit PIN (e.g. 1234567) or password',
+                onChange: this.handleChange
+              })
+            ),
+            computedHash ? h('div', { className: 'hash-preview-row' },
+              '🔒 Generated PIN Hash for markdown: ',
+              h('span', { className: 'hash-preview-code' }, computedHash)
+            ) : null
+          );
+        }
+      });
+
+      CMS.registerWidget('pin_hasher', PinHasherControl);
+
+      // 5. PreSave Hook: Automatically inject computed `pin_hash` and `url` into the MD frontmatter
+      CMS.registerEventListener({
+        name: 'preSave',
+        handler: function(data) {
+          var entry = data.entry;
+          var slug = entry.getIn(['data', 'slug_name']);
+          var pinCode = entry.getIn(['data', 'pin_code']);
+          var updates = {};
+
+          if (slug) {
+            var cleanSlug = String(slug).toLowerCase().trim().replace(/^\/+|\/+$/g, '');
+            updates.url = '/' + cleanSlug + '/';
+          }
+
+          if (pinCode) {
+            updates.pin_hash = generatePinHash(pinCode);
+          }
+
+          if (Object.keys(updates).length > 0) {
+            return entry.get('data').merge(updates);
+          }
+          return entry.get('data');
+        }
+      });
+
+      // 6. Netlify Identity handling (identical to blog pattern)
       window.CMS_MANUAL_INIT = true;
-
-      var adminBar = document.getElementById('csrgo-admin-bar');
 
       if (window.netlifyIdentity) {
         window.netlifyIdentity.on("init", function(user) {
           if (!user) {
-            if (adminBar) adminBar.classList.remove('logged-in');
             window.netlifyIdentity.on("login", function() {
               document.location.reload();
             });
-          } else {
-            // User is logged in: show the tools bar
-            if (adminBar) adminBar.classList.add('logged-in');
           }
         });
         window.netlifyIdentity.init();
       }
 
-      // 4. Start CMS
+      // Start CMS safely
       CMS.init();
     </script>
   </body>

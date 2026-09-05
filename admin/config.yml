@@ -5,7 +5,7 @@ backend:
 media_folder: "static/images/wishes"
 public_folder: "/images/wishes"
 
-site_url: "https://wishes-admin.csrgo.com"
+site_url: "https://wishes.csrgo.com"
 display_url: "https://wishes.csrgo.com"
 
 collections:
@@ -16,44 +16,50 @@ collections:
     slug: "{{fields.slug_name}}"
     format: "frontmatter"
     extension: "md"
+    editor:
+      preview: false
     fields:
-      - { label: "Customised URL Slug", name: "slug_name", widget: "string", hint: "e.g., rahul, kiran-birthday" }
-      - { label: "Full URL Path", name: "url", widget: "string", hint: "/customisedurl/" }
+      - { label: "Customised URL Slug", name: "slug_name", widget: "slug_checker", hint: "Enter your desired URL. Availability against existing wishes markdown files will be verified right here." }
+      - { label: "Full URL Path", name: "url", widget: "string", hint: "Format: /customisedurl/ (e.g. /kiran/)" }
       - { label: "Birthday Person Name", name: "birthday_name", widget: "string" }
       - { label: "Sender Name", name: "sender_name", widget: "string" }
       - { label: "Birth Date", name: "birth_date", widget: "datetime" }
-      - { label: "7-Digit PIN Code", name: "pin_code", widget: "string", required: false }
-      - { label: "PIN Hash", name: "pin_hash", widget: "string", hint: "Auto-computed hash like h_xdkb3o" }
+      - { label: "Unlock Password / 7-Digit PIN", name: "pin_code", widget: "pin_hasher", hint: "Enter password or 7-digit PIN here (e.g. 1234567). It will automatically convert to encrypted pin_hash for the md file." }
+      - { label: "PIN Hash (Auto-computed for MD)", name: "pin_hash", widget: "string", hint: "Auto-generated hash (e.g. h_xdkb3o)" }
       - { label: "PIN Hint (Optional)", name: "pin_hint", widget: "string", required: false }
-      - label: "Photos (6 items)"
+      - label: "Photos (Exactly 6 Photos)"
         name: "photos"
         widget: "list"
         min: 6
         max: 6
         field: { label: "Photo", name: "photo", widget: "image" }
-      - label: "Balloon Messages (6 items)"
+      - label: "Balloon Messages (6 Messages)"
         name: "balloons"
         widget: "list"
         min: 6
         max: 6
-        field: { label: "Message", name: "message", widget: "string" }
-      - { label: "Birthday Letter", name: "letter", widget: "markdown" }
+        field: { label: "Balloon Message", name: "message", widget: "string" }
+      - { label: "Birthday Letter", name: "letter", widget: "text" }
 
   - name: "custom_wishes"
-    label: "Custom / Other Orders"
+    label: "Custom / Future Orders"
     folder: "content/wishes"
     create: true
     slug: "{{fields.slug_name}}"
     format: "frontmatter"
     extension: "md"
+    editor:
+      preview: false
     fields:
       - { label: "Template Type", name: "template_type", widget: "select", options: ["birthday-star", "friendship-day", "anniversary", "custom"], default: "birthday-star" }
-      - { label: "Customised URL Slug", name: "slug_name", widget: "string" }
+      - { label: "Customised URL Slug", name: "slug_name", widget: "slug_checker" }
       - { label: "Full URL Path", name: "url", widget: "string" }
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Recipient Name", name: "recipient_name", widget: "string", required: false }
       - { label: "Sender Name", name: "sender_name", widget: "string", required: false }
-      - { label: "Message / Note", name: "body", widget: "markdown", required: false }
+      - { label: "Password / PIN", name: "pin_code", widget: "pin_hasher", required: false }
+      - { label: "PIN Hash", name: "pin_hash", widget: "string", required: false }
+      - { label: "Message / Note", name: "body", widget: "text", required: false }
       - label: "Photos"
         name: "photos"
         widget: "list"
