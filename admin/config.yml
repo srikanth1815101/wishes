@@ -19,7 +19,8 @@ collections:
     editor:
       preview: false
     fields:
-      - { label: "Customised URL Slug", name: "slug_name", widget: "slug_checker", hint: "Enter desired slug (e.g., rahul, kiran). Checks availability against wishes folder and automatically saves as url: /your-slug/" }
+      - { label: "Paste WhatsApp Message to Auto-Fill Form", name: "whatsapp_order_text", widget: "whatsapp_autofill_box", required: false, hint: "Paste customer WhatsApp order message here to automatically populate name, date, pin, and all balloon messages." }
+      - { label: "Customised URL Slug", name: "slug_name", widget: "slug_checker", hint: "URL identifier (e.g. roja, kiran). Checks availability against content/wishes/ and sets page at wishes.csrgo.com/your-slug/" }
       - { label: "Birthday Person Name", name: "birthday_name", widget: "string" }
       - { label: "Sender Name", name: "sender_name", widget: "string" }
       - { label: "Birth Date", name: "birth_date", widget: "datetime", default: "", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DDT00:00:00", hint: "Select the birth date using the calendar picker" }

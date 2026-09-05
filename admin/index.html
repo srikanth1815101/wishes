@@ -22,28 +22,26 @@
         margin: 0 auto !important;
       }
 
-      /* Floating Quick Auto-Fill Banner */
-      #order-autofill-banner {
-        display: none;
+      /* In-Form WhatsApp AutoFill Box */
+      .autofill-card {
         background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
-        border-bottom: 2px solid #ec4899;
+        border: 2px solid #ec4899;
+        border-radius: 12px;
+        padding: 16px 20px;
         color: #fff;
-        padding: 12px 20px;
-        position: sticky;
-        top: 0;
-        z-index: 99999;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        margin-bottom: 8px;
+        box-shadow: 0 4px 15px rgba(236, 72, 153, 0.15);
       }
 
       .autofill-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        cursor: pointer;
+        margin-bottom: 10px;
       }
 
       .autofill-title {
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 700;
         display: flex;
         align-items: center;
@@ -51,26 +49,24 @@
         color: #f472b6;
       }
 
-      .autofill-body {
-        margin-top: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-
       .autofill-textarea {
         width: 100%;
         box-sizing: border-box;
-        height: 85px;
+        height: 100px;
         background: rgba(255, 255, 255, 0.08);
         border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 8px;
         color: #fff;
         padding: 10px 14px;
         font-family: monospace;
-        font-size: 12px;
+        font-size: 13px;
         outline: none;
         resize: vertical;
+      }
+
+      .autofill-textarea:focus {
+        border-color: #ec4899;
+        background: rgba(255, 255, 255, 0.12);
       }
 
       .autofill-actions {
@@ -79,26 +75,29 @@
         justify-content: space-between;
         flex-wrap: wrap;
         gap: 10px;
+        margin-top: 10px;
       }
 
       .btn-parse-fill {
         background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
         color: white;
         border: none;
-        border-radius: 6px;
-        padding: 8px 18px;
+        border-radius: 8px;
+        padding: 10px 22px;
         font-weight: 700;
-        font-size: 13px;
+        font-size: 14px;
         cursor: pointer;
-        transition: transform 0.1s;
+        transition: transform 0.1s, box-shadow 0.2s;
+        box-shadow: 0 4px 14px rgba(236, 72, 153, 0.4);
       }
 
       .btn-parse-fill:hover {
-        transform: scale(1.02);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(236, 72, 153, 0.5);
       }
 
       .parse-status {
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 600;
         color: #34d399;
       }
@@ -278,23 +277,6 @@
     </style>
   </head>
   <body>
-    <!-- Floating WhatsApp Order Auto-Filler (Visible inside Wish editor) -->
-    <div id="order-autofill-banner">
-      <div class="autofill-header" id="toggleAutofill">
-        <div class="autofill-title">
-          <span>⚡ Paste WhatsApp Order to Auto-Fill</span>
-          <span style="font-size: 11px; font-weight: normal; color: #cbd5e1;">(Click to paste order text from WhatsApp)</span>
-        </div>
-      </div>
-      <div class="autofill-body" id="autofillContent">
-        <textarea id="whatsappOrderInput" class="autofill-textarea" placeholder="Paste WhatsApp message here (e.g. *Birthday Person:* Roja, *Date of Birth:* 2026-09-18, *Secret PIN:* 1234567, 6 Balloon messages, Main wish message)..."></textarea>
-        <div class="autofill-actions">
-          <button type="button" class="btn-parse-fill" id="btnAutoFill">✨ Auto-Fill Form Fields</button>
-          <span id="parseStatus" class="parse-status"></span>
-        </div>
-      </div>
-    </div>
-
     <!-- Identity Widget -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
@@ -324,7 +306,100 @@
         })
         .catch(function() {});
 
-      // 3. Custom In-Form "slug_checker" Widget
+      // 3. Custom In-Form "whatsapp_autofill_box" Widget (Embedded right in the form!)
+      var WhatsAppAutoFillControl = createClass({
+        getInitialState: function() {
+          return { status: '', text: this.props.value || '' };
+        },
+        handleTextChange: function(e) {
+          this.setState({ text: e.target.value });
+          this.props.onChange(e.target.value);
+        },
+        handleAutoFill: function() {
+          var parsed = parseWhatsAppOrder(this.state.text);
+          var filledCount = 0;
+
+          // 1. Fill Slug
+          if (parsed.slug_name) {
+            var slugEl = document.querySelector('input[id*="slug_name"]');
+            if (slugEl) { setNativeInputValue(slugEl, parsed.slug_name); filledCount++; }
+          }
+
+          // 2. Fill Birthday Person
+          if (parsed.birthday_name) {
+            var bNameEl = document.querySelector('input[id*="birthday_name"]');
+            if (bNameEl) { setNativeInputValue(bNameEl, parsed.birthday_name); filledCount++; }
+          }
+
+          // 3. Fill Sender Name
+          if (parsed.sender_name) {
+            var senderEl = document.querySelector('input[id*="sender_name"]');
+            if (senderEl) { setNativeInputValue(senderEl, parsed.sender_name); filledCount++; }
+          }
+
+          // 4. Fill Date of Birth
+          if (parsed.birth_date) {
+            var dateEl = document.querySelector('input[id*="birth_date"]');
+            if (dateEl) { setNativeInputValue(dateEl, parsed.birth_date); filledCount++; }
+          }
+
+          // 5. Fill PIN
+          if (parsed.pin_code) {
+            var pinEl = document.querySelector('input[id*="pin_code"]');
+            if (pinEl) { setNativeInputValue(pinEl, parsed.pin_code); filledCount++; }
+          }
+
+          // 6. Fill Balloon Messages 1 to 6
+          if (parsed.balloons && parsed.balloons.length > 0) {
+            for (var bi = 0; bi < parsed.balloons.length; bi++) {
+              var idx = bi + 1;
+              var bEl = document.querySelector('input[id*="balloon_' + idx + '"]');
+              if (bEl) {
+                setNativeInputValue(bEl, parsed.balloons[bi]);
+                filledCount++;
+              }
+            }
+          }
+
+          // 7. Fill Main Letter
+          if (parsed.letter) {
+            var letterEl = document.querySelector('textarea[id*="letter"]');
+            if (letterEl) { setNativeInputValue(letterEl, parsed.letter); filledCount++; }
+          }
+
+          if (filledCount > 0) {
+            this.setState({ status: '✓ Successfully auto-filled ' + filledCount + ' fields below!' });
+          } else {
+            this.setState({ status: 'Could not find fields to parse. Please check WhatsApp message format.' });
+          }
+        },
+        render: function() {
+          var self = this;
+          return h('div', { className: 'autofill-card' },
+            h('div', { className: 'autofill-header' },
+              h('div', { className: 'autofill-title' }, '⚡ 1-Click WhatsApp Order Auto-Fill')
+            ),
+            h('textarea', {
+              className: 'autofill-textarea',
+              value: this.state.text,
+              placeholder: 'Paste the WhatsApp order message here (e.g. *Birthday Person:* Roja, *Date of Birth:* 2026-09-18, *Secret PIN:* 1234567, 6 Balloon messages, Main wish message)...',
+              onChange: this.handleTextChange
+            }),
+            h('div', { className: 'autofill-actions' },
+              h('button', {
+                type: 'button',
+                className: 'btn-parse-fill',
+                onClick: this.handleAutoFill
+              }, '✨ Auto-Fill Form Fields Below'),
+              self.state.status ? h('span', { className: 'parse-status' }, self.state.status) : null
+            )
+          );
+        }
+      });
+
+      CMS.registerWidget('whatsapp_autofill_box', WhatsAppAutoFillControl);
+
+      // 4. Custom In-Form "slug_checker" Widget
       var SlugCheckerControl = createClass({
         getInitialState: function() {
           return {
@@ -399,7 +474,7 @@
 
       CMS.registerWidget('slug_checker', SlugCheckerControl);
 
-      // 4. Custom Single "pin_hasher" Widget:
+      // 5. Custom Single "pin_hasher" Widget:
       var PinHasherControl = createClass({
         handleChange: function(e) {
           var val = e.target.value.trim();
@@ -430,7 +505,7 @@
 
       CMS.registerWidget('pin_hasher', PinHasherControl);
 
-      // 5. Custom Multi-Photo Uploader Widget with 6-Photo Batch Upload & Reordering
+      // 6. Custom Multi-Photo Uploader Widget with 6-Photo Batch Upload & Reordering
       var MultiPhotoControl = createClass({
         getInitialState: function() {
           var initialList = [];
@@ -447,7 +522,6 @@
           var files = Array.from(e.target.files);
           if (!files.length) return;
 
-          // Process files into Data URLs
           var readers = files.map(function(file) {
             return new Promise(function(resolve) {
               var reader = new FileReader();
@@ -491,7 +565,6 @@
           var photos = this.state.photos || [];
 
           return h('div', { className: 'multi-photo-container' },
-            // Dropzone/Click to upload all 6 at once
             h('label', { className: 'multi-photo-dropzone' },
               h('span', { style: { fontSize: '28px', marginBottom: '6px' } }, '📷'),
               h('strong', { style: { color: '#0f172a', fontSize: '14px' } },
@@ -509,7 +582,6 @@
               })
             ),
 
-            // Photos Grid with Reordering Buttons
             photos.length > 0 ? h('div', { className: 'multi-photo-grid' },
               photos.map(function(photoUrl, idx) {
                 return h('div', { key: idx, className: 'photo-card' },
@@ -546,7 +618,7 @@
 
       CMS.registerWidget('multi_photo_uploader', MultiPhotoControl);
 
-      // 6. PreSave Hook: Automatically inject computed `url`, `pin_hash`, `photos` array, and `balloons` array into frontmatter!
+      // 7. PreSave Hook: Cleanly inject computed frontmatter
       CMS.registerEventListener({
         name: 'preSave',
         handler: function(data) {
@@ -565,7 +637,6 @@
             updates.pin_hash = generatePinHash(pinCode);
           }
 
-          // Save photos array from multi_photo_uploader widget
           if (photosData) {
             var pList = photosData.toJS ? photosData.toJS() : photosData;
             if (Array.isArray(pList) && pList.length > 0) {
@@ -573,7 +644,6 @@
             }
           }
 
-          // Convert individual balloon_1...balloon_6 inputs into standard balloons array
           var balloonList = [];
           for (var b = 1; b <= 6; b++) {
             var balloonVal = entry.getIn(['data', 'balloon_' + b]);
@@ -592,37 +662,32 @@
         }
       });
 
-      // 7. WhatsApp Order Auto-Fill Parser
+      // 8. WhatsApp Order Parsing function
       function parseWhatsAppOrder(text) {
         var result = {};
         if (!text) return result;
 
-        // Extract Birthday Person Name
         var nameMatch = text.match(/\*?Birthday Person:?\*?\s*([^\n\r]+)/i);
         if (nameMatch) {
           result.birthday_name = nameMatch[1].trim();
           result.slug_name = result.birthday_name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
         }
 
-        // Extract Date of Birth
         var dobMatch = text.match(/\*?Date of Birth:?\*?\s*([0-9]{4}-[0-9]{2}-[0-9]{2})/i);
         if (dobMatch) {
           result.birth_date = dobMatch[1].trim();
         }
 
-        // Extract Ordered By
         var senderMatch = text.match(/\*?Ordered By:?\*?\s*([^\n\r]+)/i);
         if (senderMatch) {
           result.sender_name = senderMatch[1].trim();
         }
 
-        // Extract Secret PIN
         var pinMatch = text.match(/\*?Secret PIN:?\*?\s*([0-9a-zA-Z]+)/i);
         if (pinMatch) {
           result.pin_code = pinMatch[1].trim();
         }
 
-        // Extract Balloon Messages (1 to 6)
         result.balloons = [];
         for (var i = 1; i <= 6; i++) {
           var balloonRegex = new RegExp('(?:^|\\n)\\s*' + i + '\\.\\s*([^\\n\\r]+)', 'i');
@@ -632,7 +697,6 @@
           }
         }
 
-        // Extract Main Wish Message
         var wishMatch = text.match(/\*?Main Wish Message:?\*?\s*([\s\S]*?)(?:-{3,}|\*Amount|$)/i);
         if (wishMatch) {
           result.letter = wishMatch[1].trim();
@@ -641,7 +705,6 @@
         return result;
       }
 
-      // Helper to simulate native input event so React/Decap CMS updates state
       function setNativeInputValue(el, value) {
         if (!el) return;
         var prototype = Object.getPrototypeOf(el);
@@ -655,89 +718,7 @@
         el.dispatchEvent(new Event('change', { bubbles: true }));
       }
 
-      // Setup Auto-Fill Banner logic
-      var autofillBanner = document.getElementById('order-autofill-banner');
-      var autofillBtn = document.getElementById('btnAutoFill');
-      var parseStatus = document.getElementById('parseStatus');
-      var orderInput = document.getElementById('whatsappOrderInput');
-
-      if (autofillBtn) {
-        autofillBtn.addEventListener('click', function() {
-          var raw = orderInput.value;
-          var parsed = parseWhatsAppOrder(raw);
-          var filledCount = 0;
-
-          // 1. Fill Slug
-          if (parsed.slug_name) {
-            var slugEl = document.querySelector('input[id*="slug_name"]');
-            if (slugEl) { setNativeInputValue(slugEl, parsed.slug_name); filledCount++; }
-          }
-
-          // 2. Fill Birthday Person
-          if (parsed.birthday_name) {
-            var bNameEl = document.querySelector('input[id*="birthday_name"]');
-            if (bNameEl) { setNativeInputValue(bNameEl, parsed.birthday_name); filledCount++; }
-          }
-
-          // 3. Fill Sender Name
-          if (parsed.sender_name) {
-            var senderEl = document.querySelector('input[id*="sender_name"]');
-            if (senderEl) { setNativeInputValue(senderEl, parsed.sender_name); filledCount++; }
-          }
-
-          // 4. Fill Date of Birth
-          if (parsed.birth_date) {
-            var dateEl = document.querySelector('input[id*="birth_date"]');
-            if (dateEl) { setNativeInputValue(dateEl, parsed.birth_date); filledCount++; }
-          }
-
-          // 5. Fill PIN
-          if (parsed.pin_code) {
-            var pinEl = document.querySelector('input[id*="pin_code"]');
-            if (pinEl) { setNativeInputValue(pinEl, parsed.pin_code); filledCount++; }
-          }
-
-          // 6. Fill Balloon Messages 1 to 6 directly into their own dedicated inputs!
-          if (parsed.balloons && parsed.balloons.length > 0) {
-            for (var bi = 0; bi < parsed.balloons.length; bi++) {
-              var idx = bi + 1;
-              var bEl = document.querySelector('input[id*="balloon_' + idx + '"]');
-              if (bEl) {
-                setNativeInputValue(bEl, parsed.balloons[bi]);
-                filledCount++;
-              }
-            }
-          }
-
-          // 7. Fill Main Letter
-          if (parsed.letter) {
-            var letterEl = document.querySelector('textarea[id*="letter"]');
-            if (letterEl) { setNativeInputValue(letterEl, parsed.letter); filledCount++; }
-          }
-
-          if (filledCount > 0) {
-            parseStatus.style.color = '#34d399';
-            parseStatus.textContent = '✓ Auto-filled ' + filledCount + ' fields! Review and adjust if needed.';
-          } else {
-            parseStatus.style.color = '#fbbf24';
-            parseStatus.textContent = 'Please make sure you are on the New Entry page before clicking Auto-Fill.';
-          }
-        });
-      }
-
-      // Check current URL hash to display autofill banner only when editing/creating
-      function checkRouteForBanner() {
-        if (window.location.hash.indexOf('/collections/wishes/new') !== -1 ||
-            window.location.hash.indexOf('/collections/wishes/entries/') !== -1) {
-          if (autofillBanner) autofillBanner.style.display = 'block';
-        } else {
-          if (autofillBanner) autofillBanner.style.display = 'none';
-        }
-      }
-      window.addEventListener('hashchange', checkRouteForBanner);
-      setInterval(checkRouteForBanner, 1000);
-
-      // 8. Netlify Identity handling (identical to blog pattern)
+      // 9. Netlify Identity handling
       window.CMS_MANUAL_INIT = true;
 
       if (window.netlifyIdentity) {
@@ -751,7 +732,7 @@
         window.netlifyIdentity.init();
       }
 
-      // Start CMS safely
+      // Start CMS
       CMS.init();
     </script>
   </body>
