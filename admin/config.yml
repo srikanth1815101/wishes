@@ -15,8 +15,8 @@ collections:
     create: true
     slug: "{{fields.slug}}"
     identifier_field: "slug"
-    media_folder: "{{media_folder}}/{{fields.slug}}"
-    public_folder: "{{public_folder}}/{{fields.slug}}"
+    media_folder: "/static/images/wishes/{{fields.slug}}"
+    public_folder: "/images/wishes/{{fields.slug}}"
     format: "frontmatter"
     extension: "md"
     editor:
