@@ -2,7 +2,6 @@ backend:
   name: git-gateway
   branch: pilot
 
-# Global fallback media folder
 media_folder: "static/images/wishes"
 public_folder: "/images/wishes"
 
@@ -19,9 +18,6 @@ collections:
     extension: "md"
     editor:
       preview: false
-    # Per-collection media folder structured as static/images/wishes/birthday-star/{{slug}}
-    media_folder: "static/images/wishes/birthday-star/{{slug}}"
-    public_folder: "/images/wishes/birthday-star/{{slug}}"
     fields:
       - { label: "Paste WhatsApp Message to Auto-Fill Form", name: "whatsapp_order_text", widget: "whatsapp_autofill_box", required: false, hint: "Paste customer WhatsApp order message here to automatically populate name, date, pin, and all balloon messages." }
       - { label: "Customised URL Slug", name: "slug_name", widget: "slug_checker", hint: "URL identifier (e.g. roja, kiran). Checks availability against content/wishes/ and sets page at wishes.csrgo.com/your-slug/" }
@@ -30,8 +26,13 @@ collections:
       - { label: "Birth Date", name: "birth_date", widget: "datetime", default: "", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DDT00:00:00", hint: "Select the birth date using the calendar picker" }
       - { label: "7-Digit PIN / Password", name: "pin_code", widget: "pin_hasher", hint: "Enter the PIN (e.g. 1234567). The encrypted pin_hash is generated and stored in the markdown file automatically on submit." }
       
-      # Multi-Photo Uploader (Batch upload up to 6 photos at once with drag/drop reordering)
-      - { label: "Photos (Upload All 6 Photos at Once with Reorder)", name: "photos_data", widget: "multi_photo_uploader", hint: "Select all 6 photos together from your computer. Use arrow buttons to reorder them 1 to 6." }
+      # Photos: 6 native Netlify CMS image upload fields
+      - { label: "Photo 1", name: "photo_1", widget: "image" }
+      - { label: "Photo 2", name: "photo_2", widget: "image" }
+      - { label: "Photo 3", name: "photo_3", widget: "image" }
+      - { label: "Photo 4", name: "photo_4", widget: "image" }
+      - { label: "Photo 5", name: "photo_5", widget: "image" }
+      - { label: "Photo 6", name: "photo_6", widget: "image" }
 
       # 6 Direct Balloon Message Inputs (Always open, auto-fillable with 1 click)
       - { label: "Balloon Message 1 (Mandatory)", name: "balloon_1", widget: "string" }
@@ -52,8 +53,6 @@ collections:
     extension: "md"
     editor:
       preview: false
-    media_folder: "static/images/wishes/custom/{{slug}}"
-    public_folder: "/images/wishes/custom/{{slug}}"
     fields:
       - { label: "Template Type", name: "template_type", widget: "select", options: ["birthday-star", "friendship-day", "anniversary", "custom"], default: "birthday-star" }
       - { label: "Customised URL Slug", name: "slug_name", widget: "slug_checker" }

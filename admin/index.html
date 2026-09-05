@@ -637,12 +637,16 @@
             updates.pin_hash = generatePinHash(pinCode);
           }
 
-          // Save photos from batch multi_photo_uploader widget
-          if (photosData) {
-            var pList = photosData.toJS ? photosData.toJS() : photosData;
-            if (Array.isArray(pList) && pList.length > 0) {
-              updates.photos = pList;
+          // Collect uploaded file paths from photo_1...photo_6 into clean photos list matching sample files
+          var pList = [];
+          for (var p = 1; p <= 6; p++) {
+            var pVal = entry.getIn(['data', 'photo_' + p]);
+            if (pVal) {
+              pList.push(pVal);
             }
+          }
+          if (pList.length > 0) {
+            updates.photos = pList;
           }
 
           var balloonList = [];
@@ -656,9 +660,14 @@
             updates.balloons = balloonList;
           }
 
-          if (Object.keys(updates).length > 0) {
-            return entry.get('data').merge(updates);
+          // Clean up individual helper fields from frontmatter
+          var dataMap = entry.get('data').merge(updates);
+          dataMap = dataMap.delete('whatsapp_order_text');
+          for (var i = 1; i <= 6; i++) {
+            dataMap = dataMap.delete('photo_' + i);
+            dataMap = dataMap.delete('balloon_' + i);
           }
+          return dataMap;
           return entry.get('data');
         }
       });
