@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wishes Admin Portal | wishes-admin.csrgo.com</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Netlify Identity Widget -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+    <style>
+      :root {
+        --primary: #ec4899;
+        --primary-hover: #db2777;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --bg-dark: #0f172a;
+        --card-dark: #1e293b;
+      }
+
+      /* Quick Companion Toolbar at Top of Admin */
+      #csrgo-admin-bar {
+        background: linear-gradient(135deg, #18181b 0%, #09090b 100%);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+        padding: 12px 20px;
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        z-index: 99999;
+        position: relative;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      }
+
+      .admin-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+
+      .admin-brand span.badge {
+        background: linear-gradient(135deg, #ec4899, #f43f5e);
+        color: white;
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .admin-tools {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .slug-checker-box {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        padding: 4px 10px;
+        gap: 6px;
+        font-size: 13px;
+      }
+
+      .slug-prefix {
+        color: #9ca3af;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .slug-input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        font-family: inherit;
+        width: 140px;
+      }
+
+      .slug-input::placeholder {
+        color: #6b7280;
+      }
+
+      .slug-status {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .status-idle { background: #374151; color: #9ca3af; }
+      .status-available { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+      .status-taken { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+      .status-loading { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+      .pin-hasher-box {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        padding: 4px 10px;
+        gap: 6px;
+        font-size: 13px;
+      }
+
+      .pin-input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #fff;
+        font-size: 13px;
+        font-family: monospace;
+        width: 80px;
+        letter-spacing: 2px;
+      }
+
+      .pin-hash-result {
+        font-family: monospace;
+        font-size: 12px;
+        background: rgba(236, 72, 153, 0.2);
+        color: #f472b6;
+        padding: 2px 6px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .admin-links a {
+        color: #cbd5e1;
+        font-size: 12px;
+        text-decoration: none;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background: rgba(255,255,255,0.05);
+        transition: all 0.2s;
+      }
+
+      .admin-links a:hover {
+        color: #fff;
+        background: rgba(255,255,255,0.15);
+      }
+
+      /* Decap CMS Overrides for modern polished feel */
+      body {
+        margin: 0;
+        background-color: #f8fafc;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Top helper navigation bar for Wishes Admin -->
+    <div id="csrgo-admin-bar">
+      <div class="admin-brand">
+        ✨ <span>CSRGO Wishes Admin</span>
+        <span class="badge">wishes-admin.csrgo.com</span>
+      </div>
+
+      <div class="admin-tools">
+        <!-- Slug Availability Real-time Checker -->
+        <div class="slug-checker-box" title="Type a slug to check if wishes.csrgo.com/{customisedurl} is available">
+          <span class="slug-prefix">wishes.csrgo.com/</span>
+          <input type="text" id="checkSlugInput" class="slug-input" placeholder="customisedurl" spellcheck="false" autocomplete="off" />
+          <span id="slugStatusBadge" class="slug-status status-idle">Check Slug</span>
+        </div>
+
+        <!-- 7-Digit PIN Quick Hasher -->
+        <div class="pin-hasher-box" title="Enter 7-digit PIN to compute pin_hash for Birthday Star">
+          <span class="slug-prefix">PIN:</span>
+          <input type="text" id="quickPinInput" class="pin-input" placeholder="1234567" maxlength="7" />
+          <span id="quickPinHash" class="pin-hash-result" title="Click to copy hash">h_xdkb3o</span>
+        </div>
+
+        <div class="admin-links">
+          <a href="https://wishes.csrgo.com" target="_blank" rel="noopener">🌐 Visit Site</a>
+          <a href="https://github.com/srikanth1815101/wishes/tree/main/content/wishes" target="_blank" rel="noopener">📂 View MD Files</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include Decap CMS (Netlify CMS 2.x) -->
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+
+    <script>
+      // 1. PIN Hashing Logic (matching birthday-star hash formula)
+      function generatePinHash(pin) {
+        if (!pin) return '';
+        var hash = 0;
+        var str = String(pin).trim();
+        for (var i = 0; i < str.length; i++) {
+          var char = str.charCodeAt(i);
+          hash = ((hash << 5) - hash) + char;
+          hash = hash & hash; // Convert to 32bit integer
+        }
+        return 'h_' + Math.abs(hash).toString(36);
+      }
+
+      var pinInput = document.getElementById('quickPinInput');
+      var pinHashDisplay = document.getElementById('quickPinHash');
+      pinInput.addEventListener('input', function(e) {
+        var val = e.target.value.replace(/\D/g, '');
+        e.target.value = val;
+        var h = generatePinHash(val);
+        pinHashDisplay.textContent = h || 'h_......';
+      });
+      pinHashDisplay.addEventListener('click', function() {
+        if (pinHashDisplay.textContent) {
+          navigator.clipboard.writeText(pinHashDisplay.textContent);
+          var orig = pinHashDisplay.textContent;
+          pinHashDisplay.textContent = 'Copied!';
+          setTimeout(function() { pinHashDisplay.textContent = orig; }, 1200);
+        }
+      });
+
+      // 2. Slug Availability Checking Logic
+      // Cache of existing slugs loaded from local manifest and GitHub
+      var existingSlugs = new Set(["birthday-sample", "kiran"]);
+
+      // Load slugs from slugs.json
+      fetch('/slugs.json')
+        .then(function(res) { return res.json(); })
+        .then(function(list) {
+          if (Array.isArray(list)) {
+            list.forEach(function(s) { existingSlugs.add(s.toLowerCase()); });
+          }
+        })
+        .catch(function(err) { console.log('Loaded base slugs fallback', err); });
+
+      // Check against GitHub contents API asynchronously
+      function checkGitHubForSlug(slug, callback) {
+        var clean = slug.toLowerCase().trim().replace(/^\/+|\/+$/g, '');
+        var url = 'https://api.github.com/repos/srikanth1815101/wishes/contents/content/wishes/' + clean + '.md';
+        fetch(url, { headers: { 'Accept': 'application/vnd.github.v3+json' } })
+          .then(function(res) {
+            if (res.status === 200) {
+              existingSlugs.add(clean);
+              callback(false); // Taken!
+            } else if (res.status === 404) {
+              callback(true); // Available!
+            } else {
+              // Rate-limited or offline, fallback to existing set
+              callback(!existingSlugs.has(clean));
+            }
+          })
+          .catch(function() {
+            callback(!existingSlugs.has(clean));
+          });
+      }
+
+      var checkSlugInput = document.getElementById('checkSlugInput');
+      var slugStatusBadge = document.getElementById('slugStatusBadge');
+      var slugTimer = null;
+
+      function updateSlugStatus() {
+        var raw = checkSlugInput.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+        checkSlugInput.value = raw;
+
+        if (!raw) {
+          slugStatusBadge.className = 'slug-status status-idle';
+          slugStatusBadge.textContent = 'Check Slug';
+          return;
+        }
+
+        if (existingSlugs.has(raw)) {
+          slugStatusBadge.className = 'slug-status status-taken';
+          slugStatusBadge.innerHTML = '✕ Taken';
+          return;
+        }
+
+        slugStatusBadge.className = 'slug-status status-loading';
+        slugStatusBadge.innerHTML = 'Checking...';
+
+        clearTimeout(slugTimer);
+        slugTimer = setTimeout(function() {
+          checkGitHubForSlug(raw, function(isAvailable) {
+            if (isAvailable) {
+              slugStatusBadge.className = 'slug-status status-available';
+              slugStatusBadge.innerHTML = '✓ Available';
+            } else {
+              slugStatusBadge.className = 'slug-status status-taken';
+              slugStatusBadge.innerHTML = '✕ Taken';
+            }
+          });
+        }, 300);
+      }
+
+      checkSlugInput.addEventListener('input', updateSlugStatus);
+
+      // 3. Register Custom Decap CMS Preview & Event Listeners
+      if (window.CMS) {
+        // Custom Preview for Birthday Wishes
+        var BirthdayPreview = createClass({
+          render: function() {
+            var entry = this.props.entry;
+            var slug = entry.getIn(['data', 'slug_name']) || 'customisedurl';
+            var name = entry.getIn(['data', 'birthday_name']) || 'Birthday Star';
+            var sender = entry.getIn(['data', 'sender_name']) || 'Friend';
+            var photos = entry.getIn(['data', 'photos']) ? entry.getIn(['data', 'photos']).toJS() : [];
+            var balloons = entry.getIn(['data', 'balloons']) ? entry.getIn(['data', 'balloons']).toJS() : [];
+            var letter = entry.getIn(['data', 'letter']) || '';
+
+            return h('div', { style: { padding: '24px', fontFamily: 'sans-serif', background: '#090a16', color: '#fff', minHeight: '100vh' } },
+              h('div', { style: { maxWidth: '650px', margin: '0 auto', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', padding: '24px', border: '1px solid rgba(255,255,255,0.1)' } },
+                h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px', marginBottom: '20px' } },
+                  h('h1', { style: { margin: 0, fontSize: '22px', color: '#ec4899' } }, '🎂 ' + name),
+                  h('span', { style: { background: '#2563eb', padding: '4px 10px', borderRadius: '8px', fontSize: '12px' } }, 'wishes.csrgo.com/' + slug + '/')
+                ),
+                h('p', { style: { color: '#94a3b8', fontSize: '14px' } }, 'From: ' + sender),
+                h('h3', { style: { fontSize: '15px', marginTop: '20px', color: '#f43f5e' } }, 'Photos Uploaded (' + photos.length + '/6)'),
+                h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginTop: '10px' } },
+                  photos.map(function(p, i) {
+                    return h('div', { key: i, style: { background: 'rgba(255,255,255,0.1)', height: '80px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' } },
+                      p ? h('img', { src: p, style: { width: '100%', height: '100%', objectFit: 'cover' } }) : 'Photo ' + (i + 1)
+                    );
+                  })
+                ),
+                h('h3', { style: { fontSize: '15px', marginTop: '24px', color: '#f59e0b' } }, 'Floating Balloon Messages (' + balloons.length + '/6)'),
+                h('ul', { style: { fontSize: '13px', lineHeight: '1.6', color: '#cbd5e1', paddingLeft: '20px' } },
+                  balloons.map(function(b, i) { return h('li', { key: i }, b || 'Balloon ' + (i+1)); })
+                ),
+                h('h3', { style: { fontSize: '15px', marginTop: '24px', color: '#ec4899' } }, 'Birthday Letter'),
+                h('div', { style: { background: 'rgba(255,255,255,0.06)', padding: '16px', borderRadius: '10px', fontSize: '14px', lineHeight: '1.6', color: '#f1f5f9' } }, letter || 'No letter written yet...')
+              )
+            );
+          }
+        });
+
+        CMS.registerPreviewTemplate('wishes', BirthdayPreview);
+
+        // Pre-save validation hook to ensure slug is set and url is formatted
+        CMS.registerEventListener({
+          name: 'preSave',
+          handler: function(data) {
+            var entry = data.entry;
+            var slug = entry.getIn(['data', 'slug_name']);
+            var pinCode = entry.getIn(['data', 'pin_code']);
+            var currentHash = entry.getIn(['data', 'pin_hash']);
+
+            var updates = {};
+            if (slug) {
+              updates.url = '/' + slug.toLowerCase().trim().replace(/^\/+|\/+$/g, '') + '/';
+            }
+            if (pinCode && (!currentHash || currentHash.indexOf('h_') !== 0)) {
+              updates.pin_hash = generatePinHash(pinCode);
+            }
+            if (Object.keys(updates).length > 0) {
+              return entry.get('data').merge(updates);
+            }
+            return entry.get('data');
+          }
+        });
+      }
+
+      // Netlify Identity Login handling
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on("init", function(user) {
+          if (!user) {
+            window.netlifyIdentity.on("login", function() {
+              document.location.reload();
+            });
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

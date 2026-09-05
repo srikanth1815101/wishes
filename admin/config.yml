@@ -1,0 +1,50 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# Where images uploaded via the CMS will be stored in repo
+media_folder: "static/images/wishes"
+public_folder: "/images/wishes"
+
+# Display settings
+site_url: "https://wishes.csrgo.com"
+display_url: "https://wishes.csrgo.com"
+logo_url: "https://wishes.csrgo.com/images/logo.png"
+
+collections:
+  - name: "wishes"
+    label: "Birthday Wish Orders"
+    label_singular: "Birthday Wish Order"
+    folder: "content/wishes"
+    create: true
+    slug: "{{fields.slug_name}}"
+    summary: "{{fields.birthday_name}} (wishes.csrgo.com/{{fields.slug_name}}/) - by {{fields.sender_name}}"
+    extension: "md"
+    format: "frontmatter"
+    editor:
+      preview: true
+    fields:
+      - { label: "Customised URL Slug", name: "slug_name", widget: "string", hint: "e.g., 'rahul', 'kiran-birthday'. This determines wishes.csrgo.com/your-slug/ and the markdown filename.", pattern: ['^[a-z0-9-]+$', "Must contain only lowercase letters, numbers, and hyphens"] }
+      - { label: "Full URL Path", name: "url", widget: "string", hint: "Format: /customisedurl/ (e.g. /kiran-birthday/)", pattern: ['^\/[a-z0-9-]+\/$', "Must start and end with / like /your-slug/"] }
+      - { label: "Birthday Person Name", name: "birthday_name", widget: "string" }
+      - { label: "Sender Name", name: "sender_name", widget: "string" }
+      - { label: "Birth Date & Time", name: "birth_date", widget: "datetime", format: "YYYY-MM-DDTHH:mm:ss", date_format: "YYYY-MM-DD", time_format: "HH:mm:ss" }
+      - { label: "7-Digit Unlock PIN", name: "pin_code", widget: "string", required: false, hint: "Enter a 7-digit PIN (e.g. 1234567). The PIN Hash will be calculated automatically." }
+      - { label: "PIN Hash (Auto-computed)", name: "pin_hash", widget: "string", hint: "Hashed format stored in markdown, e.g. h_xdkb3o" }
+      - { label: "PIN Hint (Optional)", name: "pin_hint", widget: "string", required: false, hint: "Optional hint displayed on demo or recovery" }
+      
+      - label: "Photos (Exactly 6 Photos)"
+        name: "photos"
+        widget: "list"
+        min: 6
+        max: 6
+        field: { label: "Photo Image", name: "photo", widget: "image", choose_url: false }
+
+      - label: "Floating Balloon Messages (6 Messages)"
+        name: "balloons"
+        widget: "list"
+        min: 6
+        max: 6
+        field: { label: "Balloon Message", name: "balloon", widget: "string" }
+
+      - { label: "Main Birthday Letter", name: "letter", widget: "text" }
