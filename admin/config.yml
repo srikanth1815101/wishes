@@ -24,18 +24,23 @@ collections:
       - { label: "Sender Name", name: "sender_name", widget: "string" }
       - { label: "Birth Date", name: "birth_date", widget: "datetime", default: "", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DDT00:00:00", hint: "Select the birth date using the calendar picker" }
       - { label: "7-Digit PIN / Password", name: "pin_code", widget: "pin_hasher", hint: "Enter the PIN (e.g. 1234567). The encrypted pin_hash is generated and stored in the markdown file automatically on submit." }
-      - label: "Photos (Exactly 6 Photos)"
-        name: "photos"
-        widget: "list"
-        min: 6
-        max: 6
-        field: { label: "Photo", name: "photo", widget: "image" }
-      - label: "Balloon Messages (6 Messages)"
-        name: "balloons"
-        widget: "list"
-        min: 6
-        max: 6
-        field: { label: "Balloon Message", name: "message", widget: "string" }
+      
+      # 6 Direct Photo Upload Inputs (Always open, individual file uploads)
+      - { label: "Photo 1 (Mandatory)", name: "photo_1", widget: "image" }
+      - { label: "Photo 2 (Mandatory)", name: "photo_2", widget: "image" }
+      - { label: "Photo 3 (Mandatory)", name: "photo_3", widget: "image" }
+      - { label: "Photo 4 (Mandatory)", name: "photo_4", widget: "image" }
+      - { label: "Photo 5 (Mandatory)", name: "photo_5", widget: "image" }
+      - { label: "Photo 6 (Mandatory)", name: "photo_6", widget: "image" }
+
+      # 6 Direct Balloon Message Inputs (Always open, auto-fillable with 1 click)
+      - { label: "Balloon Message 1 (Mandatory)", name: "balloon_1", widget: "string" }
+      - { label: "Balloon Message 2 (Mandatory)", name: "balloon_2", widget: "string" }
+      - { label: "Balloon Message 3 (Mandatory)", name: "balloon_3", widget: "string" }
+      - { label: "Balloon Message 4 (Mandatory)", name: "balloon_4", widget: "string" }
+      - { label: "Balloon Message 5 (Mandatory)", name: "balloon_5", widget: "string" }
+      - { label: "Balloon Message 6 (Mandatory)", name: "balloon_6", widget: "string" }
+
       - { label: "Birthday Letter", name: "letter", widget: "text" }
 
   - name: "custom_wishes"
@@ -55,8 +60,3 @@ collections:
       - { label: "Sender Name", name: "sender_name", widget: "string", required: false }
       - { label: "Password / PIN", name: "pin_code", widget: "pin_hasher", required: false }
       - { label: "Message / Note", name: "body", widget: "text", required: false }
-      - label: "Photos"
-        name: "photos"
-        widget: "list"
-        required: false
-        field: { label: "Photo", name: "photo", widget: "image" }

@@ -322,7 +322,7 @@
 
       CMS.registerWidget('pin_hasher', PinHasherControl);
 
-      // 5. PreSave Hook: Automatically inject computed `url` and `pin_hash` directly into frontmatter!
+      // 5. PreSave Hook: Automatically inject computed `url`, `pin_hash`, `photos` array, and `balloons` array into frontmatter!
       CMS.registerEventListener({
         name: 'preSave',
         handler: function(data) {
@@ -338,6 +338,30 @@
 
           if (pinCode) {
             updates.pin_hash = generatePinHash(pinCode);
+          }
+
+          // Convert individual photo_1...photo_6 inputs into standard photos array
+          var photoList = [];
+          for (var p = 1; p <= 6; p++) {
+            var photoVal = entry.getIn(['data', 'photo_' + p]);
+            if (photoVal) {
+              photoList.push(photoVal);
+            }
+          }
+          if (photoList.length > 0) {
+            updates.photos = photoList;
+          }
+
+          // Convert individual balloon_1...balloon_6 inputs into standard balloons array
+          var balloonList = [];
+          for (var b = 1; b <= 6; b++) {
+            var balloonVal = entry.getIn(['data', 'balloon_' + b]);
+            if (balloonVal) {
+              balloonList.push(balloonVal);
+            }
+          }
+          if (balloonList.length > 0) {
+            updates.balloons = balloonList;
           }
 
           if (Object.keys(updates).length > 0) {
@@ -356,7 +380,6 @@
         var nameMatch = text.match(/\*?Birthday Person:?\*?\s*([^\n\r]+)/i);
         if (nameMatch) {
           result.birthday_name = nameMatch[1].trim();
-          // Generate default slug suggestion from name e.g. "roja"
           result.slug_name = result.birthday_name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
         }
 
@@ -453,13 +476,13 @@
             if (pinEl) { setNativeInputValue(pinEl, parsed.pin_code); filledCount++; }
           }
 
-          // 6. Fill Balloon Messages
+          // 6. Fill Balloon Messages 1 to 6 directly into their own dedicated inputs!
           if (parsed.balloons && parsed.balloons.length > 0) {
-            // Check existing balloon inputs
-            var balloonInputs = document.querySelectorAll('input[id*="balloons"]');
             for (var bi = 0; bi < parsed.balloons.length; bi++) {
-              if (balloonInputs[bi]) {
-                setNativeInputValue(balloonInputs[bi], parsed.balloons[bi]);
+              var idx = bi + 1;
+              var bEl = document.querySelector('input[id*="balloon_' + idx + '"]');
+              if (bEl) {
+                setNativeInputValue(bEl, parsed.balloons[bi]);
                 filledCount++;
               }
             }
