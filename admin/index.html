@@ -1,141 +1,45 @@
 <!doctype html>
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wishes Admin Portal | wishes-admin.csrgo.com</title>
+    <title>Wishes Admin | wishes-admin.csrgo.com</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Netlify Identity Widget -->
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-
     <style>
-      :root {
-        --primary: #ec4899;
-        --primary-hover: #db2777;
-        --success: #10b981;
-        --danger: #ef4444;
-        --warning: #f59e0b;
-        --bg-dark: #0f172a;
-        --card-dark: #1e293b;
-      }
-
-      body {
+      html, body {
         margin: 0;
-        background-color: #0b0f19;
+        padding: 0;
+        background: linear-gradient(to bottom, #fdf4ff 0%, #f3e8ff 50%, #dbeafe 100%);
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       }
 
-      /* Logged-out landing state */
-      #logged-out-gate {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        background: radial-gradient(circle at 50% 20%, rgba(236, 72, 153, 0.15) 0%, rgba(15, 23, 42, 0) 70%), #090a16;
-        color: #fff;
-        text-align: center;
-      }
-
-      .login-card {
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        padding: 40px 32px;
-        border-radius: 20px;
-        max-width: 420px;
-        width: 100%;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-      }
-
-      .brand-icon {
-        font-size: 40px;
-        margin-bottom: 12px;
-        display: inline-block;
-      }
-
-      .login-title {
-        font-size: 22px;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        margin: 0 0 6px 0;
-        background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-
-      .login-subtitle {
-        color: #94a3b8;
-        font-size: 13px;
-        margin: 0 0 26px 0;
-      }
-
-      .btn-admin-login {
-        background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
-        color: #fff;
-        font-family: inherit;
-        font-weight: 700;
-        font-size: 14px;
-        border: none;
-        border-radius: 12px;
-        padding: 14px 28px;
-        width: 100%;
-        cursor: pointer;
-        box-shadow: 0 8px 25px rgba(236, 72, 153, 0.35);
-        transition: transform 0.2s, box-shadow 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-      }
-
-      .btn-admin-login:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 30px rgba(236, 72, 153, 0.5);
-      }
-
-      /* Authenticated Toolbar: ONLY shown when user is logged in */
+      /* Helper Bar: ONLY visible once logged in */
       #csrgo-admin-bar {
-        display: none; /* hidden until authenticated */
+        display: none;
         background: linear-gradient(135deg, #18181b 0%, #09090b 100%);
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         color: #fff;
-        padding: 10px 20px;
-        z-index: 99999;
+        padding: 8px 18px;
         position: relative;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        z-index: 99999;
       }
 
-      #csrgo-admin-bar.is-authenticated {
+      #csrgo-admin-bar.logged-in {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
-        gap: 14px;
+        gap: 12px;
       }
 
       .admin-brand {
         display: flex;
         align-items: center;
-        gap: 10px;
-        font-size: 14px;
+        gap: 8px;
+        font-size: 13px;
         font-weight: 700;
-      }
-
-      .admin-brand span.badge {
-        background: linear-gradient(135deg, #ec4899, #f43f5e);
-        color: white;
-        font-size: 10px;
-        padding: 2px 7px;
-        border-radius: 999px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
       }
 
       .admin-tools {
@@ -148,48 +52,24 @@
       .tool-box {
         display: flex;
         align-items: center;
-        background: rgba(255, 255, 255, 0.07);
+        background: rgba(255, 255, 255, 0.08);
         border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 8px;
-        padding: 4px 10px;
+        border-radius: 6px;
+        padding: 3px 8px;
         gap: 6px;
         font-size: 12px;
       }
 
-      .tool-prefix {
-        color: #9ca3af;
-        font-size: 11px;
-        font-weight: 500;
-      }
-
-      .tool-input {
-        background: transparent;
-        border: none;
-        outline: none;
-        color: #fff;
-        font-size: 12px;
-        font-weight: 600;
-        font-family: inherit;
-        width: 130px;
-      }
-
-      .slug-status {
-        font-size: 10px;
-        font-weight: 700;
-        padding: 2px 6px;
-        border-radius: 4px;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        display: inline-flex;
-        align-items: center;
-      }
-
+      .tool-prefix { color: #9ca3af; font-size: 11px; }
+      .tool-input { background: transparent; border: none; outline: none; color: #fff; font-size: 12px; font-weight: 600; width: 130px; font-family: inherit; }
+      
+      .slug-status { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
       .status-idle { background: #374151; color: #9ca3af; }
-      .status-available { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
-      .status-taken { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
-      .status-loading { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+      .status-available { background: rgba(16, 185, 129, 0.25); color: #34d399; }
+      .status-taken { background: rgba(239, 68, 68, 0.25); color: #f87171; }
+      .status-loading { background: rgba(245, 158, 11, 0.25); color: #fbbf24; }
 
-      .pin-hash-result {
+      .pin-hash-badge {
         font-family: monospace;
         font-size: 11px;
         background: rgba(236, 72, 153, 0.25);
@@ -198,85 +78,39 @@
         border-radius: 4px;
         cursor: pointer;
       }
-
-      .user-pill {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 12px;
-        color: #cbd5e1;
-      }
-
-      .btn-logout {
-        background: rgba(255,255,255,0.1);
-        color: #cbd5e1;
-        border: none;
-        border-radius: 6px;
-        padding: 4px 9px;
-        font-size: 11px;
-        font-weight: 600;
-        cursor: pointer;
-      }
-
-      .btn-logout:hover {
-        background: rgba(239,68,68,0.25);
-        color: #fca5a5;
-      }
-
-      /* Decap CMS container */
-      #nc-root {
-        display: block;
-      }
     </style>
   </head>
   <body>
-    <!-- Authenticated Tool Bar (SHOWN ONLY ONCE LOGGED IN) -->
-    <header id="csrgo-admin-bar">
+    <!-- Authenticated Tool Bar (appears ONLY once logged in) -->
+    <div id="csrgo-admin-bar">
       <div class="admin-brand">
         ✨ <span>Wishes Admin</span>
-        <span class="badge">wishes-admin.csrgo.com</span>
       </div>
-
       <div class="admin-tools">
-        <!-- Live Slug Availability Checker -->
-        <div class="tool-box" title="Type a slug to test if wishes.csrgo.com/{customisedurl} is available">
+        <!-- Slug Availability Checker -->
+        <div class="tool-box" title="Type a slug to check availability against existing wishes md files">
           <span class="tool-prefix">wishes.csrgo.com/</span>
           <input type="text" id="checkSlugInput" class="tool-input" placeholder="customisedurl" spellcheck="false" autocomplete="off" />
           <span id="slugStatusBadge" class="slug-status status-idle">Check Slug</span>
         </div>
 
         <!-- 7-Digit PIN Quick Hasher -->
-        <div class="tool-box" title="Enter 7-digit PIN to compute pin_hash for Birthday Star">
+        <div class="tool-box" title="Type 7-digit PIN to get pin_hash">
           <span class="tool-prefix">PIN:</span>
-          <input type="text" id="quickPinInput" class="tool-input" placeholder="1234567" maxlength="7" style="width: 65px; letter-spacing: 1px;" />
-          <span id="quickPinHash" class="pin-hash-result" title="Click to copy hash">h_xdkb3o</span>
+          <input type="text" id="quickPinInput" class="tool-input" placeholder="1234567" maxlength="7" style="width: 60px;" />
+          <span id="quickPinHash" class="pin-hash-badge" title="Click to copy hash">h_xdkb3o</span>
         </div>
-
-        <!-- Authenticated User & Logout -->
-        <div class="user-pill">
-          <span id="userEmail">admin</span>
-          <button class="btn-logout" id="logoutBtn">Log out</button>
-        </div>
-      </div>
-    </header>
-
-    <!-- Logged out splash / login prompt -->
-    <div id="logged-out-gate">
-      <div class="login-card">
-        <div class="brand-icon">✨</div>
-        <h1 class="login-title">CSRGO Wishes Portal</h1>
-        <p class="login-subtitle">Secure admin dashboard for managing birthday, friendship & custom wish orders.</p>
-        <button class="btn-admin-login" id="triggerLoginBtn">
-          <span>🔒 Login with Netlify Identity</span>
-        </button>
       </div>
     </div>
 
-    <!-- Include Decap CMS -->
-    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <!-- Identity Widget -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+    <!-- Netlify CMS matching blog version -->
+    <script src="https://unpkg.com/netlify-cms@^2.10.192/dist/netlify-cms.js"></script>
 
     <script>
-      // 1. PIN Hashing Helper
+      // 1. PIN Hasher calculation
       function generatePinHash(pin) {
         if (!pin) return '';
         var hash = 0;
@@ -295,48 +129,26 @@
         pinInput.addEventListener('input', function(e) {
           var val = e.target.value.replace(/\D/g, '');
           e.target.value = val;
-          var h = generatePinHash(val);
-          pinHashDisplay.textContent = h || 'h_......';
+          pinHashDisplay.textContent = generatePinHash(val) || 'h_......';
         });
         pinHashDisplay.addEventListener('click', function() {
           if (pinHashDisplay.textContent && pinHashDisplay.textContent !== 'h_......') {
             navigator.clipboard.writeText(pinHashDisplay.textContent);
             var orig = pinHashDisplay.textContent;
             pinHashDisplay.textContent = 'Copied!';
-            setTimeout(function() { pinHashDisplay.textContent = orig; }, 1200);
+            setTimeout(function() { pinHashDisplay.textContent = orig; }, 1000);
           }
         });
       }
 
-      // 2. Slug Availability Checker
+      // 2. Slug availability checker
       var existingSlugs = new Set(["birthday-sample", "kiran"]);
       fetch('/slugs.json')
         .then(function(res) { return res.json(); })
         .then(function(list) {
-          if (Array.isArray(list)) {
-            list.forEach(function(s) { existingSlugs.add(s.toLowerCase()); });
-          }
+          if (Array.isArray(list)) list.forEach(function(s) { existingSlugs.add(s.toLowerCase()); });
         })
-        .catch(function(e) { console.log('Slugs fallback active'); });
-
-      function checkGitHubForSlug(slug, callback) {
-        var clean = slug.toLowerCase().trim().replace(/^\/+|\/+$/g, '');
-        var url = 'https://api.github.com/repos/srikanth1815101/wishes/contents/content/wishes/' + clean + '.md';
-        fetch(url, { headers: { 'Accept': 'application/vnd.github.v3+json' } })
-          .then(function(res) {
-            if (res.status === 200) {
-              existingSlugs.add(clean);
-              callback(false);
-            } else if (res.status === 404) {
-              callback(true);
-            } else {
-              callback(!existingSlugs.has(clean));
-            }
-          })
-          .catch(function() {
-            callback(!existingSlugs.has(clean));
-          });
-      }
+        .catch(function() {});
 
       var checkSlugInput = document.getElementById('checkSlugInput');
       var slugStatusBadge = document.getElementById('slugStatusBadge');
@@ -364,133 +176,49 @@
 
           clearTimeout(slugTimer);
           slugTimer = setTimeout(function() {
-            checkGitHubForSlug(raw, function(isAvailable) {
-              if (isAvailable) {
-                slugStatusBadge.className = 'slug-status status-available';
-                slugStatusBadge.innerHTML = '✓ Available';
-              } else {
-                slugStatusBadge.className = 'slug-status status-taken';
-                slugStatusBadge.innerHTML = '✕ Taken';
-              }
-            });
+            var url = 'https://api.github.com/repos/srikanth1815101/wishes/contents/content/wishes/' + raw + '.md';
+            fetch(url, { headers: { 'Accept': 'application/vnd.github.v3+json' } })
+              .then(function(res) {
+                if (res.status === 200) {
+                  existingSlugs.add(raw);
+                  slugStatusBadge.className = 'slug-status status-taken';
+                  slugStatusBadge.innerHTML = '✕ Taken';
+                } else {
+                  slugStatusBadge.className = 'slug-status status-available';
+                  slugStatusBadge.innerHTML = '✓ Available';
+                }
+              })
+              .catch(function() {
+                var avail = !existingSlugs.has(raw);
+                slugStatusBadge.className = 'slug-status ' + (avail ? 'status-available' : 'status-taken');
+                slugStatusBadge.innerHTML = avail ? '✓ Available' : '✕ Taken';
+              });
           }, 300);
         });
       }
 
-      // 3. Register Custom Decap CMS Preview & Event Listeners
-      if (window.CMS) {
-        // Universal Wish Preview supporting Birthday, Friendship, and Custom templates
-        var WishPreview = createClass({
-          render: function() {
-            var entry = this.props.entry;
-            var slug = entry.getIn(['data', 'slug_name']) || 'customisedurl';
-            var tType = entry.getIn(['data', 'template_type']) || 'birthday-star';
-            var name = entry.getIn(['data', 'birthday_name']) || entry.getIn(['data', 'recipient_name']) || entry.getIn(['data', 'title']) || 'Recipient';
-            var sender = entry.getIn(['data', 'sender_name']) || 'Sender';
-            var photos = entry.getIn(['data', 'photos']) ? entry.getIn(['data', 'photos']).toJS() : [];
-            var balloons = entry.getIn(['data', 'balloons']) ? entry.getIn(['data', 'balloons']).toJS() : [];
-            var letter = entry.getIn(['data', 'letter']) || entry.getIn(['data', 'friendship_note']) || '';
+      // 3. Ensure manual init for Netlify Identity exactly like blog
+      window.CMS_MANUAL_INIT = true;
 
-            return h('div', { style: { padding: '24px', fontFamily: 'sans-serif', background: '#090a16', color: '#fff', minHeight: '100vh' } },
-              h('div', { style: { maxWidth: '650px', margin: '0 auto', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', padding: '24px', border: '1px solid rgba(255,255,255,0.1)' } },
-                h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px', marginBottom: '20px' } },
-                  h('h1', { style: { margin: 0, fontSize: '20px', color: '#ec4899' } }, (tType === 'birthday-star' ? '🎂 ' : '✨ ') + name),
-                  h('span', { style: { background: '#2563eb', padding: '4px 10px', borderRadius: '8px', fontSize: '12px' } }, 'wishes.csrgo.com/' + slug + '/')
-                ),
-                h('p', { style: { color: '#94a3b8', fontSize: '14px' } }, 'Template: ' + tType + ' | From: ' + sender),
-                h('h3', { style: { fontSize: '14px', marginTop: '20px', color: '#f43f5e' } }, 'Uploaded Photos (' + photos.length + ')'),
-                h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginTop: '10px' } },
-                  photos.map(function(p, i) {
-                    return h('div', { key: i, style: { background: 'rgba(255,255,255,0.1)', height: '80px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' } },
-                      p ? h('img', { src: p, style: { width: '100%', height: '100%', objectFit: 'cover' } }) : 'Photo ' + (i + 1)
-                    );
-                  })
-                ),
-                balloons.length > 0 ? [
-                  h('h3', { style: { fontSize: '14px', marginTop: '20px', color: '#f59e0b' } }, 'Balloon Messages (' + balloons.length + ')'),
-                  h('ul', { style: { fontSize: '13px', lineHeight: '1.6', color: '#cbd5e1', paddingLeft: '20px' } },
-                    balloons.map(function(b, i) { return h('li', { key: i }, b || 'Balloon ' + (i+1)); })
-                  )
-                ] : null,
-                h('h3', { style: { fontSize: '14px', marginTop: '20px', color: '#ec4899' } }, 'Message / Letter Content'),
-                h('div', { style: { background: 'rgba(255,255,255,0.06)', padding: '16px', borderRadius: '10px', fontSize: '14px', lineHeight: '1.6', color: '#f1f5f9' } }, letter || 'No letter written yet...')
-              )
-            );
-          }
-        });
-
-        CMS.registerPreviewTemplate('birthday_wishes', WishPreview);
-        CMS.registerPreviewTemplate('friendship_wishes', WishPreview);
-        CMS.registerPreviewTemplate('general_wishes', WishPreview);
-
-        // Pre-save hook: auto format URL and PIN hash
-        CMS.registerEventListener({
-          name: 'preSave',
-          handler: function(data) {
-            var entry = data.entry;
-            var slug = entry.getIn(['data', 'slug_name']);
-            var pinCode = entry.getIn(['data', 'pin_code']);
-            var currentHash = entry.getIn(['data', 'pin_hash']);
-
-            var updates = {};
-            if (slug) {
-              updates.url = '/' + slug.toLowerCase().trim().replace(/^\/+|\/+$/g, '') + '/';
-            }
-            if (pinCode && (!currentHash || currentHash.indexOf('h_') !== 0)) {
-              updates.pin_hash = generatePinHash(pinCode);
-            }
-            if (Object.keys(updates).length > 0) {
-              return entry.get('data').merge(updates);
-            }
-            return entry.get('data');
-          }
-        });
-      }
-
-      // 4. Authentication State Management
       var adminBar = document.getElementById('csrgo-admin-bar');
-      var loggedOutGate = document.getElementById('logged-out-gate');
-      var triggerLoginBtn = document.getElementById('triggerLoginBtn');
-      var logoutBtn = document.getElementById('logoutBtn');
-      var userEmail = document.getElementById('userEmail');
-
-      function updateAuthState(user) {
-        if (user) {
-          // Logged in: Show toolbar & hide gate
-          if (adminBar) adminBar.classList.add('is-authenticated');
-          if (loggedOutGate) loggedOutGate.style.display = 'none';
-          if (userEmail) userEmail.textContent = user.email || 'Admin';
-        } else {
-          // Logged out: Hide toolbar & show gate
-          if (adminBar) adminBar.classList.remove('is-authenticated');
-          if (loggedOutGate) loggedOutGate.style.display = 'flex';
-        }
-      }
-
-      if (triggerLoginBtn) {
-        triggerLoginBtn.addEventListener('click', function() {
-          if (window.netlifyIdentity) window.netlifyIdentity.open('login');
-        });
-      }
-
-      if (logoutBtn) {
-        logoutBtn.addEventListener('click', function() {
-          if (window.netlifyIdentity) window.netlifyIdentity.logout();
-        });
-      }
 
       if (window.netlifyIdentity) {
         window.netlifyIdentity.on("init", function(user) {
-          updateAuthState(user);
+          if (!user) {
+            if (adminBar) adminBar.classList.remove('logged-in');
+            window.netlifyIdentity.on("login", function() {
+              document.location.reload();
+            });
+          } else {
+            // User is logged in: show the tools bar
+            if (adminBar) adminBar.classList.add('logged-in');
+          }
         });
-        window.netlifyIdentity.on("login", function(user) {
-          updateAuthState(user);
-          if (window.netlifyIdentity) window.netlifyIdentity.close();
-        });
-        window.netlifyIdentity.on("logout", function() {
-          updateAuthState(null);
-        });
+        window.netlifyIdentity.init();
       }
+
+      // 4. Start CMS
+      CMS.init();
     </script>
   </body>
 </html>

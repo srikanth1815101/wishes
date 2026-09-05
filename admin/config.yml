@@ -2,100 +2,59 @@ backend:
   name: git-gateway
   branch: main
 
-# Where images uploaded via the CMS will be stored in repo
 media_folder: "static/images/wishes"
 public_folder: "/images/wishes"
 
-# Display settings
-site_url: "https://wishes.csrgo.com"
+site_url: "https://wishes-admin.csrgo.com"
 display_url: "https://wishes.csrgo.com"
-logo_url: "https://wishes.csrgo.com/images/logo.png"
 
 collections:
-  # 1. Birthday Wish Orders
-  - name: "birthday_wishes"
+  - name: "wishes"
     label: "Birthday Wish Orders"
-    label_singular: "Birthday Wish Order"
     folder: "content/wishes"
     create: true
     slug: "{{fields.slug_name}}"
-    summary: "🎂 {{fields.birthday_name}} (/{{fields.slug_name}}/) — by {{fields.sender_name}}"
-    extension: "md"
     format: "frontmatter"
-    editor:
-      preview: true
+    extension: "md"
     fields:
-      - { label: "Customised URL Slug", name: "slug_name", widget: "string", hint: "e.g., 'rahul', 'kiran-birthday'. Live availability checked automatically.", pattern: ['^[a-z0-9-]+$', "Must contain only lowercase letters, numbers, and hyphens"] }
-      - { label: "Full URL Path", name: "url", widget: "string", hint: "Automatically formatted as /customisedurl/", pattern: ['^\/[a-z0-9-]+\/$', "Must start and end with / like /your-slug/"] }
+      - { label: "Customised URL Slug", name: "slug_name", widget: "string", hint: "e.g., rahul, kiran-birthday" }
+      - { label: "Full URL Path", name: "url", widget: "string", hint: "/customisedurl/" }
       - { label: "Birthday Person Name", name: "birthday_name", widget: "string" }
       - { label: "Sender Name", name: "sender_name", widget: "string" }
-      - { label: "Birth Date & Time", name: "birth_date", widget: "datetime", format: "YYYY-MM-DDTHH:mm:ss", date_format: "YYYY-MM-DD", time_format: "HH:mm:ss" }
-      - { label: "7-Digit Unlock PIN", name: "pin_code", widget: "string", required: false, hint: "Enter a 7-digit PIN (e.g. 1234567). Computed pin_hash will be saved." }
-      - { label: "PIN Hash (Auto-computed)", name: "pin_hash", widget: "string", hint: "Hashed format stored in markdown, e.g. h_xdkb3o" }
-      - { label: "PIN Hint (Optional)", name: "pin_hint", widget: "string", required: false, hint: "Optional hint displayed on demo or recovery" }
-      
-      - label: "Photos (Exactly 6 Photos)"
+      - { label: "Birth Date", name: "birth_date", widget: "datetime" }
+      - { label: "7-Digit PIN Code", name: "pin_code", widget: "string", required: false }
+      - { label: "PIN Hash", name: "pin_hash", widget: "string", hint: "Auto-computed hash like h_xdkb3o" }
+      - { label: "PIN Hint (Optional)", name: "pin_hint", widget: "string", required: false }
+      - label: "Photos (6 items)"
         name: "photos"
         widget: "list"
         min: 6
         max: 6
-        field: { label: "Photo Image", name: "photo", widget: "image", choose_url: false }
-
-      - label: "Floating Balloon Messages (6 Messages)"
+        field: { label: "Photo", name: "photo", widget: "image" }
+      - label: "Balloon Messages (6 items)"
         name: "balloons"
         widget: "list"
         min: 6
         max: 6
-        field: { label: "Balloon Message", name: "balloon", widget: "string" }
+        field: { label: "Message", name: "message", widget: "string" }
+      - { label: "Birthday Letter", name: "letter", widget: "markdown" }
 
-      - { label: "Main Birthday Letter", name: "letter", widget: "text" }
-
-  # 2. Friendship Day & Future Template Wish Orders
-  - name: "friendship_wishes"
-    label: "Friendship Day Wish Orders"
-    label_singular: "Friendship Day Wish Order"
+  - name: "custom_wishes"
+    label: "Custom / Other Orders"
     folder: "content/wishes"
     create: true
     slug: "{{fields.slug_name}}"
-    summary: "🤝 {{fields.recipient_name}} (/{{fields.slug_name}}/) — by {{fields.sender_name}}"
-    extension: "md"
     format: "frontmatter"
-    editor:
-      preview: true
-    fields:
-      - { label: "Customised URL Slug", name: "slug_name", widget: "string", hint: "e.g., 'bestie-ananya'. Live availability checked automatically.", pattern: ['^[a-z0-9-]+$', "Must contain only lowercase letters, numbers, and hyphens"] }
-      - { label: "Full URL Path", name: "url", widget: "string", hint: "Format: /customisedurl/" }
-      - { label: "Recipient Name", name: "recipient_name", widget: "string" }
-      - { label: "Sender Name", name: "sender_name", widget: "string" }
-      - { label: "Gender Pairing", name: "gender_pair", widget: "select", options: ["Male & Female", "Male & Male", "Female & Female"], default: "Male & Female" }
-      - { label: "Special Friendship Message", name: "friendship_note", widget: "text" }
-      - label: "Gallery Photos"
-        name: "photos"
-        widget: "list"
-        required: false
-        field: { label: "Photo", name: "photo", widget: "image" }
-
-  # 3. All General / Custom Orders (Extensible for all future templates)
-  - name: "general_wishes"
-    label: "All Custom Wish Orders"
-    label_singular: "Custom Wish Order"
-    folder: "content/wishes"
-    create: true
-    slug: "{{fields.slug_name}}"
-    summary: "✨ {{fields.title}} (/{{fields.slug_name}}/)"
     extension: "md"
-    format: "frontmatter"
-    editor:
-      preview: true
     fields:
-      - { label: "Template", name: "template_type", widget: "select", options: ["birthday-star", "friendship-day", "anniversary", "custom"], default: "birthday-star" }
-      - { label: "Customised URL Slug", name: "slug_name", widget: "string", hint: "Unique customized URL identifier", pattern: ['^[a-z0-9-]+$', "Must contain only lowercase letters, numbers, and hyphens"] }
+      - { label: "Template Type", name: "template_type", widget: "select", options: ["birthday-star", "friendship-day", "anniversary", "custom"], default: "birthday-star" }
+      - { label: "Customised URL Slug", name: "slug_name", widget: "string" }
       - { label: "Full URL Path", name: "url", widget: "string" }
-      - { label: "Order / Wish Title", name: "title", widget: "string" }
+      - { label: "Title", name: "title", widget: "string" }
       - { label: "Recipient Name", name: "recipient_name", widget: "string", required: false }
       - { label: "Sender Name", name: "sender_name", widget: "string", required: false }
-      - { label: "Message / Letter", name: "letter", widget: "text", required: false }
-      - label: "Uploaded Photos"
+      - { label: "Message / Note", name: "body", widget: "markdown", required: false }
+      - label: "Photos"
         name: "photos"
         widget: "list"
         required: false
