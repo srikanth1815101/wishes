@@ -529,21 +529,11 @@
           }
 
           // Gather individual photo_1...photo_6 inputs into photos array
-          // Format paths into /images/wishes/{slug}/{slug}{N}.{ext}
           var pList = [];
           for (var p = 1; p <= 6; p++) {
             var pVal = entry.getIn(['data', 'photo_' + p]);
             if (pVal) {
-              var strVal = String(pVal).trim();
-              // extract file extension
-              var ext = 'jpg';
-              var dotIdx = strVal.lastIndexOf('.');
-              if (dotIdx !== -1) {
-                var extracted = strVal.substring(dotIdx + 1).toLowerCase();
-                if (extracted.length <= 4) ext = extracted;
-              }
-              var formattedPath = '/images/wishes/' + cleanSlug + '/' + cleanSlug + p + '.' + ext;
-              pList.push(formattedPath);
+              pList.push(String(pVal).trim());
             }
           }
           if (pList.length > 0) {
