@@ -349,15 +349,13 @@
             if (pinEl) { setNativeInputValue(pinEl, parsed.pin_code); filledCount++; }
           }
 
-          // 6. Fill Balloon Messages 1 to 6 directly
+          // 6. Fill Balloon Messages
           if (parsed.balloons && parsed.balloons.length > 0) {
-            for (var bi = 0; bi < parsed.balloons.length; bi++) {
-              var idx = bi + 1;
-              var bEl = document.querySelector('input[id*="balloon_' + idx + '"]');
-              if (bEl) {
-                setNativeInputValue(bEl, parsed.balloons[bi]);
-                filledCount++;
-              }
+            var balloonInputs = document.querySelectorAll('input[id*="balloons-field"]');
+            if (!balloonInputs.length) balloonInputs = document.querySelectorAll('input[id*="balloon"][type="text"]');
+            for (var bi = 0; bi < parsed.balloons.length && bi < balloonInputs.length; bi++) {
+              setNativeInputValue(balloonInputs[bi], parsed.balloons[bi]);
+              filledCount++;
             }
           }
 
@@ -505,7 +503,7 @@
 
       CMS.registerWidget('pin_hasher', PinHasherControl);
 
-      // 6. PreSave Hook: Cleanly assemble photos and balloons into arrays & strip unwanted fields
+      // 6. PreSave Hook: Cleanly assemble frontmatter & strip unwanted fields
       CMS.registerEventListener({
         name: 'preSave',
         handler: function(data) {
@@ -515,9 +513,8 @@
           var existingPinHash = entry.getIn(['data', 'pin_hash']);
           var updates = {};
 
-          var cleanSlug = 'wish';
           if (slugVal) {
-            cleanSlug = String(slugVal).toLowerCase().trim().replace(/[^a-z0-9-]/g, '').replace(/^-+|-+$/g, '');
+            var cleanSlug = String(slugVal).toLowerCase().trim().replace(/[^a-z0-9-]/g, '').replace(/^-+|-+$/g, '');
             updates.slug = cleanSlug;
             updates.url = '/' + cleanSlug + '/';
           }
@@ -528,39 +525,34 @@
             updates.pin_hash = existingPinHash;
           }
 
-          // Gather individual photo_1...photo_6 inputs into photos array
-          var pList = [];
-          for (var p = 1; p <= 6; p++) {
-            var pVal = entry.getIn(['data', 'photo_' + p]);
-            if (pVal) {
-              pList.push(String(pVal).trim());
-            }
-          }
-          if (pList.length > 0) {
-            updates.photos = pList;
-          }
-
-          // Gather individual balloon_1...balloon_6 inputs into balloons array
-          var bList = [];
-          for (var b = 1; b <= 6; b++) {
-            var bVal = entry.getIn(['data', 'balloon_' + b]);
-            if (bVal) bList.push(bVal);
-          }
-          if (bList.length > 0) {
-            updates.balloons = bList;
-          }
-
           var dataMap = entry.get('data').merge(updates);
-          // Crucial: Delete temporary input fields so markdown gets only clean balloons & photos arrays!
+          // Delete temporary helper fields
           dataMap = dataMap.delete('pin_code');
           dataMap = dataMap.delete('whatsapp_order_text');
           dataMap = dataMap.delete('slug_name');
-          for (var i = 1; i <= 6; i++) {
-            dataMap = dataMap.delete('photo_' + i);
-            dataMap = dataMap.delete('balloon_' + i);
-          }
 
           return dataMap;
+        }
+      });
+
+      // 7. PreProcess Hook: Ensure slug is available when editing existing entry
+      CMS.registerEventListener({
+        name: 'preProcess',
+        handler: function(data) {
+          var entry = data.entry;
+          var slug = entry.get('slug');
+          var url = entry.getIn(['data', 'url']);
+          var updates = {};
+
+          if (!entry.getIn(['data', 'slug'])) {
+            if (slug) {
+              updates.slug = slug;
+            } else if (url) {
+              updates.slug = String(url).replace(/^\/+|\/+$/g, '');
+            }
+          }
+
+          return entry.get('data').merge(updates);
         }
       });
 
@@ -622,95 +614,7 @@
         el.dispatchEvent(new Event('change', { bubbles: true }));
       }
 
-      // 7. Populate balloon_1..6 and photo_1..6 and slug when editing an existing entry
-      CMS.registerEventListener({
-        name: 'preProcess',
-        handler: function(data) {
-          var entry = data.entry;
-          var slug = entry.get('slug');
-          var url = entry.getIn(['data', 'url']);
-          var photos = entry.getIn(['data', 'photos']);
-          var balloons = entry.getIn(['data', 'balloons']);
-          var updates = {};
-
-          if (!entry.getIn(['data', 'slug'])) {
-            if (slug) {
-              updates.slug = slug;
-            } else if (url) {
-              updates.slug = String(url).replace(/^\/+|\/+$/g, '');
-            }
-          }
-
-          if (photos && typeof photos.toJS === 'function') {
-            var pArr = photos.toJS();
-            if (Array.isArray(pArr)) {
-              for (var i = 0; i < pArr.length && i < 6; i++) {
-                updates['photo_' + (i + 1)] = pArr[i];
-              }
-            }
-          }
-
-          if (balloons && typeof balloons.toJS === 'function') {
-            var bArr = balloons.toJS();
-            if (Array.isArray(bArr)) {
-              for (var j = 0; j < bArr.length && j < 6; j++) {
-                updates['balloon_' + (j + 1)] = bArr[j];
-              }
-            }
-          }
-
-          return entry.get('data').merge(updates);
-        }
-      });
-
-      // Also watch DOM to populate balloon_1..6 if user navigates to existing entry
-      window.addEventListener('hashchange', function() {
-        setTimeout(function() {
-          var hash = window.location.hash;
-          if (hash.indexOf('/collections/wishes/entries/') !== -1) {
-            var slug = hash.split('/collections/wishes/entries/')[1];
-            if (slug && slug !== 'new') {
-              fetch('https://raw.githubusercontent.com/srikanth1815101/wishes/pilot/content/wishes/' + slug + '.md')
-                .then(function(res) { return res.text(); })
-                .then(function(md) {
-                  // parse yaml frontmatter
-                  var match = md.match(/^---\s*([\s\S]*?)\s*---/);
-                  if (match) {
-                    var yaml = match[1];
-                    // parse balloons
-                    var bMatch = yaml.match(/balloons:\s*\n((?:\s*-\s*.*(?:\n|$))+)/);
-                    if (bMatch) {
-                      var lines = bMatch[1].split('\n');
-                      var bCount = 1;
-                      lines.forEach(function(line) {
-                        var cleaned = line.replace(/^\s*-\s*["']?/, '').replace(/["']?\s*$/, '').trim();
-                        if (cleaned) {
-                          var el = document.querySelector('input[id*="balloon_' + bCount + '"]');
-                          if (el && !el.value) setNativeInputValue(el, cleaned);
-                          bCount++;
-                        }
-                      });
-                    }
-                    // parse photos
-                    var pMatch = yaml.match(/photos:\s*\n((?:\s*-\s*.*(?:\n|$))+)/);
-                    if (pMatch) {
-                      var pLines = pMatch[1].split('\n');
-                      var pCount = 1;
-                      pLines.forEach(function(line) {
-                        var cleaned = line.replace(/^\s*-\s*["']?/, '').replace(/["']?\s*$/, '').trim();
-                        if (cleaned) {
-                          var el = document.querySelector('input[id*="photo_' + pCount + '"]');
-                          if (el && !el.value) setNativeInputValue(el, cleaned);
-                          pCount++;
-                        }
-                      });
-                    }
-                  }
-                }).catch(function() {});
-            }
-          }
-        }, 800);
-      });
+      // 8. Netlify Identity handling
 
       // 9. Netlify Identity handling
       window.CMS_MANUAL_INIT = true;
