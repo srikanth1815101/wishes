@@ -540,17 +540,17 @@
     }
 
     function getFriendshipImage(payload) {
-      if (!payload) return '/friendship-day/images/friends_mf.png';
+      if (!payload) return '/templates/friendship-day/images/friends_mf.png';
       const ug = (payload.ug || 'm').toLowerCase();
       const fg = (payload.fg || 'f').toLowerCase();
 
       if (ug === 'm' && fg === 'm') {
-        return '/friendship-day/images/friends_mm.png';
+        return '/templates/friendship-day/images/friends_mm.png';
       }
       if (ug === 'f' && fg === 'f') {
-        return '/friendship-day/images/friends_ff.png';
+        return '/templates/friendship-day/images/friends_ff.png';
       }
-      return '/friendship-day/images/friends_mf.png';
+      return '/templates/friendship-day/images/friends_mf.png';
     }
 
     const MESSAGE_CATEGORIES = [
@@ -1280,7 +1280,7 @@
               <!-- Hands Tying Friendship Band Illustration -->
               <div class="relative mb-3 flex justify-center">
                 <div class="relative rounded-3xl bg-gradient-to-br from-rose-100 via-orange-100 to-amber-100 p-2.5 shadow-inner border border-white/70">
-                  <img src="/friendship-day/images/friendship_band_hands.png" alt="Tying Friendship Band" class="h-44 w-44 object-cover rounded-2xl drop-shadow-md" />
+                  <img src="/templates/friendship-day/images/friendship_band_hands.png" alt="Tying Friendship Band" class="h-44 w-44 object-cover rounded-2xl drop-shadow-md" />
                   <div class="absolute -right-2 -top-2 rounded-full bg-gradient-to-br from-rose-500 to-orange-400 p-2 text-white shadow-lg animate-heartbeat">
                     <i data-lucide="heart" class="h-5 w-5 fill-current"></i>
                   </div>

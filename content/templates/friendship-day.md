@@ -7,6 +7,7 @@ tagline: "Interactive mini-games and secret custom wish reveal for your bestie."
 description: "Send a magical Friendship Day surprise! Features interactive heart collector game, scratch card reveal, friendship meter, celebratory confetti, custom message library, and instant WhatsApp link sharing."
 price: 0
 original_price: 99
+demo_url: "/templates/friendship-day/?token=HVAcR1RGMgkbEVtGTVtYVRIIFEBBX1ABTVxQJAQXBVFESxZKRltbSxAcEFsPWVEmDw4IGUkcARFTDgYCDQYEEENVEEZeSEMcHAJPFhcbFgEKUx8BHw0KBA9IQBBVV1sGUwcXTwkcSQgLSlMgCABdHUE_X1tVXFJeCxoCRysHC0hHQkYHSlNBGlxZTx8EAAEBHldGDw"
 image_url: "/templates/friendship-day/images/friendship_band_hands.png"
 gallery:
   - "/templates/friendship-day/images/friendship_band_hands.png"
@@ -31,7 +32,7 @@ show_whatsapp_order: false
 show_back_button: false
 builder_key: "friendship-day"
 builder_script: "/templates/friendship-day/builder.js"
-sort_order: 1
+sort_order: 2
 date: 2026-08-01T00:00:00Z
 ---
 

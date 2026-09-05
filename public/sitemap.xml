@@ -2,53 +2,53 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://wishes.csrgo.com/templates/</loc>
+    <loc>http://localhost:1313/templates/</loc>
     <lastmod>2026-08-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://wishes.csrgo.com/cookie-policy/</loc>
+    <loc>http://localhost:1313/cookie-policy/</loc>
     <lastmod>2026-08-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://wishes.csrgo.com/</loc>
+    <loc>http://localhost:1313/</loc>
     <lastmod>2026-08-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://wishes.csrgo.com/disclaimer/</loc>
+    <loc>http://localhost:1313/disclaimer/</loc>
     <lastmod>2026-08-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://wishes.csrgo.com/tags/friendship/</loc>
+    <loc>http://localhost:1313/tags/friendship/</loc>
     <lastmod>2026-08-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://wishes.csrgo.com/templates/templates/friendship-day/</loc>
+    <loc>http://localhost:1313/templates/templates/friendship-day/</loc>
     <lastmod>2026-08-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://wishes.csrgo.com/tags/interactive/</loc>
+    <loc>http://localhost:1313/tags/interactive/</loc>
     <lastmod>2026-08-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://wishes.csrgo.com/tags/mini-games/</loc>
+    <loc>http://localhost:1313/tags/mini-games/</loc>
     <lastmod>2026-08-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://wishes.csrgo.com/privacy-policy/</loc>
+    <loc>http://localhost:1313/privacy-policy/</loc>
     <lastmod>2026-08-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://wishes.csrgo.com/tags/scratch-card/</loc>
+    <loc>http://localhost:1313/tags/scratch-card/</loc>
     <lastmod>2026-08-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://wishes.csrgo.com/tags/</loc>
+    <loc>http://localhost:1313/tags/</loc>
     <lastmod>2026-08-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://wishes.csrgo.com/terms/</loc>
+    <loc>http://localhost:1313/terms/</loc>
     <lastmod>2026-08-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://wishes.csrgo.com/tags/trending/</loc>
+    <loc>http://localhost:1313/tags/trending/</loc>
     <lastmod>2026-08-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://wishes.csrgo.com/birthday-sample/</loc>
+    <loc>http://localhost:1313/birthday-sample/</loc>
   </url><url>
-    <loc>https://wishes.csrgo.com/kiran/</loc>
+    <loc>http://localhost:1313/kiran/</loc>
   </url><url>
-    <loc>https://wishes.csrgo.com/templates/templates/birthday-star/</loc>
+    <loc>http://localhost:1313/templates/templates/birthday-star/</loc>
   </url><url>
-    <loc>https://wishes.csrgo.com/categories/</loc>
+    <loc>http://localhost:1313/categories/</loc>
   </url><url>
-    <loc>https://wishes.csrgo.com/wishes/</loc>
+    <loc>http://localhost:1313/wishes/</loc>
   </url>
 </urlset>

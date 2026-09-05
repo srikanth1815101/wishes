@@ -76,6 +76,7 @@
       var birthdayName = JSON.parse({{ .Params.birthday_name | default "Birthday Star" | jsonify }});
       var senderName = JSON.parse({{ .Params.sender_name | default .Params.from_name | default "" | jsonify }});
       var BIRTHDAY_PIN = JSON.parse({{ .Params.pin_hash | default .Params.pin | default "h_11li87w" | jsonify }});
+      var BIRTHDAY_PIN_HINT = JSON.parse({{ .Params.pin_hint | default "" | jsonify }});
       var BIRTHDAY_TARGET_DATE = JSON.parse({{ .Params.birth_date | default "2026-07-28T00:00:00" | jsonify }});
 
       var welcomeMessage = {

@@ -413,7 +413,13 @@
 
       inner = `
         <div class="flex w-full max-w-xs flex-col items-center text-center px-6">
-          <p class="font-script text-3xl text-rose-500 mb-6">Your secret code</p>
+          <p class="font-script text-3xl text-rose-500 mb-3">Your secret code</p>
+          ${(typeof BIRTHDAY_PIN_HINT !== 'undefined' && BIRTHDAY_PIN_HINT) ? `
+            <div class="mb-6 inline-flex items-center gap-2 rounded-full bg-white/80 border border-rose-200/80 px-4 py-1.5 shadow-sm backdrop-blur-md transition-all hover:bg-white animate-fade-up">
+              <span class="text-sm">💡</span>
+              <span class="font-body text-xs font-bold tracking-wide text-rose-600">${BIRTHDAY_PIN_HINT}</span>
+            </div>
+          ` : '<div class="mb-4"></div>'}
 
           <div class="flex gap-2.5 mb-4 flex-wrap justify-center">${pinDots}</div>
 

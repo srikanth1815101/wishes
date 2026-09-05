@@ -154,7 +154,7 @@
 
       {{ $mdTemplates := slice }}
       {{ range where site.RegularPages "Section" "templates" }}
-        {{ $item := dict "id" (.Params.id | default .File.TranslationBaseName) "name" .Title "slug" (.Params.slug | default (printf "templates/%s" .File.TranslationBaseName)) "category" .Params.category "tagline" .Params.tagline "description" (.Params.description | default .Summary) "price" .Params.price "original_price" .Params.original_price "image_url" .Params.image_url "gallery" .Params.gallery "features" .Params.features "tags" .Params.tags "is_featured" .Params.is_featured "is_active" .Params.is_active "show_whatsapp_order" .Params.show_whatsapp_order "show_back_button" .Params.show_back_button "builder_key" .Params.builder_key "builder_script" .Params.builder_script "sort_order" .Params.sort_order }}
+        {{ $item := dict "id" (.Params.id | default .File.TranslationBaseName) "name" .Title "slug" (.Params.slug | default (printf "templates/%s" .File.TranslationBaseName)) "category" .Params.category "tagline" .Params.tagline "description" (.Params.description | default .Summary) "price" .Params.price "original_price" .Params.original_price "image_url" .Params.image_url "demo_url" .Params.demo_url "gallery" .Params.gallery "features" .Params.features "tags" .Params.tags "is_featured" .Params.is_featured "is_active" .Params.is_active "show_whatsapp_order" .Params.show_whatsapp_order "show_back_button" .Params.show_back_button "builder_key" .Params.builder_key "builder_script" .Params.builder_script "sort_order" .Params.sort_order }}
         {{ $mdTemplates = $mdTemplates | append $item }}
       {{ end }}
       {{ $data := $mdTemplates }}

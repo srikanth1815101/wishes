@@ -507,10 +507,10 @@
     const priceFormatted = Number(t.price).toLocaleString('en-IN');
 
     modalContent.innerHTML = `
-      <div class="relative z-10 flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl animate-slide-up sm:rounded-3xl sm:animate-scale-in">
+      <div class="relative z-10 flex h-[92dvh] sm:h-auto sm:max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl animate-slide-up sm:rounded-3xl sm:animate-scale-in">
         ${currentStep === 'details' ? `
           <!-- Gallery Header (Details / Specification Page Only) -->
-          <div class="relative aspect-[16/10] shrink-0 overflow-hidden bg-ink-100 sm:aspect-[16/8]">
+          <div class="relative aspect-[16/11] sm:aspect-[16/9] shrink-0 overflow-hidden bg-ink-100">
             ${gallery[galleryIndex] ? `
               <img id="modal-gallery-img" src="${escapeHtml(gallery[galleryIndex])}" alt="${escapeHtml(t.name)}" class="h-full w-full object-cover transition-opacity duration-200" />
             ` : ''}
@@ -564,22 +564,22 @@
           </div>
         ` : `
           <!-- Compact Header (Form Page Only) -->
-          <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-5 py-4 sm:px-7 shrink-0">
-            <div class="flex items-center gap-2">
-              <span class="rounded-full bg-purple-100 dark:bg-purple-900/40 px-2.5 py-0.5 text-xs font-bold text-purple-700 dark:text-purple-300 uppercase tracking-wide">
+          <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3.5 sm:px-7 sm:py-4 shrink-0">
+            <div class="flex items-center gap-2 min-w-0 pr-2">
+              <span class="shrink-0 rounded-full bg-purple-100 dark:bg-purple-900/40 px-2.5 py-0.5 text-[11px] sm:text-xs font-bold text-purple-700 dark:text-purple-300 uppercase tracking-wide">
                 ${escapeHtml(t.category)}
               </span>
-              <h2 class="font-display text-lg sm:text-xl font-bold text-ink-900 dark:text-white">
+              <h2 class="font-display text-base sm:text-lg md:text-xl font-bold text-ink-900 dark:text-white truncate">
                 ${escapeHtml(t.name)} Order Form
               </h2>
             </div>
             <button
               type="button"
               id="modal-close-btn"
-              class="rounded-full bg-gray-100 dark:bg-gray-800 p-2 text-ink-700 dark:text-gray-300 transition hover:bg-gray-200 dark:hover:bg-gray-700 shrink-0 ml-2"
+              class="rounded-full bg-gray-100 dark:bg-gray-800 p-2 text-ink-700 dark:text-gray-300 transition hover:bg-gray-200 dark:hover:bg-gray-700 shrink-0"
               aria-label="Close"
             >
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              <svg class="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
             </button>
           </div>
         `}
@@ -608,37 +608,37 @@
 
     if (currentStep === 'details') {
       return `
-        <div class="border-t border-ink-100 bg-white/95 px-5 py-4 backdrop-blur sm:px-7">
-          <div class="flex items-center justify-between gap-4">
-            <div>
-              <p class="text-xs font-medium text-ink-500 dark:text-gray-400">Price</p>
+        <div class="border-t border-ink-100 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 px-4 py-3 backdrop-blur sm:px-7 sm:py-4">
+          <div class="flex items-center justify-between gap-3 sm:gap-4">
+            <div class="min-w-0">
+              <p class="text-[10px] sm:text-xs font-medium text-ink-500 dark:text-gray-400 uppercase tracking-wider">Price</p>
               ${t.original_price && t.original_price > t.price ? `
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-semibold text-gray-400 line-through">₹${t.original_price}</span>
-                  <span class="font-display text-2xl font-bold text-rose-600 dark:text-rose-400">${t.price === 0 ? 'FREE' : `₹${t.price}`}</span>
-                  <span class="rounded-full bg-rose-100 dark:bg-rose-900/40 px-2.5 py-0.5 text-xs font-bold text-rose-600 dark:text-rose-300">
-                    ${Math.round(((t.original_price - t.price) / t.original_price) * 100)}% OFF
+                <div class="flex items-baseline gap-1.5 flex-wrap">
+                  <span class="font-display text-xl sm:text-2xl font-bold text-rose-600 dark:text-rose-400">${t.price === 0 ? 'FREE' : `₹${t.price}`}</span>
+                  <span class="text-xs font-semibold text-gray-400 line-through">₹${t.original_price}</span>
+                  <span class="rounded-full bg-rose-100 dark:bg-rose-900/40 px-2 py-0.2 text-[10px] sm:text-xs font-bold text-rose-600 dark:text-rose-300">
+                    ${Math.round(((t.original_price - t.price) / t.original_price) * 100)}%
                   </span>
                 </div>
               ` : `
-                <p class="font-display text-2xl font-semibold text-ink-900 dark:text-white">
+                <p class="font-display text-xl sm:text-2xl font-semibold text-ink-900 dark:text-white">
                   ${t.price === 0 ? 'FREE' : `${config.currency}${priceFormatted}`}
                 </p>
               `}
             </div>
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
               <a
                 href="${demoUrl}"
                 target="_blank"
-                class="inline-flex items-center justify-center gap-1.5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-200 shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-95 shrink-0"
+                class="inline-flex items-center justify-center gap-1.5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-200 shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-95 shrink-0"
               >
-                <svg class="h-4 w-4 text-purple-600 dark:text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-600 dark:text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                 Demo
               </a>
               <button
                 type="button"
                 id="modal-order-step-btn"
-                class="flex-1 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-500 px-5 py-3 text-xs sm:text-base font-bold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98] sm:flex-none sm:px-8"
+                class="rounded-2xl bg-gradient-to-r from-rose-500 to-orange-500 px-4 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-base font-bold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98]"
               >
                 Order Now
               </button>
@@ -754,6 +754,7 @@
     }
     const script = document.createElement('script');
     script.setAttribute('data-builder', cleanUrl);
+    script.charset = 'UTF-8';
     script.src = `${cleanUrl}?v=${Date.now()}`;
     script.onload = () => {
       if (callback) callback();

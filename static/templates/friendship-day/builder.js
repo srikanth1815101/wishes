@@ -68,14 +68,12 @@
           <form id="friendship-wish-form" class="space-y-4">
             <!-- Your Name & Your Gender -->
             <div>
-              <div class="flex items-center justify-between mb-1">
-                <label class="text-sm font-semibold text-ink-700 dark:text-gray-200">
-                  Your Name & Gender <span class="text-purple-600">*</span>
-                </label>
-              </div>
-              <div class="flex flex-col sm:flex-row gap-2">
-                <input type="text" id="field-user-name" placeholder="e.g. Aarav" required class="field-input flex-1" />
-                <div class="flex shrink-0 rounded-xl border border-ink-200 dark:border-gray-700 bg-ink-50 dark:bg-gray-800 p-1">
+              <label class="text-xs sm:text-sm font-semibold text-ink-700 dark:text-gray-200 mb-1.5 block">
+                Your Name & Gender <span class="text-purple-600">*</span>
+              </label>
+              <div class="flex flex-col xs:flex-row sm:flex-row gap-2">
+                <input type="text" id="field-user-name" placeholder="e.g. Aarav" required class="field-input flex-1 text-sm" />
+                <div class="flex shrink-0 rounded-xl border border-ink-200 dark:border-gray-700 bg-ink-50 dark:bg-gray-800 p-1 self-start sm:self-auto">
                   <button type="button" id="btn-ug-m" class="gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-purple-600 text-white shadow-sm" data-gender="m">Male</button>
                   <button type="button" id="btn-ug-f" class="gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition text-ink-600 dark:text-gray-300 hover:bg-ink-100 dark:hover:bg-gray-700" data-gender="f">Female</button>
                 </div>
@@ -84,14 +82,12 @@
 
             <!-- Friend's Name & Friend's Gender -->
             <div>
-              <div class="flex items-center justify-between mb-1">
-                <label class="text-sm font-semibold text-ink-700 dark:text-gray-200">
-                  Friend's Name & Gender <span class="text-purple-600">*</span>
-                </label>
-              </div>
-              <div class="flex flex-col sm:flex-row gap-2">
-                <input type="text" id="field-friend-name" placeholder="e.g. Maya" required class="field-input flex-1" />
-                <div class="flex shrink-0 rounded-xl border border-ink-200 dark:border-gray-700 bg-ink-50 dark:bg-gray-800 p-1">
+              <label class="text-xs sm:text-sm font-semibold text-ink-700 dark:text-gray-200 mb-1.5 block">
+                Friend's Name & Gender <span class="text-purple-600">*</span>
+              </label>
+              <div class="flex flex-col xs:flex-row sm:flex-row gap-2">
+                <input type="text" id="field-friend-name" placeholder="e.g. Maya" required class="field-input flex-1 text-sm" />
+                <div class="flex shrink-0 rounded-xl border border-ink-200 dark:border-gray-700 bg-ink-50 dark:bg-gray-800 p-1 self-start sm:self-auto">
                   <button type="button" id="btn-fg-m" class="gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition text-ink-600 dark:text-gray-300 hover:bg-ink-100 dark:hover:bg-gray-700" data-gender="m">Male</button>
                   <button type="button" id="btn-fg-f" class="gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-purple-600 text-white shadow-sm" data-gender="f">Female</button>
                 </div>
@@ -151,36 +147,38 @@
       const btnUgF = document.getElementById('btn-ug-f');
       const btnFgM = document.getElementById('btn-fg-m');
       const btnFgF = document.getElementById('btn-fg-f');
-      const btnPick = document.getElementById('btn-pick-preset');
-      const msgArea = document.getElementById('field-custom-message');
-      const charCounter = document.getElementById('char-count-indicator');
-      const fwForm = document.getElementById('friendship-wish-form');
 
       if (btnUgM && btnUgF) {
         btnUgM.onclick = () => {
           state.userGender = 'm';
-          btnUgM.className = 'rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-purple-600 text-white shadow-sm';
-          btnUgF.className = 'rounded-lg px-3 py-1.5 text-xs font-semibold transition text-ink-600 dark:text-gray-300 hover:bg-ink-100 dark:hover:bg-gray-700';
+          btnUgM.className = 'gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-purple-600 text-white shadow-sm';
+          btnUgF.className = 'gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition text-ink-600 dark:text-gray-300 hover:bg-ink-100 dark:hover:bg-gray-700';
         };
         btnUgF.onclick = () => {
           state.userGender = 'f';
-          btnUgF.className = 'rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-purple-600 text-white shadow-sm';
-          btnUgM.className = 'rounded-lg px-3 py-1.5 text-xs font-semibold transition text-ink-600 dark:text-gray-300 hover:bg-ink-100 dark:hover:bg-gray-700';
+          btnUgF.className = 'gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-purple-600 text-white shadow-sm';
+          btnUgM.className = 'gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition text-ink-600 dark:text-gray-300 hover:bg-ink-100 dark:hover:bg-gray-700';
         };
       }
 
       if (btnFgM && btnFgF) {
         btnFgM.onclick = () => {
           state.friendGender = 'm';
-          btnFgM.className = 'rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-purple-600 text-white shadow-sm';
-          btnFgF.className = 'rounded-lg px-3 py-1.5 text-xs font-semibold transition text-ink-600 dark:text-gray-300 hover:bg-ink-100 dark:hover:bg-gray-700';
+          btnFgM.className = 'gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-purple-600 text-white shadow-sm';
+          btnFgF.className = 'gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition text-ink-600 dark:text-gray-300 hover:bg-ink-100 dark:hover:bg-gray-700';
         };
         btnFgF.onclick = () => {
           state.friendGender = 'f';
-          btnFgF.className = 'rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-purple-600 text-white shadow-sm';
-          btnFgM.className = 'rounded-lg px-3 py-1.5 text-xs font-semibold transition text-ink-600 dark:text-gray-300 hover:bg-ink-100 dark:hover:bg-gray-700';
+          btnFgF.className = 'gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-purple-600 text-white shadow-sm';
+          btnFgM.className = 'gender-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition text-ink-600 dark:text-gray-300 hover:bg-ink-100 dark:hover:bg-gray-700';
         };
       }
+
+      const btnPick = document.getElementById('btn-pick-preset');
+
+      const msgArea = document.getElementById('field-custom-message');
+      const charCounter = document.getElementById('char-count-indicator');
+      const fwForm = document.getElementById('friendship-wish-form');
 
       if (msgArea && charCounter) {
         msgArea.oninput = () => {

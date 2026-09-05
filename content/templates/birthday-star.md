@@ -16,7 +16,9 @@ gallery:
   - "/templates/birthday-star/images/demo_6.png"
 is_featured: true
 tagline: "Magical interactive birthday celebration with candle lighting, countdown & photo memories"
-description: "Make birthdays unforgettable! Features candle lighting, countdown timer, pop-up memory balloons, photo gallery, cake cutting game, baby/family wishes, and custom birthday love letter."
+description: "Make birthdays unforgettable! Features candle lighting, countdown timer, pop-up memory balloons, photo gallery, cake cutting game, baby/family wishes, and custom birthday love letter. (💡 For Demo, use secret PIN: 1234567)"
 builder_key: "birthday-star"
 builder_script: "/templates/birthday-star/builder.js"
+sort_order: 1
+is_active: true
 ---

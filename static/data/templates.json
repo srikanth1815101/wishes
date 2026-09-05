@@ -1,43 +1,11 @@
 [
   {
-    "id": "friendship-day-magic",
-    "name": "Friendship Day Magic & Surprise",
-    "slug": "templates/friendship-day",
-    "category": "Friendship",
-    "tagline": "Interactive mini-games and secret custom wish reveal for your bestie.",
-    "description": "Send a magical Friendship Day surprise! Features interactive heart collector game, scratch card reveal, friendship meter, celebratory confetti, custom message library, and instant WhatsApp link sharing.",
-    "price": 0,
-    "original_price": 99,
-    "image_url": "/templates/friendship-day/images/friendship_band_hands.png",
-    "demo_url": "/templates/friendship-day/",
-    "gallery": [
-      "/templates/friendship-day/images/friendship_band_hands.png",
-      "/templates/friendship-day/images/friends_mf.png",
-      "/templates/friendship-day/images/friends_mm.png",
-      "/templates/friendship-day/images/friends_ff.png"
-    ],
-    "features": [
-      "3 Interactive Mini-Games (Hearts, Scratch Card, Meter)",
-      "Curated message library (Gratitude, Funny, Heartfelt, etc.)",
-      "Confetti & floating heart celebration effects",
-      "Encrypted shareable link & instant WhatsApp sharing",
-      "Customizable sender & recipient names"
-    ],
-    "tags": ["Friendship", "Interactive", "Mini Games", "Scratch Card", "Trending"],
-    "is_featured": true,
-    "is_active": true,
-    "sort_order": 1,
-    "builder_key": "friendship-day",
-    "builder_script": "/templates/friendship-day/builder.js",
-    "created_at": "2026-08-01T00:00:00Z"
-  },
-  {
     "id": "birthday-star-celebration",
     "name": "Birthday Star Celebration",
     "slug": "templates/birthday-star",
     "category": "Birthday",
     "tagline": "Magical interactive birthday celebration with candle lighting, countdown & photo memories.",
-    "description": "Make birthdays unforgettable! Features candle lighting, countdown timer, pop-up memory balloons, photo gallery, cake cutting interactive game, baby/family wishes, and custom birthday love letter.",
+    "description": "Make birthdays unforgettable! Features candle lighting, countdown timer, pop-up memory balloons, photo gallery, cake cutting interactive game, baby/family wishes, and custom birthday love letter. (💡 For Demo, use secret PIN: 1234567)",
     "price": 99,
     "original_price": 199,
     "image_url": "/templates/birthday-star/images/demo_1.png",
@@ -60,9 +28,41 @@
     "tags": ["Birthday", "Interactive", "Balloons", "Cake", "Memories", "Trending"],
     "is_featured": true,
     "is_active": true,
-    "sort_order": 2,
+    "sort_order": 1,
     "builder_key": "birthday-star",
     "builder_script": "/templates/birthday-star/builder.js",
+    "created_at": "2026-08-01T00:00:00Z"
+  },
+  {
+    "id": "friendship-day-magic",
+    "name": "Friendship Day Magic & Surprise",
+    "slug": "templates/friendship-day",
+    "category": "Friendship",
+    "tagline": "Interactive mini-games and secret custom wish reveal for your bestie.",
+    "description": "Send a magical Friendship Day surprise! Features interactive heart collector game, scratch card reveal, friendship meter, celebratory confetti, custom message library, and instant WhatsApp link sharing.",
+    "price": 0,
+    "original_price": 99,
+    "image_url": "/templates/friendship-day/images/friendship_band_hands.png",
+    "demo_url": "/templates/friendship-day/?token=HVAcR1RGMgkbEVtGTVtYVRIIFEBBX1ABTVxQJAQXBVFESxZKRltbSxAcEFsPWVEmDw4IGUkcARFTDgYCDQYEEENVEEZeSEMcHAJPFhcbFgEKUx8BHw0KBA9IQBBVV1sGUwcXTwkcSQgLSlMgCABdHUE_X1tVXFJeCxoCRysHC0hHQkYHSlNBGlxZTx8EAAEBHldGDw",
+    "gallery": [
+      "/templates/friendship-day/images/friendship_band_hands.png",
+      "/templates/friendship-day/images/friends_mf.png",
+      "/templates/friendship-day/images/friends_mm.png",
+      "/templates/friendship-day/images/friends_ff.png"
+    ],
+    "features": [
+      "3 Interactive Mini-Games (Hearts, Scratch Card, Meter)",
+      "Curated message library (Gratitude, Funny, Heartfelt, etc.)",
+      "Confetti & floating heart celebration effects",
+      "Encrypted shareable link & instant WhatsApp sharing",
+      "Customizable sender & recipient names"
+    ],
+    "tags": ["Friendship", "Interactive", "Mini Games", "Scratch Card", "Trending"],
+    "is_featured": true,
+    "is_active": true,
+    "sort_order": 2,
+    "builder_key": "friendship-day",
+    "builder_script": "/templates/friendship-day/builder.js",
     "created_at": "2026-08-01T00:00:00Z"
   }
 ]
