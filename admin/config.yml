@@ -13,34 +13,34 @@ collections:
     label: "Birthday Wish Orders"
     folder: "content/wishes"
     create: true
-    slug: "{{fields.slug_name}}"
+    slug: "{{slug}}"
     format: "frontmatter"
     extension: "md"
     editor:
       preview: false
     fields:
       - { label: "Paste WhatsApp Message to Auto-Fill Form", name: "whatsapp_order_text", widget: "whatsapp_autofill_box", required: false, hint: "Paste customer WhatsApp order message here to automatically populate name, date, pin, and all balloon messages." }
-      - { label: "Customised URL Slug", name: "slug_name", widget: "slug_checker", hint: "URL identifier (e.g. roja, kiran). Checks availability against content/wishes/ and sets page at wishes.csrgo.com/your-slug/" }
+      - { label: "Customised URL Slug", name: "url", widget: "slug_checker", hint: "URL identifier (e.g. /roja/, /kiran/). Checks availability against content/wishes/ and sets page at wishes.csrgo.com/your-slug/" }
       - { label: "Birthday Person Name", name: "birthday_name", widget: "string" }
       - { label: "Sender Name", name: "sender_name", widget: "string" }
       - { label: "Birth Date", name: "birth_date", widget: "datetime", default: "", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DDT00:00:00", hint: "Select the birth date using the calendar picker" }
-      - { label: "7-Digit PIN / Password", name: "pin_code", widget: "pin_hasher", hint: "Enter the PIN (e.g. 1234567). The encrypted pin_hash is generated and stored in the markdown file automatically on submit." }
+      - { label: "7-Digit PIN / Password", name: "pin_code", widget: "pin_hasher", required: false, hint: "Enter a new PIN if you want to change it. Leaves existing pin_hash unchanged if empty." }
       
-      # Photos: 6 native Netlify CMS image upload fields
-      - { label: "Photo 1", name: "photo_1", widget: "image" }
-      - { label: "Photo 2", name: "photo_2", widget: "image" }
-      - { label: "Photo 3", name: "photo_3", widget: "image" }
-      - { label: "Photo 4", name: "photo_4", widget: "image" }
-      - { label: "Photo 5", name: "photo_5", widget: "image" }
-      - { label: "Photo 6", name: "photo_6", widget: "image" }
+      - label: "Photos (Exactly 6 Photos)"
+        name: "photos"
+        widget: "list"
+        min: 6
+        max: 6
+        collapsed: false
+        field: { label: "Photo", name: "photo", widget: "image" }
 
-      # 6 Direct Balloon Message Inputs (Always open, auto-fillable with 1 click)
-      - { label: "Balloon Message 1 (Mandatory)", name: "balloon_1", widget: "string" }
-      - { label: "Balloon Message 2 (Mandatory)", name: "balloon_2", widget: "string" }
-      - { label: "Balloon Message 3 (Mandatory)", name: "balloon_3", widget: "string" }
-      - { label: "Balloon Message 4 (Mandatory)", name: "balloon_4", widget: "string" }
-      - { label: "Balloon Message 5 (Mandatory)", name: "balloon_5", widget: "string" }
-      - { label: "Balloon Message 6 (Mandatory)", name: "balloon_6", widget: "string" }
+      - label: "Balloon Messages (6 Messages)"
+        name: "balloons"
+        widget: "list"
+        min: 6
+        max: 6
+        collapsed: false
+        field: { label: "Balloon Message", name: "balloon", widget: "string" }
 
       - { label: "Birthday Letter", name: "letter", widget: "text" }
 
@@ -48,16 +48,15 @@ collections:
     label: "Custom / Future Orders"
     folder: "content/wishes"
     create: true
-    slug: "{{fields.slug_name}}"
+    slug: "{{slug}}"
     format: "frontmatter"
     extension: "md"
     editor:
       preview: false
     fields:
       - { label: "Template Type", name: "template_type", widget: "select", options: ["birthday-star", "friendship-day", "anniversary", "custom"], default: "birthday-star" }
-      - { label: "Customised URL Slug", name: "slug_name", widget: "slug_checker" }
+      - { label: "Customised URL Slug", name: "url", widget: "string" }
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Recipient Name", name: "recipient_name", widget: "string", required: false }
       - { label: "Sender Name", name: "sender_name", widget: "string", required: false }
-      - { label: "Password / PIN", name: "pin_code", widget: "pin_hasher", required: false }
       - { label: "Message / Note", name: "body", widget: "text", required: false }

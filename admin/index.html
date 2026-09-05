@@ -319,10 +319,10 @@
           var parsed = parseWhatsAppOrder(this.state.text);
           var filledCount = 0;
 
-          // 1. Fill Slug
-          if (parsed.slug_name) {
-            var slugEl = document.querySelector('input[id*="slug_name"]');
-            if (slugEl) { setNativeInputValue(slugEl, parsed.slug_name); filledCount++; }
+          // 1. Fill Slug / URL
+          if (parsed.url) {
+            var urlEl = document.querySelector('input[id*="url"]');
+            if (urlEl) { setNativeInputValue(urlEl, parsed.url); filledCount++; }
           }
 
           // 2. Fill Birthday Person
@@ -349,15 +349,15 @@
             if (pinEl) { setNativeInputValue(pinEl, parsed.pin_code); filledCount++; }
           }
 
-          // 6. Fill Balloon Messages 1 to 6
+          // 6. Fill Balloon Messages
           if (parsed.balloons && parsed.balloons.length > 0) {
-            for (var bi = 0; bi < parsed.balloons.length; bi++) {
-              var idx = bi + 1;
-              var bEl = document.querySelector('input[id*="balloon_' + idx + '"]');
-              if (bEl) {
-                setNativeInputValue(bEl, parsed.balloons[bi]);
-                filledCount++;
-              }
+            var balloonInputs = document.querySelectorAll('input[id*="balloons-field"]');
+            if (!balloonInputs.length) {
+              balloonInputs = document.querySelectorAll('input[id*="balloons"][type="text"]');
+            }
+            for (var bi = 0; bi < parsed.balloons.length && bi < balloonInputs.length; bi++) {
+              setNativeInputValue(balloonInputs[bi], parsed.balloons[bi]);
+              filledCount++;
             }
           }
 
@@ -618,57 +618,34 @@
 
       CMS.registerWidget('multi_photo_uploader', MultiPhotoControl);
 
-      // 7. PreSave Hook: Cleanly inject computed frontmatter
+      // 7. PreSave Hook: Cleanly inject computed frontmatter & strip unwanted fields
       CMS.registerEventListener({
         name: 'preSave',
         handler: function(data) {
           var entry = data.entry;
-          var slug = entry.getIn(['data', 'slug_name']);
+          var urlVal = entry.getIn(['data', 'url']);
           var pinCode = entry.getIn(['data', 'pin_code']);
-          var photosData = entry.getIn(['data', 'photos_data']);
+          var existingPinHash = entry.getIn(['data', 'pin_hash']);
           var updates = {};
 
-          if (slug) {
-            var cleanSlug = String(slug).toLowerCase().trim().replace(/^\/+|\/+$/g, '');
+          if (urlVal) {
+            var cleanSlug = String(urlVal).toLowerCase().trim().replace(/^\/+|\/+$/g, '');
             updates.url = '/' + cleanSlug + '/';
           }
 
-          if (pinCode) {
+          if (pinCode && String(pinCode).trim().length > 0) {
             updates.pin_hash = generatePinHash(pinCode);
+          } else if (existingPinHash) {
+            updates.pin_hash = existingPinHash;
           }
 
-          // Collect uploaded file paths from photo_1...photo_6 into clean photos list matching sample files
-          var pList = [];
-          for (var p = 1; p <= 6; p++) {
-            var pVal = entry.getIn(['data', 'photo_' + p]);
-            if (pVal) {
-              pList.push(pVal);
-            }
-          }
-          if (pList.length > 0) {
-            updates.photos = pList;
-          }
-
-          var balloonList = [];
-          for (var b = 1; b <= 6; b++) {
-            var balloonVal = entry.getIn(['data', 'balloon_' + b]);
-            if (balloonVal) {
-              balloonList.push(balloonVal);
-            }
-          }
-          if (balloonList.length > 0) {
-            updates.balloons = balloonList;
-          }
-
-          // Clean up individual helper fields from frontmatter
           var dataMap = entry.get('data').merge(updates);
+          // Crucial: pin_code and whatsapp_order_text must NEVER be written to the md file
+          dataMap = dataMap.delete('pin_code');
           dataMap = dataMap.delete('whatsapp_order_text');
-          for (var i = 1; i <= 6; i++) {
-            dataMap = dataMap.delete('photo_' + i);
-            dataMap = dataMap.delete('balloon_' + i);
-          }
+          dataMap = dataMap.delete('slug_name');
+
           return dataMap;
-          return entry.get('data');
         }
       });
 
@@ -680,12 +657,13 @@
         var nameMatch = text.match(/\*?Birthday Person:?\*?\s*([^\n\r]+)/i);
         if (nameMatch) {
           result.birthday_name = nameMatch[1].trim();
-          result.slug_name = result.birthday_name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+          var slugClean = result.birthday_name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+          result.url = '/' + slugClean + '/';
         }
 
         var dobMatch = text.match(/\*?Date of Birth:?\*?\s*([0-9]{4}-[0-9]{2}-[0-9]{2})/i);
         if (dobMatch) {
-          result.birth_date = dobMatch[1].trim();
+          result.birth_date = dobMatch[1].trim() + 'T00:00:00';
         }
 
         var senderMatch = text.match(/\*?Ordered By:?\*?\s*([^\n\r]+)/i);
