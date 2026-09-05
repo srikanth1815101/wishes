@@ -16,9 +16,9 @@
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       }
 
-      /* Clean Full-width CMS form styling overrides */
+      /* Clean Full-width CMS form styling */
       div[class*="EditorContainer"] {
-        max-width: 900px !important;
+        max-width: 920px !important;
         margin: 0 auto !important;
       }
 
@@ -56,7 +56,7 @@
       .badge-indicator {
         font-size: 12px;
         font-weight: 700;
-        padding: 6px 12px;
+        padding: 8px 14px;
         border-radius: 6px;
         letter-spacing: 0.03em;
         white-space: nowrap;
@@ -67,7 +67,7 @@
       .badge-taken { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
       .badge-loading { background: #fef3c7; color: #d97706; }
 
-      .hash-preview-row {
+      .hash-status-row {
         display: flex;
         align-items: center;
         gap: 8px;
@@ -79,7 +79,7 @@
         border-radius: 6px;
       }
 
-      .hash-preview-code {
+      .hash-code {
         font-family: monospace;
         font-weight: 700;
         color: #db2777;
@@ -117,7 +117,7 @@
         })
         .catch(function() {});
 
-      // 3. Register Custom In-Form "slug_checker" Widget
+      // 3. Custom In-Form "slug_checker" Widget
       var SlugCheckerControl = createClass({
         getInitialState: function() {
           return {
@@ -177,13 +177,13 @@
                 id: this.props.forID,
                 className: 'widget-input',
                 value: val,
-                placeholder: 'e.g. rahul, kiran-birthday',
+                placeholder: 'e.g. rahul, kiran',
                 onChange: this.handleChange
               }),
               h('span', { className: 'badge-indicator ' + statusClass }, this.state.message)
             ),
             val ? h('div', { style: { fontSize: '13px', color: '#64748b' } },
-              'Final URL will be: ',
+              'Page will publish at: ',
               h('strong', { style: { color: '#0f172a' } }, 'https://wishes.csrgo.com/' + val + '/')
             ) : null
           );
@@ -192,10 +192,11 @@
 
       CMS.registerWidget('slug_checker', SlugCheckerControl);
 
-      // 4. Register Custom In-Form "pin_hasher" Widget
+      // 4. Custom Single "pin_hasher" Widget:
+      // Admin only enters PIN (e.g. 1234567); displays hash confirmation; writes encrypted pin_hash to MD file!
       var PinHasherControl = createClass({
         handleChange: function(e) {
-          var val = e.target.value;
+          var val = e.target.value.trim();
           this.props.onChange(val);
         },
         render: function() {
@@ -209,13 +210,13 @@
                 id: this.props.forID,
                 className: 'widget-input',
                 value: val,
-                placeholder: 'Enter 7-digit PIN (e.g. 1234567) or password',
+                placeholder: 'e.g. 1234567',
                 onChange: this.handleChange
               })
             ),
-            computedHash ? h('div', { className: 'hash-preview-row' },
-              '🔒 Generated PIN Hash for markdown: ',
-              h('span', { className: 'hash-preview-code' }, computedHash)
+            computedHash ? h('div', { className: 'hash-status-row' },
+              '🔒 Encrypted PIN Hash to be saved in MD: ',
+              h('span', { className: 'hash-code' }, computedHash)
             ) : null
           );
         }
@@ -223,7 +224,7 @@
 
       CMS.registerWidget('pin_hasher', PinHasherControl);
 
-      // 5. PreSave Hook: Automatically inject computed `pin_hash` and `url` into the MD frontmatter
+      // 5. PreSave Hook: Automatically inject computed `url` and `pin_hash` directly into frontmatter!
       CMS.registerEventListener({
         name: 'preSave',
         handler: function(data) {

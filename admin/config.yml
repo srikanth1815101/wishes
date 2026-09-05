@@ -19,14 +19,11 @@ collections:
     editor:
       preview: false
     fields:
-      - { label: "Customised URL Slug", name: "slug_name", widget: "slug_checker", hint: "Enter your desired URL. Availability against existing wishes markdown files will be verified right here." }
-      - { label: "Full URL Path", name: "url", widget: "string", hint: "Format: /customisedurl/ (e.g. /kiran/)" }
+      - { label: "Customised URL Slug", name: "slug_name", widget: "slug_checker", hint: "Enter desired slug (e.g., rahul, kiran). Checks availability against wishes folder and automatically saves as url: /your-slug/" }
       - { label: "Birthday Person Name", name: "birthday_name", widget: "string" }
       - { label: "Sender Name", name: "sender_name", widget: "string" }
       - { label: "Birth Date", name: "birth_date", widget: "datetime" }
-      - { label: "Unlock Password / 7-Digit PIN", name: "pin_code", widget: "pin_hasher", hint: "Enter password or 7-digit PIN here (e.g. 1234567). It will automatically convert to encrypted pin_hash for the md file." }
-      - { label: "PIN Hash (Auto-computed for MD)", name: "pin_hash", widget: "string", hint: "Auto-generated hash (e.g. h_xdkb3o)" }
-      - { label: "PIN Hint (Optional)", name: "pin_hint", widget: "string", required: false }
+      - { label: "7-Digit PIN / Password", name: "pin_code", widget: "pin_hasher", hint: "Enter the PIN (e.g. 1234567). The encrypted pin_hash is generated and stored in the markdown file automatically on submit." }
       - label: "Photos (Exactly 6 Photos)"
         name: "photos"
         widget: "list"
@@ -53,12 +50,10 @@ collections:
     fields:
       - { label: "Template Type", name: "template_type", widget: "select", options: ["birthday-star", "friendship-day", "anniversary", "custom"], default: "birthday-star" }
       - { label: "Customised URL Slug", name: "slug_name", widget: "slug_checker" }
-      - { label: "Full URL Path", name: "url", widget: "string" }
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Recipient Name", name: "recipient_name", widget: "string", required: false }
       - { label: "Sender Name", name: "sender_name", widget: "string", required: false }
       - { label: "Password / PIN", name: "pin_code", widget: "pin_hasher", required: false }
-      - { label: "PIN Hash", name: "pin_hash", widget: "string", required: false }
       - { label: "Message / Note", name: "body", widget: "text", required: false }
       - label: "Photos"
         name: "photos"
