@@ -22,6 +22,87 @@
         margin: 0 auto !important;
       }
 
+      /* Floating Quick Auto-Fill Banner */
+      #order-autofill-banner {
+        display: none;
+        background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+        border-bottom: 2px solid #ec4899;
+        color: #fff;
+        padding: 12px 20px;
+        position: sticky;
+        top: 0;
+        z-index: 99999;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      }
+
+      .autofill-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+      }
+
+      .autofill-title {
+        font-size: 14px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #f472b6;
+      }
+
+      .autofill-body {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .autofill-textarea {
+        width: 100%;
+        box-sizing: border-box;
+        height: 90px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        color: #fff;
+        padding: 10px 14px;
+        font-family: monospace;
+        font-size: 12px;
+        outline: none;
+        resize: vertical;
+      }
+
+      .autofill-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .btn-parse-fill {
+        background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 18px;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+        transition: transform 0.1s;
+      }
+
+      .btn-parse-fill:hover {
+        transform: scale(1.02);
+      }
+
+      .parse-status {
+        font-size: 12px;
+        font-weight: 600;
+        color: #34d399;
+      }
+
       /* Custom widget styling */
       .widget-box {
         position: relative;
@@ -88,6 +169,23 @@
     </style>
   </head>
   <body>
+    <!-- Floating WhatsApp Order Auto-Filler (Visible inside Wish editor) -->
+    <div id="order-autofill-banner">
+      <div class="autofill-header" id="toggleAutofill">
+        <div class="autofill-title">
+          <span>⚡ Paste WhatsApp Order to Auto-Fill</span>
+          <span style="font-size: 11px; font-weight: normal; color: #cbd5e1;">(Click to paste order text from WhatsApp)</span>
+        </div>
+      </div>
+      <div class="autofill-body" id="autofillContent">
+        <textarea id="whatsappOrderInput" class="autofill-textarea" placeholder="Paste WhatsApp message here (e.g. *Birthday Person:* Roja, *Date of Birth:* 2026-09-18, *Secret PIN:* 1234567, 6 Balloon messages, Main wish message)..."></textarea>
+        <div class="autofill-actions">
+          <button type="button" class="btn-parse-fill" id="btnAutoFill">✨ Auto-Fill Form Fields</button>
+          <span id="parseStatus" class="parse-status"></span>
+        </div>
+      </div>
+    </div>
+
     <!-- Identity Widget -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
@@ -249,7 +347,153 @@
         }
       });
 
-      // 6. Netlify Identity handling (identical to blog pattern)
+      // 6. WhatsApp Order Auto-Fill Parser
+      function parseWhatsAppOrder(text) {
+        var result = {};
+        if (!text) return result;
+
+        // Extract Birthday Person Name
+        var nameMatch = text.match(/\*?Birthday Person:?\*?\s*([^\n\r]+)/i);
+        if (nameMatch) {
+          result.birthday_name = nameMatch[1].trim();
+          // Generate default slug suggestion from name e.g. "roja"
+          result.slug_name = result.birthday_name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+        }
+
+        // Extract Date of Birth
+        var dobMatch = text.match(/\*?Date of Birth:?\*?\s*([0-9]{4}-[0-9]{2}-[0-9]{2})/i);
+        if (dobMatch) {
+          result.birth_date = dobMatch[1].trim();
+        }
+
+        // Extract Ordered By
+        var senderMatch = text.match(/\*?Ordered By:?\*?\s*([^\n\r]+)/i);
+        if (senderMatch) {
+          result.sender_name = senderMatch[1].trim();
+        }
+
+        // Extract Secret PIN
+        var pinMatch = text.match(/\*?Secret PIN:?\*?\s*([0-9a-zA-Z]+)/i);
+        if (pinMatch) {
+          result.pin_code = pinMatch[1].trim();
+        }
+
+        // Extract Balloon Messages (1 to 6)
+        result.balloons = [];
+        for (var i = 1; i <= 6; i++) {
+          var balloonRegex = new RegExp('(?:^|\\n)\\s*' + i + '\\.\\s*([^\\n\\r]+)', 'i');
+          var bMatch = text.match(balloonRegex);
+          if (bMatch) {
+            result.balloons.push(bMatch[1].trim());
+          }
+        }
+
+        // Extract Main Wish Message
+        var wishMatch = text.match(/\*?Main Wish Message:?\*?\s*([\s\S]*?)(?:-{3,}|\*Amount|$)/i);
+        if (wishMatch) {
+          result.letter = wishMatch[1].trim();
+        }
+
+        return result;
+      }
+
+      // Helper to simulate native input event so React/Decap CMS updates state
+      function setNativeInputValue(el, value) {
+        if (!el) return;
+        var prototype = Object.getPrototypeOf(el);
+        var descriptor = Object.getOwnPropertyDescriptor(prototype, 'value');
+        if (descriptor && descriptor.set) {
+          descriptor.set.call(el, value);
+        } else {
+          el.value = value;
+        }
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+
+      // Setup Auto-Fill Banner logic
+      var autofillBanner = document.getElementById('order-autofill-banner');
+      var autofillBtn = document.getElementById('btnAutoFill');
+      var parseStatus = document.getElementById('parseStatus');
+      var orderInput = document.getElementById('whatsappOrderInput');
+
+      if (autofillBtn) {
+        autofillBtn.addEventListener('click', function() {
+          var raw = orderInput.value;
+          var parsed = parseWhatsAppOrder(raw);
+          var filledCount = 0;
+
+          // 1. Fill Slug
+          if (parsed.slug_name) {
+            var slugEl = document.querySelector('input[id*="slug_name"]');
+            if (slugEl) { setNativeInputValue(slugEl, parsed.slug_name); filledCount++; }
+          }
+
+          // 2. Fill Birthday Person
+          if (parsed.birthday_name) {
+            var bNameEl = document.querySelector('input[id*="birthday_name"]');
+            if (bNameEl) { setNativeInputValue(bNameEl, parsed.birthday_name); filledCount++; }
+          }
+
+          // 3. Fill Sender Name
+          if (parsed.sender_name) {
+            var senderEl = document.querySelector('input[id*="sender_name"]');
+            if (senderEl) { setNativeInputValue(senderEl, parsed.sender_name); filledCount++; }
+          }
+
+          // 4. Fill Date of Birth
+          if (parsed.birth_date) {
+            var dateEl = document.querySelector('input[id*="birth_date"]');
+            if (dateEl) { setNativeInputValue(dateEl, parsed.birth_date); filledCount++; }
+          }
+
+          // 5. Fill PIN
+          if (parsed.pin_code) {
+            var pinEl = document.querySelector('input[id*="pin_code"]');
+            if (pinEl) { setNativeInputValue(pinEl, parsed.pin_code); filledCount++; }
+          }
+
+          // 6. Fill Balloon Messages
+          if (parsed.balloons && parsed.balloons.length > 0) {
+            // Check existing balloon inputs
+            var balloonInputs = document.querySelectorAll('input[id*="balloons"]');
+            for (var bi = 0; bi < parsed.balloons.length; bi++) {
+              if (balloonInputs[bi]) {
+                setNativeInputValue(balloonInputs[bi], parsed.balloons[bi]);
+                filledCount++;
+              }
+            }
+          }
+
+          // 7. Fill Main Letter
+          if (parsed.letter) {
+            var letterEl = document.querySelector('textarea[id*="letter"]');
+            if (letterEl) { setNativeInputValue(letterEl, parsed.letter); filledCount++; }
+          }
+
+          if (filledCount > 0) {
+            parseStatus.style.color = '#34d399';
+            parseStatus.textContent = '✓ Auto-filled ' + filledCount + ' fields! Review and adjust if needed.';
+          } else {
+            parseStatus.style.color = '#fbbf24';
+            parseStatus.textContent = 'Please make sure you are on the New Entry page before clicking Auto-Fill.';
+          }
+        });
+      }
+
+      // Check current URL hash to display autofill banner only when editing/creating
+      function checkRouteForBanner() {
+        if (window.location.hash.indexOf('/collections/wishes/new') !== -1 ||
+            window.location.hash.indexOf('/collections/wishes/entries/') !== -1) {
+          if (autofillBanner) autofillBanner.style.display = 'block';
+        } else {
+          if (autofillBanner) autofillBanner.style.display = 'none';
+        }
+      }
+      window.addEventListener('hashchange', checkRouteForBanner);
+      setInterval(checkRouteForBanner, 1000);
+
+      // 7. Netlify Identity handling (identical to blog pattern)
       window.CMS_MANUAL_INIT = true;
 
       if (window.netlifyIdentity) {
