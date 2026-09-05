@@ -1,5 +1,5 @@
 ---
-slug: roja
+slug: rojasri
 birthday_name: Roja
 sender_name: Srikanth
 birth_date: 2026-09-04T00:00:00
@@ -21,6 +21,6 @@ letter: Happy Birthday! Today is all about celebrating you and the amazing
   energy you bring into our lives. May your special day bring as much joy,
   warmth, and laughter as you bring to everyone around you. Wishing you health,
   success, and endless happiness!
-url: /roja/
+url: /rojasri/
 pin_hash: h_xdkb3o
 ---
