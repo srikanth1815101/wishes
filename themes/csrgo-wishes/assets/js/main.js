@@ -75,13 +75,7 @@
 
       const timeA = getEntryTimestamp(a);
       const timeB = getEntryTimestamp(b);
-      if (timeA !== timeB) {
-        return timeB - timeA; // newest entry date first
-      }
-
-      const orderA = typeof a.sort_order === 'number' ? a.sort_order : 999;
-      const orderB = typeof b.sort_order === 'number' ? b.sort_order : 999;
-      return orderA - orderB;
+      return timeB - timeA; // newest date first
     });
   }
 

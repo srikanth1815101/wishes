@@ -19,7 +19,6 @@ tagline: "Magical interactive birthday celebration with candle lighting, countdo
 description: "Make birthdays unforgettable! Features candle lighting, countdown timer, pop-up memory balloons, photo gallery, cake cutting game, baby/family wishes, and custom birthday love letter. (💡 For Demo, use secret PIN: 1234567)"
 builder_key: "birthday-star"
 builder_script: "/templates/birthday-star/builder.js"
-sort_order: 1
 demand_type: "all_year"
 date: 2026-08-10T00:00:00Z
 is_active: true
