@@ -16,7 +16,7 @@ theme = 'csrgo-wishes'
 [params]
   brandName = 'CSRGO Wishes'
   brandDomain = 'wishes.csrgo.com'
-  whatsappNumber = '919666839729'
+  whatsappNumber = '919392438319'
   currency = '₹'
   supabaseUrl = ''
   supabaseAnonKey = ''

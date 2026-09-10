@@ -1,0 +1,50 @@
+name: Auto Clean Deleted Wish Images
+
+on:
+  push:
+    branches:
+      - pilot
+      - main
+    paths:
+      - 'content/wishes/**'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Remove orphaned wish image folders
+        run: |
+          DELETED_ANY=false
+
+          if [ -d "static/images/wishes" ]; then
+            for dir in static/images/wishes/*/; do
+              if [ -d "$dir" ]; then
+                slug=$(basename "$dir")
+                wish_file="content/wishes/${slug}.md"
+
+                if [ ! -f "$wish_file" ]; then
+                  echo "Deleting orphaned image directory: $dir (no matching $wish_file found)"
+                  rm -rf "$dir"
+                  DELETED_ANY=true
+                fi
+              fi
+            done
+          fi
+
+          if [ "$DELETED_ANY" = true ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add static/images/wishes/
+            git commit -m "Auto-clean: delete images folder for deleted wish entry [skip ci]"
+            git push
+          else
+            echo "No orphaned wish image directories found."
+          fi
