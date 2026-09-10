@@ -2,7 +2,7 @@
   window.WISH_BUILDERS = window.WISH_BUILDERS || {};
 
   const WHATSAPP_NUMBER = '919392438319';
-  const UPI_ID = 'csr850@okaxis';
+  const UPI_ID = 'csrgo@ptyes';
 
   const DEFAULT_BALLOONS = [
     "You are so much stronger than you think. \u{1F31F}",
