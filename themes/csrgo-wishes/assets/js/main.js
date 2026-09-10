@@ -58,7 +58,7 @@
   }
 
   function getEntryTimestamp(t) {
-    const val = t.entry_date || t.created_at || t.date;
+    const val = t.date || t.entry_date || t.created_at;
     if (!val) return 0;
     const time = new Date(val).getTime();
     return isNaN(time) ? 0 : time;

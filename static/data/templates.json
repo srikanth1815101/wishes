@@ -30,10 +30,9 @@
     "is_active": true,
     "sort_order": 1,
     "demand_type": "all_year",
-    "entry_date": "2026-08-10T00:00:00Z",
+    "date": "2026-08-10T00:00:00Z",
     "builder_key": "birthday-star",
-    "builder_script": "/templates/birthday-star/builder.js",
-    "created_at": "2026-08-10T00:00:00Z"
+    "builder_script": "/templates/birthday-star/builder.js"
   },
   {
     "id": "friendship-day-magic",
@@ -64,9 +63,8 @@
     "is_active": true,
     "sort_order": 2,
     "demand_type": "single_day",
-    "entry_date": "2026-08-01T00:00:00Z",
+    "date": "2026-08-01T00:00:00Z",
     "builder_key": "friendship-day",
-    "builder_script": "/templates/friendship-day/builder.js",
-    "created_at": "2026-08-01T00:00:00Z"
+    "builder_script": "/templates/friendship-day/builder.js"
   }
 ]
