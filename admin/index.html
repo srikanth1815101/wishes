@@ -617,6 +617,16 @@
         return window._baseImageControl;
       }
 
+      function resolveAssetUrl(val) {
+        if (!val) return '';
+        var s = String(val).trim();
+        if (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('data:') || s.startsWith('blob:')) {
+          return s;
+        }
+        var clean = s.replace(/^\/+/, '');
+        return 'https://raw.githubusercontent.com/srikanth1815101/wishes/pilot/static/' + clean;
+      }
+
       var WishPhotoControl = createClass({
         getFallbackPhoto: function() {
           if (!this.props.entry) return '';
@@ -643,28 +653,98 @@
         render: function() {
           var BaseControl = getBaseImageControl();
           var currentVal = this.props.value || this.getFallbackPhoto();
+          var resolvedUrl = resolveAssetUrl(currentVal);
+
           var newProps = Object.assign({}, this.props, {
-            value: currentVal
+            value: currentVal,
+            getAsset: function(val) {
+              var r = resolveAssetUrl(val);
+              return {
+                url: r,
+                path: val,
+                toString: function() { return r; }
+              };
+            }
           });
 
-          if (BaseControl) {
-            return h(BaseControl, newProps);
-          }
-
-          var self = this;
           return h('div', { className: 'widget-box' },
-            h('input', {
+            BaseControl ? h(BaseControl, newProps) : h('input', {
               type: 'text',
               id: this.props.forID,
               className: 'widget-input',
               value: currentVal,
               placeholder: '/images/wishes/...',
-              onChange: function(e) { self.props.onChange(e.target.value); }
+              onChange: (e) => this.props.onChange(e.target.value)
             }),
-            currentVal ? h('img', {
-              src: currentVal,
-              style: { maxHeight: '120px', objectFit: 'cover', borderRadius: '8px', marginTop: '8px' }
-            }) : null
+            currentVal ? h('div', {
+              style: {
+                display: 'flex',
+                alignItems: 'center',
+                gap: '14px',
+                marginTop: '8px',
+                padding: '10px 14px',
+                background: '#f8fafc',
+                border: '1.5px solid #e2e8f0',
+                borderRadius: '10px',
+                boxShadow: '0 2px 5px rgba(0,0,0,0.03)'
+              }
+            },
+              h('img', {
+                src: resolvedUrl,
+                alt: 'Photo preview',
+                style: {
+                  width: '72px',
+                  height: '72px',
+                  objectFit: 'cover',
+                  borderRadius: '8px',
+                  border: '1px solid #cbd5e1',
+                  background: '#fff'
+                },
+                onError: function(e) {
+                  if (!e.target._triedPublic) {
+                    e.target._triedPublic = true;
+                    var clean = String(currentVal).replace(/^\/+/, '');
+                    e.target.src = 'https://wishes.csrgo.com/' + clean;
+                  }
+                }
+              }),
+              h('div', { style: { flex: 1, minWidth: 0 } },
+                h('div', {
+                  style: {
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    color: '#16a34a',
+                    marginBottom: '2px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }
+                }, '✓ Current Image Attached'),
+                h('div', {
+                  style: {
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    color: '#334155',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }
+                }, currentVal),
+                h('a', {
+                  href: resolvedUrl,
+                  target: '_blank',
+                  rel: 'noopener noreferrer',
+                  style: {
+                    display: 'inline-block',
+                    marginTop: '4px',
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    color: '#ec4899',
+                    textDecoration: 'none'
+                  }
+                }, '🔍 View Full Size Photo ↗')
+              )
+            ) : null
           );
         }
       });
