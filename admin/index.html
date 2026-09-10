@@ -280,6 +280,9 @@
     <!-- Identity Widget -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
+    <!-- Immutable.js for clean OrderedMap frontmatter serialization -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/immutable/3.8.2/immutable.min.js"></script>
+
     <!-- Netlify CMS (Matching Blog Engine) -->
     <script src="https://unpkg.com/netlify-cms@^2.10.192/dist/netlify-cms.js"></script>
 
@@ -527,7 +530,103 @@
 
       CMS.registerWidget('pin_hasher', PinHasherControl);
 
+      // 6. Custom Individual "wish_balloon" Widget
+      var WishBalloonControl = createClass({
+        getFallbackValue: function() {
+          if (!this.props.entry) return '';
+          var name = this.props.field ? this.props.field.get('name') : '';
+          var match = name.match(/balloon_(\d+)/);
+          if (match) {
+            var idx = parseInt(match[1], 10) - 1;
+            var balloonsList = this.props.entry.getIn(['data', 'balloons']);
+            if (balloonsList) {
+              var val = balloonsList.get ? balloonsList.get(idx) : balloonsList[idx];
+              if (val) return String(val);
+            }
+          }
+          return '';
+        },
+        componentDidMount: function() {
+          if (!this.props.value) {
+            var fallback = this.getFallbackValue();
+            if (fallback) {
+              this.props.onChange(fallback);
+            }
+          }
+        },
+        handleChange: function(e) {
+          this.props.onChange(e.target.value);
+        },
+        render: function() {
+          var name = this.props.field ? this.props.field.get('name') : '';
+          var match = name.match(/balloon_(\d+)/);
+          var num = match ? match[1] : '';
+          var val = (this.props.value !== undefined && this.props.value !== null && this.props.value !== '')
+            ? this.props.value
+            : this.getFallbackValue();
 
+          return h('div', { className: 'widget-box' },
+            h('div', { className: 'widget-row' },
+              h('span', {
+                style: {
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  padding: '8px 12px',
+                  background: '#fdf2f8',
+                  color: '#db2777',
+                  borderRadius: '8px',
+                  border: '1px solid #fbcfe8',
+                  whiteSpace: 'nowrap'
+                }
+              }, '🎈 Message ' + num),
+              h('input', {
+                type: 'text',
+                id: this.props.forID,
+                className: 'widget-input',
+                value: val,
+                placeholder: 'Enter balloon message #' + num + ' (e.g. You bring so much joy! 💖)',
+                onChange: this.handleChange
+              })
+            )
+          );
+        }
+      });
+
+      CMS.registerWidget('wish_balloon', WishBalloonControl);
+
+      // 7. Custom Individual "wish_photo" Widget
+      var WishPhotoControl = createClass({
+        getFallbackPhoto: function() {
+          if (!this.props.entry) return '';
+          var name = this.props.field ? this.props.field.get('name') : '';
+          var match = name.match(/photo_(\d+)/);
+          if (match) {
+            var idx = parseInt(match[1], 10) - 1;
+            var photosList = this.props.entry.getIn(['data', 'photos']);
+            if (photosList) {
+              var val = photosList.get ? photosList.get(idx) : photosList[idx];
+              if (val) return String(val);
+            }
+          }
+          return '';
+        },
+        componentDidMount: function() {
+          if (!this.props.value) {
+            var fallback = this.getFallbackPhoto();
+            if (fallback) {
+              this.props.onChange(fallback);
+            }
+          }
+        },
+        render: function() {
+          var BaseControl = (window.CMS && CMS.getWidget) ? CMS.getWidget('image').control : null;
+          var val = this.props.value || this.getFallbackPhoto();
+          var newProps = (val && !this.props.value) ? Object.assign({}, this.props, { value: val }) : this.props;
+          return BaseControl ? h(BaseControl, newProps) : null;
+        }
+      });
+
+      CMS.registerWidget('wish_photo', WishPhotoControl);
 
       // 8. PreSave Hook: Cleanly assemble frontmatter & strip unwanted fields
       CMS.registerEventListener({
@@ -537,39 +636,24 @@
           var slugVal = entry.getIn(['data', 'slug']);
           var pinCode = entry.getIn(['data', 'pin_code']);
           var existingPinHash = entry.getIn(['data', 'pin_hash']);
-          var updates = {};
+          var birthdayName = entry.getIn(['data', 'birthday_name']) || '';
+          var senderName = entry.getIn(['data', 'sender_name']) || '';
+          var birthDate = entry.getIn(['data', 'birth_date']) || '';
+          var letter = entry.getIn(['data', 'letter']) || '';
 
           // 1. Slug & URL
+          var cleanSlug = '';
           if (slugVal) {
-            var cleanSlug = String(slugVal).toLowerCase().trim().replace(/[^a-z0-9-]/g, '').replace(/^-+|-+$/g, '');
-            updates.slug = cleanSlug;
-            updates.url = '/' + cleanSlug + '/';
+            cleanSlug = String(slugVal).toLowerCase().trim().replace(/[^a-z0-9-]/g, '').replace(/^-+|-+$/g, '');
           }
 
           // 2. PIN Hash
+          var finalPinHash = existingPinHash || '';
           if (pinCode && String(pinCode).trim().length > 0) {
-            updates.pin_hash = generatePinHash(pinCode);
-          } else if (existingPinHash) {
-            updates.pin_hash = existingPinHash;
+            finalPinHash = generatePinHash(pinCode);
           }
 
-          // 3. Assemble Balloons Array (preserve array for Hugo & individual fields for CMS)
-          var balloons = [];
-          for (var b = 1; b <= 6; b++) {
-            var bVal = entry.getIn(['data', 'balloon_' + b]);
-            if (bVal && String(bVal).trim()) {
-              balloons.push(String(bVal).trim());
-            }
-          }
-          if (balloons.length === 0) {
-            var existB = entry.getIn(['data', 'balloons']);
-            if (existB) {
-              balloons = existB.toJS ? existB.toJS() : (Array.isArray(existB) ? existB : []);
-            }
-          }
-          updates.balloons = balloons;
-
-          // 4. Assemble Photos Array (preserve array for Hugo & individual fields for CMS)
+          // 3. Assemble Photos Array (preserve actual uploaded paths)
           var photos = [];
           for (var p = 1; p <= 6; p++) {
             var pVal = entry.getIn(['data', 'photo_' + p]);
@@ -583,16 +667,56 @@
               photos = existP.toJS ? existP.toJS() : (Array.isArray(existP) ? existP : []);
             }
           }
-          updates.photos = photos;
 
-          var dataMap = entry.get('data').merge(updates);
+          // 4. Assemble Balloons Array
+          var balloons = [];
+          for (var b = 1; b <= 6; b++) {
+            var bVal = entry.getIn(['data', 'balloon_' + b]);
+            if (bVal && String(bVal).trim()) {
+              balloons.push(String(bVal).trim());
+            }
+          }
+          if (balloons.length === 0) {
+            var existB = entry.getIn(['data', 'balloons']);
+            if (existB) {
+              balloons = existB.toJS ? existB.toJS() : (Array.isArray(existB) ? existB : []);
+            }
+          }
 
-          // Strip temporary non-content fields
-          dataMap = dataMap.delete('pin_code');
-          dataMap = dataMap.delete('whatsapp_order_text');
-          dataMap = dataMap.delete('slug_name');
+          // 5. Build clean, pristine frontmatter without ANY photo_1..6 or balloon_1..6
+          var cleanData;
+          if (window.Immutable && window.Immutable.OrderedMap) {
+            cleanData = window.Immutable.OrderedMap();
+            if (cleanSlug) {
+              cleanData = cleanData.set('slug', cleanSlug);
+              cleanData = cleanData.set('url', '/' + cleanSlug + '/');
+            }
+            if (birthdayName) cleanData = cleanData.set('birthday_name', birthdayName);
+            if (senderName) cleanData = cleanData.set('sender_name', senderName);
+            if (birthDate) cleanData = cleanData.set('birth_date', birthDate);
+            if (finalPinHash) cleanData = cleanData.set('pin_hash', finalPinHash);
+            cleanData = cleanData.set('photos', window.Immutable.fromJS(photos));
+            cleanData = cleanData.set('balloons', window.Immutable.fromJS(balloons));
+            if (letter) cleanData = cleanData.set('letter', letter);
+          } else {
+            cleanData = entry.get('data');
+            for (var i = 1; i <= 6; i++) {
+              cleanData = cleanData.delete('photo_' + i);
+              cleanData = cleanData.delete('balloon_' + i);
+            }
+            cleanData = cleanData.delete('pin_code');
+            cleanData = cleanData.delete('whatsapp_order_text');
+            cleanData = cleanData.delete('slug_name');
+            cleanData = cleanData.set('photos', photos);
+            cleanData = cleanData.set('balloons', balloons);
+            if (cleanSlug) {
+              cleanData = cleanData.set('slug', cleanSlug);
+              cleanData = cleanData.set('url', '/' + cleanSlug + '/');
+            }
+            if (finalPinHash) cleanData = cleanData.set('pin_hash', finalPinHash);
+          }
 
-          return dataMap;
+          return cleanData;
         }
       });
 
