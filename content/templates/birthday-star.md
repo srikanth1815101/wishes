@@ -20,5 +20,8 @@ description: "Make birthdays unforgettable! Features candle lighting, countdown 
 builder_key: "birthday-star"
 builder_script: "/templates/birthday-star/builder.js"
 sort_order: 1
+demand_type: "all_year"
+entry_date: 2026-08-10T00:00:00Z
+date: 2026-08-10T00:00:00Z
 is_active: true
 ---

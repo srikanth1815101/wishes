@@ -16,7 +16,9 @@
     "tags": {{ $page.Params.tags | jsonify }},
     "is_featured": {{ if $page.Params.is_featured }}true{{ else }}false{{ end }},
     "is_active": {{ if ne $page.Params.is_active false }}true{{ else }}false{{ end }},
-    "sort_order": {{ $page.Params.sort_order | default 1 }}
+    "sort_order": {{ $page.Params.sort_order | default 1 }},
+    "demand_type": {{ ($page.Params.demand_type | default "all_year") | jsonify }},
+    "entry_date": {{ ($page.Params.entry_date | default ($page.Date.Format "2006-01-02T15:04:05Z07:00") | default $page.Params.created_at) | jsonify }}
   }
   {{- end }}
 ]

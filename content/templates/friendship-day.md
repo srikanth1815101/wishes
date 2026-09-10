@@ -33,6 +33,8 @@ show_back_button: false
 builder_key: "friendship-day"
 builder_script: "/templates/friendship-day/builder.js"
 sort_order: 2
+demand_type: "single_day"
+entry_date: 2026-08-01T00:00:00Z
 date: 2026-08-01T00:00:00Z
 ---
 

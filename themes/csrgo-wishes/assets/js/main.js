@@ -46,6 +46,45 @@
     initApp();
   }
 
+  // Sort templates:
+  // 1. Demand Type: Throughout-the-year demand ('all_year') prioritized first, then single-day ('single_day')
+  // 2. Entry Date: Newest entry_date (or created_at/date) descending so latest ones show first
+  function getDemandWeight(t) {
+    const d = (t.demand_type || t.demand || '').toLowerCase();
+    if (d === 'all_year' || d === 'year_round' || d === 'evergreen' || d === 'throughout_the_year') {
+      return 1;
+    }
+    return 2;
+  }
+
+  function getEntryTimestamp(t) {
+    const val = t.entry_date || t.created_at || t.date;
+    if (!val) return 0;
+    const time = new Date(val).getTime();
+    return isNaN(time) ? 0 : time;
+  }
+
+  function sortTemplates(list) {
+    if (!Array.isArray(list)) return [];
+    return [...list].sort((a, b) => {
+      const weightA = getDemandWeight(a);
+      const weightB = getDemandWeight(b);
+      if (weightA !== weightB) {
+        return weightA - weightB;
+      }
+
+      const timeA = getEntryTimestamp(a);
+      const timeB = getEntryTimestamp(b);
+      if (timeA !== timeB) {
+        return timeB - timeA; // newest entry date first
+      }
+
+      const orderA = typeof a.sort_order === 'number' ? a.sort_order : 999;
+      const orderB = typeof b.sort_order === 'number' ? b.sort_order : 999;
+      return orderA - orderB;
+    });
+  }
+
   // Fetch templates from Supabase or Fallback static dataset
   async function loadTemplates() {
     renderSkeleton();
@@ -74,7 +113,7 @@
     }
 
     if (fetched && Array.isArray(fetched)) {
-      allTemplates = fetched;
+      allTemplates = sortTemplates(fetched);
       renderAll();
       checkUrlForModal();
     } else {
