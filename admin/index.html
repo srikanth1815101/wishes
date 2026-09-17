@@ -388,28 +388,30 @@
                     try {
                       if (isJson) {
                         var data = JSON.parse(text);
-                        if (data && data.content && data.encoding === 'base64' && (
-                          isMarkdownPath || (data.path && data.path.indexOf('content/wishes') !== -1) || (data.name && data.name.endsWith('.md'))
-                        )) {
+                        if (data && data.content && data.encoding === 'base64') {
                           var decoded = decodeUtf8Base64(data.content);
-                          var transformed = transformMarkdown(decoded);
-                          if (transformed !== decoded) {
-                            data.content = encodeUtf8Base64(transformed);
-                            return new Response(JSON.stringify(data), {
+                          if (decoded && decoded.trimStart().startsWith('---')) {
+                            var transformed = transformMarkdown(decoded);
+                            if (transformed !== decoded) {
+                              data.content = encodeUtf8Base64(transformed);
+                              return new Response(JSON.stringify(data), {
+                                status: res.status,
+                                statusText: res.statusText,
+                                headers: res.headers
+                              });
+                            }
+                          }
+                        }
+                      } else {
+                        if (text && text.trimStart().startsWith('---')) {
+                          var transformedText = transformMarkdown(text);
+                          if (transformedText !== text) {
+                            return new Response(transformedText, {
                               status: res.status,
                               statusText: res.statusText,
                               headers: res.headers
                             });
                           }
-                        }
-                      } else if (isMarkdownPath) {
-                        var transformedText = transformMarkdown(text);
-                        if (transformedText !== text) {
-                          return new Response(transformedText, {
-                            status: res.status,
-                            statusText: res.statusText,
-                            headers: res.headers
-                          });
                         }
                       }
                     } catch(e) {
@@ -425,6 +427,26 @@
             });
           };
         }
+
+        // Global Image Fallback Handler for Admin Section
+        window.addEventListener('error', function(e) {
+          if (e.target && e.target.tagName === 'IMG') {
+            var src = e.target.getAttribute('src') || e.target.src || '';
+            if (src.indexOf('/images/') !== -1) {
+              var clean = src.substring(src.indexOf('/images/'));
+              if (!e.target._retriedRaw) {
+                e.target._retriedRaw = true;
+                e.target.src = 'https://raw.githubusercontent.com/srikanth1815101/wishes/main/static' + clean;
+                return;
+              }
+              if (!e.target._retriedProd) {
+                e.target._retriedProd = true;
+                e.target.src = 'https://wishes.csrgo.com' + clean;
+                return;
+              }
+            }
+          }
+        }, true);
       })();
     </script>
 
