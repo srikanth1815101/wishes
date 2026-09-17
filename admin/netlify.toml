@@ -3,7 +3,7 @@
 
 [[redirects]]
   from = "/images/*"
-  to = "https://raw.githubusercontent.com/srikanth1815101/wishes/pilot/static/images/:splat"
+  to = "https://raw.githubusercontent.com/srikanth1815101/wishes/main/static/images/:splat"
   status = 200
   force = true
 
