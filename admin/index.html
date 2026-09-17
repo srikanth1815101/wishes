@@ -16,10 +16,25 @@
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       }
 
+      /* Remove Preview Split Pane & Resizer cleanly */
+      .Pane2,
+      div[class*="Pane2"],
+      .Resizer,
+      div[class*="Resizer"] {
+        display: none !important;
+        width: 0 !important;
+      }
+
+      .Pane1,
+      div[class*="Pane1"] {
+        width: 100% !important;
+      }
+
       /* Clean Full-width CMS form styling */
       div[class*="EditorContainer"] {
-        max-width: 960px !important;
+        max-width: 900px !important;
         margin: 0 auto !important;
+        box-sizing: border-box !important;
       }
 
       /* In-Form WhatsApp AutoFill Box */
@@ -166,113 +181,45 @@
         font-size: 14px;
       }
 
-      /* Multi-Photo Uploader & Reordering Grid */
-      .multi-photo-container {
-        background: #ffffff;
-        border: 2px dashed #cbd5e1;
-        border-radius: 12px;
-        padding: 16px;
-        margin-top: 6px;
-      }
+      /* ==========================================================================
+         RESPONSIVE & MOBILE FRIENDLINESS
+         ========================================================================== */
+      @media (max-width: 768px) {
+        div[class*="EditorContainer"] {
+          padding: 12px 14px 70px 14px !important;
+        }
 
-      .multi-photo-dropzone {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-        background: #f8fafc;
-        border-radius: 8px;
-        border: 1px dashed #94a3b8;
-        cursor: pointer;
-        text-align: center;
-        transition: background 0.2s, border-color 0.2s;
-      }
+        /* Prevent iOS Zoom by ensuring inputs are at least 16px */
+        input, textarea, select, .widget-input, .autofill-textarea {
+          font-size: 16px !important;
+        }
 
-      .multi-photo-dropzone:hover {
-        background: #fdf2f8;
-        border-color: #ec4899;
-      }
+        .autofill-card {
+          padding: 14px !important;
+          border-radius: 10px !important;
+        }
 
-      .multi-photo-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: 12px;
-        margin-top: 16px;
-      }
+        .autofill-actions {
+          flex-direction: column !important;
+          align-items: stretch !important;
+        }
 
-      .photo-card {
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-        display: flex;
-        flex-direction: column;
-        position: relative;
-      }
+        .btn-parse-fill {
+          width: 100% !important;
+          justify-content: center !important;
+          padding: 12px !important;
+          font-size: 15px !important;
+        }
 
-      .photo-card-img {
-        width: 100%;
-        height: 110px;
-        object-fit: cover;
-        background: #f1f5f9;
-      }
+        .widget-row {
+          flex-direction: column !important;
+          align-items: stretch !important;
+          gap: 10px !important;
+        }
 
-      .photo-card-badge {
-        position: absolute;
-        top: 6px;
-        left: 6px;
-        background: rgba(15, 23, 42, 0.75);
-        color: #fff;
-        font-size: 10px;
-        font-weight: 700;
-        padding: 2px 6px;
-        border-radius: 4px;
-      }
-
-      .photo-card-actions {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 6px 8px;
-        background: #f8fafc;
-        border-top: 1px solid #e2e8f0;
-      }
-
-      .btn-arrow {
-        background: #e2e8f0;
-        border: none;
-        border-radius: 4px;
-        width: 26px;
-        height: 24px;
-        font-size: 12px;
-        font-weight: 700;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .btn-arrow:hover:not(:disabled) {
-        background: #cbd5e1;
-      }
-
-      .btn-arrow:disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-      }
-
-      .btn-remove-photo {
-        background: #fee2e2;
-        color: #ef4444;
-        border: none;
-        border-radius: 4px;
-        width: 24px;
-        height: 24px;
-        font-size: 11px;
-        font-weight: 700;
-        cursor: pointer;
+        .badge-indicator {
+          align-self: flex-start !important;
+        }
       }
     </style>
   </head>
