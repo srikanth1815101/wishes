@@ -8,242 +8,36 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <script>
-      // Enforce preview off in Decap CMS so no split-pane is rendered
-      try {
-        localStorage.setItem('cms.preview-visible', 'false');
-      } catch (e) {}
-    </script>
-
     <style>
-      *, *::before, *::after {
-        box-sizing: border-box;
-      }
-
       html, body {
         margin: 0;
         padding: 0;
         background: #f8fafc;
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        color: #0f172a;
-        -webkit-font-smoothing: antialiased;
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       }
 
-      /* ==========================================================================
-         FULL-WIDTH SINGLE PANE EDITOR (REMOVE PREVIEW & EMPTY RIGHT AREA)
-         ========================================================================== */
-      /* Top-level Editor Containers must stretch 100% width across the monitor */
-      div[class*="EditorContainer"],
-      div[class*="e1pxf6c43"] {
-        width: 100% !important;
-        max-width: 100% !important;
-        min-width: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        background-color: #f8fafc !important;
-      }
-
-      div[class*="Editor-"],
-      div[class*="e1pxf6c44"] {
-        width: 100% !important;
-        max-width: 100% !important;
+      /* Clean Full-width CMS form styling */
+      div[class*="EditorContainer"] {
+        max-width: 960px !important;
         margin: 0 auto !important;
       }
 
-      /* Collapse and hide any right preview pane and resizer divider completely */
-      .SplitPane > .Pane2,
-      .SplitPane.vertical > .Pane2,
-      .Pane2,
-      div[class*="Pane2"],
-      .Resizer,
-      .Resizer.vertical,
-      span[class*="Resizer"],
-      div[class*="PreviewPaneContainer"],
-      div[class*="e1pxf6c45"] {
-        display: none !important;
-        width: 0 !important;
-        height: 0 !important;
-        min-width: 0 !important;
-        max-width: 0 !important;
-        flex: 0 0 0 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        border: none !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-        visibility: hidden !important;
-      }
-
-      /* Ensure left pane and no-preview container take full 100% space */
-      .SplitPane,
-      .SplitPane.vertical,
-      div[class*="StyledSplitPane"],
-      div[class*="e1pxf6c41"] {
-        width: 100% !important;
-        position: relative !important;
-        display: block !important;
-      }
-
-      .SplitPane > .Pane1,
-      .SplitPane.vertical > .Pane1,
-      .Pane1,
-      div[class*="Pane1"],
-      div[class*="NoPreviewContainer"],
-      div[class*="e1pxf6c42"] {
-        width: 100% !important;
-        max-width: 100% !important;
-        min-width: 100% !important;
-        flex: 1 1 100% !important;
-        position: relative !important;
-        outline: none !important;
-        border: none !important;
-      }
-
-      /* Center and size the form itself with professional readability */
-      div[class*="ControlPaneContainer"],
-      div[class*="e1tnasa20"],
-      div[class*="e1pxf6c46"] {
-        max-width: 900px !important;
-        margin: 0 auto !important;
-        padding: 24px 20px 90px 20px !important;
-        width: 100% !important;
-      }
-
-      /* ==========================================================================
-         MODERN PROFESSIONAL SAAS DESIGN SYSTEM
-         ========================================================================== */
-      /* Top Navigation / Editor Control Bar */
-      header,
-      div[class*="EditorControlBar"],
-      div[class*="eqipg3b0"] {
-        background: #ffffff !important;
-        border-bottom: 1px solid #e2e8f0 !important;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
-      }
-
-      /* Card-Style CMS Field Containers */
-      div[class*="ControlContainer"],
-      div[class*="ei073ck0"] {
-        background: #ffffff !important;
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 12px !important;
-        padding: 20px 24px !important;
-        margin-top: 18px !important;
-        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 1px 2px rgba(15, 23, 42, 0.02) !important;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
-      }
-
-      div[class*="ControlContainer"]:hover,
-      div[class*="ei073ck0"]:hover {
-        border-color: #cbd5e1 !important;
-        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05) !important;
-      }
-
-      div[class*="ControlContainer"]:focus-within,
-      div[class*="ei073ck0"]:focus-within {
-        border-color: #ec4899 !important;
-        box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.12) !important;
-      }
-
-      /* Field Labels */
-      div[class*="ControlContainer"] label,
-      label[class*="ControlLabel"] {
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-weight: 700 !important;
-        font-size: 12px !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.06em !important;
-        color: #475569 !important;
-        margin-bottom: 10px !important;
-        display: block !important;
-      }
-
-      /* CMS Inputs, Textareas, and Selects */
-      div[class*="ControlContainer"] input:not([type="file"]):not([type="checkbox"]):not([type="radio"]),
-      div[class*="ControlContainer"] textarea,
-      div[class*="ControlContainer"] select {
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-size: 15px !important;
-        font-weight: 500 !important;
-        color: #0f172a !important;
-        background-color: #f8fafc !important;
-        border: 1.5px solid #e2e8f0 !important;
-        border-radius: 8px !important;
-        padding: 12px 16px !important;
-        outline: none !important;
-        transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease !important;
-        box-sizing: border-box !important;
-        width: 100% !important;
-      }
-
-      div[class*="ControlContainer"] input:focus,
-      div[class*="ControlContainer"] textarea:focus,
-      div[class*="ControlContainer"] select:focus {
-        background-color: #ffffff !important;
-        border-color: #ec4899 !important;
-        box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.14) !important;
-      }
-
-      /* Field Hints */
-      p[class*="ControlHint"],
-      div[class*="ControlHint"],
-      p[class*="ei073ck2"] {
-        font-size: 12.5px !important;
-        color: #64748b !important;
-        margin-top: 8px !important;
-        line-height: 1.45 !important;
-      }
-
-      /* Image Upload Previews */
-      div[class*="ImageWrapper"],
-      div[class*="e1awjdnj0"] {
-        border-radius: 10px !important;
-        overflow: hidden !important;
-        border: 2px solid #e2e8f0 !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
-        transition: transform 0.2s ease, box-shadow 0.2s ease !important;
-      }
-
-      div[class*="ImageWrapper"]:hover,
-      div[class*="e1awjdnj0"]:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1) !important;
-      }
-
-      /* Smooth Scrollbars */
-      ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
-      }
-
-      /* ==========================================================================
-         IN-FORM WHATSAPP AUTOFILL BOX (POLISHED GLASSMORPHISM)
-         ========================================================================== */
+      /* In-Form WhatsApp AutoFill Box */
       .autofill-card {
-        background: linear-gradient(135deg, #18182f 0%, #0f172a 100%);
+        background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
         border: 2px solid #ec4899;
-        border-radius: 14px;
-        padding: 20px 24px;
+        border-radius: 12px;
+        padding: 16px 20px;
         color: #fff;
-        margin-bottom: 12px;
-        box-shadow: 0 8px 24px rgba(236, 72, 153, 0.18);
+        margin-bottom: 8px;
+        box-shadow: 0 4px 15px rgba(236, 72, 153, 0.15);
       }
 
       .autofill-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
       }
 
       .autofill-title {
@@ -253,24 +47,21 @@
         align-items: center;
         gap: 8px;
         color: #f472b6;
-        letter-spacing: -0.01em;
       }
 
       .autofill-textarea {
         width: 100%;
         box-sizing: border-box;
         height: 100px;
-        background: rgba(255, 255, 255, 0.07);
-        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 8px;
         color: #fff;
-        padding: 12px 14px;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        padding: 10px 14px;
+        font-family: monospace;
         font-size: 13px;
-        line-height: 1.5;
         outline: none;
         resize: vertical;
-        transition: border-color 0.2s, background-color 0.2s;
       }
 
       .autofill-textarea:focus {
@@ -283,8 +74,8 @@
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 14px;
+        gap: 10px;
+        margin-top: 10px;
       }
 
       .btn-parse-fill {
@@ -292,21 +83,17 @@
         color: white;
         border: none;
         border-radius: 8px;
-        padding: 11px 22px;
+        padding: 10px 22px;
         font-weight: 700;
         font-size: 14px;
         cursor: pointer;
-        transition: transform 0.15s, box-shadow 0.2s;
+        transition: transform 0.1s, box-shadow 0.2s;
         box-shadow: 0 4px 14px rgba(236, 72, 153, 0.4);
       }
 
       .btn-parse-fill:hover {
         transform: translateY(-1px);
-        box-shadow: 0 6px 20px rgba(236, 72, 153, 0.55);
-      }
-
-      .btn-parse-fill:active {
-        transform: translateY(0);
+        box-shadow: 0 6px 18px rgba(236, 72, 153, 0.5);
       }
 
       .parse-status {
@@ -334,18 +121,16 @@
         flex: 1;
         padding: 12px 16px;
         font-size: 15px;
-        border: 1.5px solid #e2e8f0;
+        border: 2px solid #e2e8f0;
         border-radius: 8px;
         outline: none;
         font-family: inherit;
-        background: #f8fafc;
-        transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+        background: #fff;
+        transition: border-color 0.2s;
       }
 
       .widget-input:focus {
-        background: #fff;
         border-color: #ec4899;
-        box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.14);
       }
 
       .badge-indicator {
@@ -375,69 +160,123 @@
       }
 
       .hash-code {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-family: monospace;
         font-weight: 700;
         color: #db2777;
         font-size: 14px;
       }
 
-      /* ==========================================================================
-         RESPONSIVE & MOBILE FRIENDLINESS
-         ========================================================================== */
-      @media (max-width: 768px) {
-        div[class*="ControlPaneContainer"],
-        div[class*="e1tnasa20"],
-        div[class*="e1pxf6c46"] {
-          padding: 16px 14px 80px 14px !important;
-        }
+      /* Multi-Photo Uploader & Reordering Grid */
+      .multi-photo-container {
+        background: #ffffff;
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 6px;
+      }
 
-        div[class*="ControlContainer"],
-        div[class*="ei073ck0"] {
-          padding: 16px !important;
-          border-radius: 10px !important;
-          margin-top: 14px !important;
-        }
+      .multi-photo-dropzone {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: #f8fafc;
+        border-radius: 8px;
+        border: 1px dashed #94a3b8;
+        cursor: pointer;
+        text-align: center;
+        transition: background 0.2s, border-color 0.2s;
+      }
 
-        /* Prevent iOS Zoom by ensuring inputs are at least 16px */
-        input, textarea, select, .widget-input, .autofill-textarea {
-          font-size: 16px !important;
-        }
+      .multi-photo-dropzone:hover {
+        background: #fdf2f8;
+        border-color: #ec4899;
+      }
 
-        .autofill-card {
-          padding: 16px !important;
-          border-radius: 12px !important;
-        }
+      .multi-photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+      }
 
-        .autofill-actions {
-          flex-direction: column !important;
-          align-items: stretch !important;
-        }
+      .photo-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
 
-        .btn-parse-fill {
-          width: 100% !important;
-          justify-content: center !important;
-          padding: 12px !important;
-          font-size: 15px !important;
-        }
+      .photo-card-img {
+        width: 100%;
+        height: 110px;
+        object-fit: cover;
+        background: #f1f5f9;
+      }
 
-        .widget-row {
-          flex-direction: column !important;
-          align-items: stretch !important;
-          gap: 10px !important;
-        }
+      .photo-card-badge {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        background: rgba(15, 23, 42, 0.75);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
 
-        .badge-indicator {
-          align-self: flex-start !important;
-        }
+      .photo-card-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 8px;
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      .btn-arrow {
+        background: #e2e8f0;
+        border: none;
+        border-radius: 4px;
+        width: 26px;
+        height: 24px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn-arrow:hover:not(:disabled) {
+        background: #cbd5e1;
+      }
+
+      .btn-arrow:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      .btn-remove-photo {
+        background: #fee2e2;
+        color: #ef4444;
+        border: none;
+        border-radius: 4px;
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
       }
     </style>
   </head>
   <body>
-    <script>
-      try {
-        localStorage.setItem('cms.preview-visible', 'false');
-      } catch (e) {}
-    </script>
     <!-- Identity Widget -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
