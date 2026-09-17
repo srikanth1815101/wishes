@@ -8,36 +8,126 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
       html, body {
         margin: 0;
         padding: 0;
         background: #f8fafc;
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: #0f172a;
+        -webkit-font-smoothing: antialiased;
       }
 
-      /* Clean Full-width CMS form styling */
+      /* ==========================================================================
+         ELIMINATE PREVIEW SPLIT PANE COMPLETELY (NO EMPTY RIGHT/LEFT SPLIT)
+         ========================================================================== */
+      .Resizer,
+      span[class*="Resizer"],
+      div[class*="Resizer"],
+      div[class*="resizer"] {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        pointer-events: none !important;
+        visibility: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+      }
+
+      .Pane2,
+      div[class*="Pane2"],
+      div[class*="pane2"],
+      section[class*="PreviewPane"],
+      div[class*="PreviewPane"],
+      div[class*="previewPane"],
+      section[class*="previewPane"],
+      div[class*="PreviewContainer"],
+      section[class*="PreviewContainer"],
+      div[class*="previewContainer"] {
+        display: none !important;
+        width: 0 !important;
+        max-width: 0 !important;
+        min-width: 0 !important;
+        height: 0 !important;
+        flex: 0 0 0% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        overflow: hidden !important;
+        visibility: hidden !important;
+      }
+
+      .SplitPane,
+      div[class*="SplitPane"],
+      div[class*="splitPane"] {
+        width: 100% !important;
+        position: static !important;
+        display: block !important;
+      }
+
+      .Pane1,
+      div[class*="Pane1"],
+      div[class*="pane1"],
+      div[class*="ControlPane"],
+      div[class*="controlPane"],
+      div[class*="EditorContent"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 100% !important;
+        flex: 1 1 100% !important;
+        position: relative !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow-x: hidden !important;
+      }
+
+      /* Clean Centered Full-Width Form Container */
       div[class*="EditorContainer"] {
-        max-width: 960px !important;
+        max-width: 880px !important;
+        width: 100% !important;
         margin: 0 auto !important;
+        padding: 20px 24px 80px 24px !important;
+        box-sizing: border-box !important;
       }
 
-      /* In-Form WhatsApp AutoFill Box */
+      /* Modern Top Navigation Bar */
+      header[class*="AppHeader"],
+      div[class*="ToolbarContainer"] {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 50 !important;
+        background: #ffffff !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+      }
+
+      /* ==========================================================================
+         IN-FORM WHATSAPP AUTO-FILL BOX
+         ========================================================================== */
       .autofill-card {
         background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
         border: 2px solid #ec4899;
-        border-radius: 12px;
-        padding: 16px 20px;
+        border-radius: 14px;
+        padding: 18px 20px;
         color: #fff;
-        margin-bottom: 8px;
-        box-shadow: 0 4px 15px rgba(236, 72, 153, 0.15);
+        margin-bottom: 16px;
+        box-shadow: 0 6px 20px rgba(236, 72, 153, 0.2);
+        transition: transform 0.2s, box-shadow 0.2s;
       }
 
       .autofill-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
       }
 
       .autofill-title {
@@ -49,24 +139,33 @@
         color: #f472b6;
       }
 
+      .autofill-title i,
+      .autofill-title svg {
+        width: 18px;
+        height: 18px;
+        color: #f472b6;
+      }
+
       .autofill-textarea {
         width: 100%;
         box-sizing: border-box;
-        height: 100px;
+        height: 105px;
         background: rgba(255, 255, 255, 0.08);
         border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 8px;
+        border-radius: 10px;
         color: #fff;
-        padding: 10px 14px;
-        font-family: monospace;
-        font-size: 13px;
+        padding: 12px 14px;
+        font-family: inherit;
+        font-size: 14px;
         outline: none;
         resize: vertical;
+        transition: border-color 0.2s, background 0.2s;
       }
 
       .autofill-textarea:focus {
         border-color: #ec4899;
         background: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.25);
       }
 
       .autofill-actions {
@@ -74,35 +173,47 @@
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 10px;
+        gap: 12px;
+        margin-top: 12px;
       }
 
       .btn-parse-fill {
         background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
         color: white;
         border: none;
-        border-radius: 8px;
-        padding: 10px 22px;
+        border-radius: 9px;
+        padding: 11px 24px;
         font-weight: 700;
         font-size: 14px;
         cursor: pointer;
-        transition: transform 0.1s, box-shadow 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: transform 0.15s, box-shadow 0.2s;
         box-shadow: 0 4px 14px rgba(236, 72, 153, 0.4);
       }
 
       .btn-parse-fill:hover {
         transform: translateY(-1px);
-        box-shadow: 0 6px 18px rgba(236, 72, 153, 0.5);
+        box-shadow: 0 6px 20px rgba(236, 72, 153, 0.55);
+      }
+
+      .btn-parse-fill:active {
+        transform: translateY(0);
       }
 
       .parse-status {
         font-size: 13px;
         font-weight: 600;
         color: #34d399;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
       }
 
-      /* Custom widget styling */
+      /* ==========================================================================
+         CUSTOM WIDGETS & INPUT STYLING
+         ========================================================================== */
       .widget-box {
         position: relative;
         display: flex;
@@ -119,160 +230,239 @@
 
       .widget-input {
         flex: 1;
+        width: 100%;
         padding: 12px 16px;
         font-size: 15px;
         border: 2px solid #e2e8f0;
-        border-radius: 8px;
+        border-radius: 9px;
         outline: none;
         font-family: inherit;
         background: #fff;
-        transition: border-color 0.2s;
+        color: #0f172a;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        box-sizing: border-box;
       }
 
       .widget-input:focus {
         border-color: #ec4899;
+        box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
       }
 
       .badge-indicator {
         font-size: 12px;
         font-weight: 700;
-        padding: 8px 14px;
-        border-radius: 6px;
-        letter-spacing: 0.03em;
+        padding: 9px 16px;
+        border-radius: 8px;
+        letter-spacing: 0.02em;
         white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
       }
 
-      .badge-idle { background: #f1f5f9; color: #64748b; }
-      .badge-available { background: #dcfce7; color: #16a34a; border: 1px solid #86efac; }
+      .badge-indicator i,
+      .badge-indicator svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .badge-idle { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+      .badge-available { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
       .badge-taken { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
-      .badge-loading { background: #fef3c7; color: #d97706; }
+      .badge-loading { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+
+      .slug-preview-link {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: #64748b;
+        margin-top: 4px;
+        word-break: break-all;
+      }
+
+      .slug-preview-link a {
+        color: #db2777;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .slug-preview-link a:hover {
+        text-decoration: underline;
+      }
 
       .hash-status-row {
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
         gap: 8px;
         font-size: 13px;
         color: #475569;
         background: #fdf2f8;
         border: 1px dashed #f472b6;
-        padding: 8px 12px;
-        border-radius: 6px;
+        padding: 9px 14px;
+        border-radius: 8px;
+      }
+
+      .hash-status-active {
+        background: #f0fdf4 !important;
+        border-color: #86efac !important;
+        color: #166534 !important;
       }
 
       .hash-code {
-        font-family: monospace;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
         font-weight: 700;
         color: #db2777;
         font-size: 14px;
-      }
-
-      /* Multi-Photo Uploader & Reordering Grid */
-      .multi-photo-container {
         background: #ffffff;
-        border: 2px dashed #cbd5e1;
-        border-radius: 12px;
-        padding: 16px;
-        margin-top: 6px;
-      }
-
-      .multi-photo-dropzone {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-        background: #f8fafc;
-        border-radius: 8px;
-        border: 1px dashed #94a3b8;
-        cursor: pointer;
-        text-align: center;
-        transition: background 0.2s, border-color 0.2s;
-      }
-
-      .multi-photo-dropzone:hover {
-        background: #fdf2f8;
-        border-color: #ec4899;
-      }
-
-      .multi-photo-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: 12px;
-        margin-top: 16px;
-      }
-
-      .photo-card {
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-        display: flex;
-        flex-direction: column;
-        position: relative;
-      }
-
-      .photo-card-img {
-        width: 100%;
-        height: 110px;
-        object-fit: cover;
-        background: #f1f5f9;
-      }
-
-      .photo-card-badge {
-        position: absolute;
-        top: 6px;
-        left: 6px;
-        background: rgba(15, 23, 42, 0.75);
-        color: #fff;
-        font-size: 10px;
-        font-weight: 700;
-        padding: 2px 6px;
+        padding: 2px 8px;
         border-radius: 4px;
+        border: 1px solid #fbcfe8;
       }
 
-      .photo-card-actions {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 6px 8px;
-        background: #f8fafc;
-        border-top: 1px solid #e2e8f0;
+      .hash-status-active .hash-code {
+        color: #16a34a !important;
+        border-color: #bbf7d0 !important;
       }
 
-      .btn-arrow {
-        background: #e2e8f0;
-        border: none;
-        border-radius: 4px;
-        width: 26px;
-        height: 24px;
+      .hash-hint {
         font-size: 12px;
-        font-weight: 700;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        color: #15803d;
       }
 
-      .btn-arrow:hover:not(:disabled) {
-        background: #cbd5e1;
+      /* ==========================================================================
+         NETLIFY CMS NATIVE WIDGET POLISH
+         ========================================================================== */
+      /* Card-like borders for each field section */
+      div[class*="ControlPaneContainer"] {
+        background: transparent !important;
       }
 
-      .btn-arrow:disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
+      div[class*="Field-ControlPane"] {
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        padding: 16px 20px !important;
+        margin-bottom: 16px !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+        transition: border-color 0.2s, box-shadow 0.2s !important;
       }
 
-      .btn-remove-photo {
-        background: #fee2e2;
-        color: #ef4444;
-        border: none;
-        border-radius: 4px;
-        width: 24px;
-        height: 24px;
-        font-size: 11px;
-        font-weight: 700;
-        cursor: pointer;
+      div[class*="Field-ControlPane"]:focus-within {
+        border-color: #f472b6 !important;
+        box-shadow: 0 4px 14px rgba(236, 72, 153, 0.08) !important;
+      }
+
+      label[class*="ControlPaneLabel"] {
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        color: #475569 !important;
+        letter-spacing: 0.04em !important;
+        text-transform: uppercase !important;
+        margin-bottom: 8px !important;
+        display: block !important;
+      }
+
+      /* Native inputs, textareas, and selects */
+      input[type="text"],
+      input[type="password"],
+      textarea,
+      select {
+        font-family: inherit !important;
+        font-size: 15px !important;
+        border-radius: 9px !important;
+        border: 2px solid #e2e8f0 !important;
+        padding: 10px 14px !important;
+        outline: none !important;
+        transition: border-color 0.2s, box-shadow 0.2s !important;
+        box-sizing: border-box !important;
+      }
+
+      input[type="text"]:focus,
+      input[type="password"]:focus,
+      textarea:focus,
+      select:focus {
+        border-color: #ec4899 !important;
+        box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15) !important;
+      }
+
+      /* Native Image Widget Card */
+      div[class*="ImageCard"],
+      div[class*="ImageWrapper"] {
+        border-radius: 10px !important;
+        overflow: hidden !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+
+      /* ==========================================================================
+         RESPONSIVE & MOBILE FRIENDLINESS
+         ========================================================================== */
+      @media (max-width: 768px) {
+        div[class*="EditorContainer"] {
+          padding: 12px 12px 70px 12px !important;
+        }
+
+        /* Prevent iOS Zoom by ensuring inputs are at least 16px */
+        input, textarea, select, .widget-input, .autofill-textarea {
+          font-size: 16px !important;
+        }
+
+        /* Top header actions wrap nicely on mobile */
+        header[class*="AppHeader"],
+        div[class*="ToolbarContainer"] {
+          flex-wrap: wrap !important;
+          padding: 8px 12px !important;
+          gap: 8px !important;
+        }
+
+        div[class*="ToolbarSectionBack"] {
+          margin-right: auto !important;
+        }
+
+        div[class*="ToolbarSectionMain"] {
+          flex-wrap: wrap !important;
+          gap: 6px !important;
+          width: 100% !important;
+          justify-content: flex-end !important;
+        }
+
+        /* Autofill Box full width on mobile */
+        .autofill-card {
+          padding: 14px !important;
+          border-radius: 10px !important;
+        }
+
+        .autofill-actions {
+          flex-direction: column !important;
+          align-items: stretch !important;
+        }
+
+        .btn-parse-fill {
+          width: 100% !important;
+          justify-content: center !important;
+          padding: 13px !important;
+          font-size: 15px !important;
+        }
+
+        /* Stack widget rows on mobile */
+        .widget-row {
+          flex-direction: column !important;
+          align-items: stretch !important;
+          gap: 10px !important;
+        }
+
+        .badge-indicator {
+          align-self: flex-start !important;
+          width: 100% !important;
+          justify-content: center !important;
+        }
+
+        div[class*="Field-ControlPane"] {
+          padding: 12px 14px !important;
+          border-radius: 10px !important;
+          margin-bottom: 12px !important;
+        }
       }
     </style>
   </head>
@@ -546,11 +736,21 @@
             this.setState({ status: 'Could not find fields to parse. Please check WhatsApp message format.' });
           }
         },
+        componentDidMount: function() {
+          if (window.lucide) { lucide.createIcons(); }
+        },
+        componentDidUpdate: function() {
+          if (window.lucide) { lucide.createIcons(); }
+        },
         render: function() {
           var self = this;
+          setTimeout(function() { if (window.lucide) lucide.createIcons(); }, 15);
           return h('div', { className: 'autofill-card' },
             h('div', { className: 'autofill-header' },
-              h('div', { className: 'autofill-title' }, '⚡ 1-Click WhatsApp Order Auto-Fill')
+              h('div', { className: 'autofill-title' },
+                h('i', { 'data-lucide': 'zap' }),
+                '1-Click WhatsApp Order Auto-Fill'
+              )
             ),
             h('textarea', {
               className: 'autofill-textarea',
@@ -563,8 +763,14 @@
                 type: 'button',
                 className: 'btn-parse-fill',
                 onClick: this.handleAutoFill
-              }, '✨ Auto-Fill Form Fields Below'),
-              self.state.status ? h('span', { className: 'parse-status' }, self.state.status) : null
+              },
+                h('i', { 'data-lucide': 'sparkles' }),
+                'Auto-Fill Form Fields Below'
+              ),
+              self.state.status ? h('span', { className: 'parse-status' },
+                h('i', { 'data-lucide': 'check-circle-2' }),
+                self.state.status
+              ) : null
             )
           );
         }
@@ -581,6 +787,7 @@
           };
         },
         componentDidMount: function() {
+          if (window.lucide) { lucide.createIcons(); }
           if (!this.props.value && this.props.entry) {
             var existingSlug = this.props.entry.getIn(['data', 'slug']) || this.props.entry.get('slug');
             if (!existingSlug) {
@@ -619,6 +826,9 @@
               }
             } catch(e) {}
           }
+        },
+        componentDidUpdate: function() {
+          if (window.lucide) { lucide.createIcons(); }
         },
         handleChange: function(e) {
           var self = this;
@@ -661,9 +871,12 @@
         render: function() {
           var val = this.props.value || '';
           var statusClass = 'badge-idle';
-          if (this.state.status === 'available') statusClass = 'badge-available';
-          if (this.state.status === 'taken') statusClass = 'badge-taken';
-          if (this.state.status === 'loading') statusClass = 'badge-loading';
+          var statusIcon = 'globe';
+          if (this.state.status === 'available') { statusClass = 'badge-available'; statusIcon = 'check-circle-2'; }
+          if (this.state.status === 'taken') { statusClass = 'badge-taken'; statusIcon = 'alert-circle'; }
+          if (this.state.status === 'loading') { statusClass = 'badge-loading'; statusIcon = 'loader-2'; }
+
+          setTimeout(function() { if (window.lucide) lucide.createIcons(); }, 15);
 
           return h('div', { className: 'widget-box' },
             h('div', { className: 'widget-row' },
@@ -675,11 +888,15 @@
                 placeholder: 'e.g. rahul, kiran',
                 onChange: this.handleChange
               }),
-              h('span', { className: 'badge-indicator ' + statusClass }, this.state.message)
+              h('span', { className: 'badge-indicator ' + statusClass },
+                h('i', { 'data-lucide': statusIcon }),
+                this.state.message
+              )
             ),
-            val ? h('div', { style: { fontSize: '13px', color: '#64748b' } },
+            val ? h('div', { className: 'slug-preview-link' },
+              h('i', { 'data-lucide': 'external-link', style: { width: '13px', height: '13px' } }),
               'Page will publish at: ',
-              h('strong', { style: { color: '#0f172a' } }, 'https://wishes.csrgo.com/' + val + '/')
+              h('a', { href: 'https://wishes.csrgo.com/' + val + '/', target: '_blank', rel: 'noopener noreferrer' }, 'https://wishes.csrgo.com/' + val + '/')
             ) : null
           );
         }
@@ -689,6 +906,12 @@
 
       // 5. Custom Single "pin_hasher" Widget
       var PinHasherControl = createClass({
+        componentDidMount: function() {
+          if (window.lucide) { lucide.createIcons(); }
+        },
+        componentDidUpdate: function() {
+          if (window.lucide) { lucide.createIcons(); }
+        },
         handleChange: function(e) {
           var val = e.target.value.trim();
           this.props.onChange(val);
@@ -697,6 +920,8 @@
           var val = this.props.value || '';
           var computedHash = generatePinHash(val);
           var existingHash = (!computedHash && this.props.entry) ? this.props.entry.getIn(['data', 'pin_hash']) : '';
+
+          setTimeout(function() { if (window.lucide) lucide.createIcons(); }, 15);
 
           return h('div', { className: 'widget-box' },
             h('div', { className: 'widget-row' },
@@ -710,12 +935,14 @@
               })
             ),
             computedHash ? h('div', { className: 'hash-status-row' },
-              '🔒 New Encrypted PIN Hash to be saved: ',
+              h('i', { 'data-lucide': 'shield-check', style: { width: '16px', height: '16px', color: '#ec4899' } }),
+              'New Encrypted PIN Hash to be saved: ',
               h('span', { className: 'hash-code' }, computedHash)
-            ) : (existingHash ? h('div', { className: 'hash-status-row', style: { background: '#f0fdf4', borderColor: '#86efac', color: '#166534' } },
-              '🔒 Active PIN Hash in record: ',
-              h('span', { className: 'hash-code', style: { color: '#16a34a' } }, existingHash),
-              h('span', { style: { fontSize: '12px', marginLeft: '6px', color: '#15803d' } }, '(Kept unchanged unless you enter a new 7-digit PIN)')
+            ) : (existingHash ? h('div', { className: 'hash-status-row hash-status-active' },
+              h('i', { 'data-lucide': 'shield', style: { width: '16px', height: '16px', color: '#16a34a' } }),
+              'Active PIN Hash in record: ',
+              h('span', { className: 'hash-code' }, existingHash),
+              h('span', { className: 'hash-hint' }, '(Kept unchanged unless you enter a new 7-digit PIN)')
             ) : null)
           );
         }
@@ -918,6 +1145,13 @@
 
       // Start CMS
       CMS.init();
+
+      // Ensure Lucide icons render on dynamic route transitions & editor mounts
+      setInterval(function() {
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+      }, 1200);
     </script>
   </body>
 </html>
