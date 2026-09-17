@@ -4,7 +4,7 @@ url: /minni/
 birthday_name: Minni
 sender_name: Srikanth
 birth_date: 2026-09-16T00:00:00
-pin_hash: h_4kbs33
+pin_hash: h_xdkb3o
 photos:
   - /images/wishes/minni/1000364245.jpg
   - /images/wishes/minni/1000364245.jpg
